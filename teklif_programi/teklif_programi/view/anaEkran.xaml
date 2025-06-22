@@ -30,14 +30,54 @@
                 </StackPanel>
 
                 <!-- Menü Butonları -->
-                <Button Content="Firma Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnFirmaEkle_Click"/>
-                <Button Content="Firmalarım" Style="{StaticResource NavigationButtonStyle}" Click="btnFirmalarim_Click"/>
-                <Button Content="Ürün Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnUrunEkle_Click"/>
-                <Button Content="Ürünlerim" Style="{StaticResource NavigationButtonStyle}" Click="btnUrunlerim_Click"/>
-                <Button Content="Personel Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnPersonelEkle_Click"/>
-                <Button Content="Personellerim" Style="{StaticResource NavigationButtonStyle}" Click="btnPersonellerim_Click"/>
-                <Button Content="Teklif Ver" Style="{StaticResource NavigationButtonStyle}" Click="btnTeklifVer_Click"/>
-                <Button Content="Geçmiş Tekliflerim" Style="{StaticResource NavigationButtonStyle}" Click="btnGecmisTekliflerim_Click"/>
+                <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🏢" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,40,0"/>
+                        <TextBlock Text="Firmalarım" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnFirmaEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="🏢⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,35,0"/>
+                        <TextBlock Text="Firma Ekle" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnUrunlerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="📋" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,43,0"/>
+                        <TextBlock Text="Ürünlerim" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnUrunEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="📋⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,38,0"/>
+                        <TextBlock Text="Ürün Ekle" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnPersonellerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👤" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,30,0"/>
+                        <TextBlock Text="Personellerim" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnPersonelEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👤⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,25,0"/>
+                        <TextBlock Text="Personel Ekle" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnTeklifVer_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="📨" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,47,0"/>
+                        <TextBlock Text="Teklif Ver" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnGecmisTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⏳" FontFamily="{StaticResource FontAwesome}" FontSize="18" VerticalAlignment="Center" Margin="10,0,15,0"/>
+                        <TextBlock Text="Geçmiş Tekliflerim" VerticalAlignment="Center" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
             </StackPanel>
         </Border>
 
