@@ -165,3 +165,8 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Debug\net8.0-windows\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_programi.csproj.AssemblyReference.cache
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_p.D1B61DE2.Up2Date
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\anaEkran.g.cs
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\anaEkran.baml
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\styles\navigationButtonStyles.baml
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Debug\net8.0-windows\FontAwesome.Sharp.dll
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\App.baml

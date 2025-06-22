@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WİNDOWS7_0_OR_GREATER
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\App.xaml
-2-912785365
+4241807301
 
-7-2043531531
-246-1177487713
-MainWindow.xaml;view\girisEkrani.xaml;
+8381086538
+2561037793428
+MainWindow.xaml;styles\navigationButtonStyles.xaml;view\anaEkran.xaml;view\girisEkrani.xaml;
 
 True
 

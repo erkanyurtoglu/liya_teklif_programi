@@ -137,7 +137,7 @@
 
                     <Button x:Name="btnGirisYap" Grid.Column="2" Content="Giriş Yap" FontSize="14"
                             Background="#13183E" Foreground="White" Height="38" BorderThickness="0"
-                            FontFamily="Source Sans Pro" Cursor="Hand">
+                            FontFamily="Source Sans Pro" Cursor="Hand" VerticalAlignment="Top" Click="btnGirisYap_Click_1">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border x:Name="border"

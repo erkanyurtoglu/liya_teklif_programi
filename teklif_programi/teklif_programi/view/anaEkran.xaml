@@ -1,0 +1,47 @@
+﻿<Window x:Class="teklif_programi.view.anaEkran"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:teklif_programi.view"
+        mc:Ignorable="d"
+        Title="Liya Laboratuvar A.Ş. Teklif Sistemi" Height="900" Width="1600"
+        WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Maximized"
+        Background="#ededed">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!-- Navigation Menu -->
+            <ColumnDefinition Width="250" />
+            <!-- Content section -->
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Navigation Menu -->
+        <Border Grid.Column="0">
+            <Border.Background>
+                <SolidColorBrush Color="#13183E" />
+            </Border.Background>
+
+            <StackPanel>
+                <!-- Logo -->
+                <StackPanel>
+                    <Image Source="/resimler/liya_logo.png" Width="200" Height="100" HorizontalAlignment="Center" Margin="15" />
+                </StackPanel>
+
+                <!-- Menü Butonları -->
+                <Button Content="Firma Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnFirmaEkle_Click"/>
+                <Button Content="Firmalarım" Style="{StaticResource NavigationButtonStyle}" Click="btnFirmalarim_Click"/>
+                <Button Content="Ürün Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnUrunEkle_Click"/>
+                <Button Content="Ürünlerim" Style="{StaticResource NavigationButtonStyle}" Click="btnUrunlerim_Click"/>
+                <Button Content="Personel Ekle" Style="{StaticResource NavigationButtonStyle}" Click="btnPersonelEkle_Click"/>
+                <Button Content="Personellerim" Style="{StaticResource NavigationButtonStyle}" Click="btnPersonellerim_Click"/>
+                <Button Content="Teklif Ver" Style="{StaticResource NavigationButtonStyle}" Click="btnTeklifVer_Click"/>
+                <Button Content="Geçmiş Tekliflerim" Style="{StaticResource NavigationButtonStyle}" Click="btnGecmisTekliflerim_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Content section -->
+        <Grid Grid.Column="1" Background="White" />
+    </Grid>
+</Window>
