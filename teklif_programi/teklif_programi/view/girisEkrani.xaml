@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="Liya Laboratuvar A.Ş. Teklif Sistemi" Height="900" Width="1600"
         WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Maximized">
+
     <Grid>
         <!-- Arkaplan resmi -->
         <Border>
@@ -16,7 +17,7 @@
         </Border>
 
         <!-- Giriş paneli -->
-        <Border Width="400" Background="#80FFFFFF" CornerRadius="8" Margin="0,100,0,100">
+        <Border Width="400" Background="#80FFFFFF" CornerRadius="8" Margin="0,150,0,200">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="8" ShadowDepth="4" Opacity="0.2" Color="Black"/>
             </Border.Effect>
@@ -28,13 +29,13 @@
                 <TextBlock Text="Liya Laboratuvar A.Ş. Teklif Sistemi" FontSize="16" FontWeight="Bold"
                            Foreground="#13183E" HorizontalAlignment="Center" Margin="0,20,0,20" FontFamily="Source Sans Pro"/>
 
-                <!-- Hata mesajı yeri -->
+                <!-- Hata mesajı -->
                 <TextBlock x:Name="txtErrorMessage" Visibility="Collapsed" FontSize="12" Foreground="#721C24"
                            Background="#F8D7DA" Padding="8" Margin="0,0,0,10" TextWrapping="Wrap"
                            HorizontalAlignment="Center" FontFamily="Source Sans Pro"/>
 
                 <!-- Kullanıcı Adı -->
-                <Grid Margin="0,5,0,10">
+                <Grid Margin="0,50,0,10">
                     <TextBox x:Name="txtKullanici" FontSize="14" Height="38" Background="White"
                              Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
                              VerticalContentAlignment="Center" FontFamily="Source Sans Pro">
@@ -49,7 +50,7 @@
                                                     CornerRadius="2">
                                                 <Grid>
                                                     <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-                                                    <TextBlock x:Name="PlaceholderText" Text="Üye Kullanıcı Adı"
+                                                    <TextBlock x:Name="PlaceholderText" Text="Kullanıcı Adı"
                                                                Foreground="Gray" IsHitTestVisible="False"
                                                                Visibility="Collapsed" VerticalAlignment="Center"
                                                                Margin="10,0,40,0" FontFamily="Source Sans Pro"/>
@@ -74,7 +75,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <TextBlock Text="" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
+                    <TextBlock Text="👤" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
                                VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                 </Grid>
 
@@ -94,7 +95,7 @@
                                                     CornerRadius="2">
                                                 <Grid>
                                                     <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-                                                    <TextBlock x:Name="PlaceholderText" Text="Üye Şifre"
+                                                    <TextBlock x:Name="PlaceholderText" Text="Şifre"
                                                                Foreground="Gray" IsHitTestVisible="False"
                                                                Visibility="Collapsed" VerticalAlignment="Center"
                                                                Margin="10,0,40,0" FontFamily="Source Sans Pro"/>
@@ -119,42 +120,40 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <TextBlock Text="" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
+                    <TextBlock Text="🔐" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
                                VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
                 </Grid>
 
                 <!-- Beni Hatırla ve Giriş Yap -->
                 <Grid Margin="0,15,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="113*"/>
+                        <ColumnDefinition Width="7*"/>
+                        <ColumnDefinition Width="60*"/>
                     </Grid.ColumnDefinitions>
+
                     <CheckBox x:Name="chkBeniHatirla" Content="Beni Hatırla" FontSize="12"
-                              Foreground="#13183E" VerticalContentAlignment="Center" FontFamily="Source Sans Pro"/>
-                    <Button x:Name="btnGirisYap" Grid.Column="1" Content="Giriş Yap" FontSize="14"
+                              Foreground="#13183E" VerticalContentAlignment="Center" FontFamily="Source Sans Pro" Grid.ColumnSpan="2"/>
+
+                    <Button x:Name="btnGirisYap" Grid.Column="2" Content="Giriş Yap" FontSize="14"
                             Background="#13183E" Foreground="White" Height="38" BorderThickness="0"
-                            FontFamily="Source Sans Pro">
-                        <Button.Style>
-                            <Style TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="4">
-                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#0E122E"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Button.Style>
+                            FontFamily="Source Sans Pro" Cursor="Hand">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="border"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="4">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
                     </Button>
                 </Grid>
             </StackPanel>

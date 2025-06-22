@@ -23,5 +23,10 @@ namespace teklif_programi.view
         {
             InitializeComponent();
         }
+
+        private void btnGiris_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
