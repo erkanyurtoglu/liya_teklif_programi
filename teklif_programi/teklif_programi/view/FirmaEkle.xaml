@@ -49,7 +49,7 @@
                        FontWeight="Bold" 
                        FontFamily="Segoe UI"
                        Foreground="#13183E" />
-            <Border Height="2" Width="220" Background="#13183E" CornerRadius="1" Margin="0,8,0,0"/>
+            <Border Height="2" Width="230" Background="#13183E" CornerRadius="1" Margin="0,8,0,0"/>
         </StackPanel>
 
         <!-- Form ve Butonlar -->
