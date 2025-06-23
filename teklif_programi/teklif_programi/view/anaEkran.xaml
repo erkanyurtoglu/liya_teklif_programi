@@ -71,6 +71,6 @@
         </Border>
 
         <!-- Content Area -->
-        <ContentControl x:Name="contentArea" Grid.Column="1" Background="White" Margin="20"/>
+        <ContentControl x:Name="contentArea" Grid.Column="1" Background="#ededed" />
     </Grid>
 </Window>
