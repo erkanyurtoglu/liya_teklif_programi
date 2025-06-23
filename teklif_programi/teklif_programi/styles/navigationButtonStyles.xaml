@@ -4,7 +4,7 @@
         <Setter Property="Background" Value="#2E2E5A"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="Padding" Value="20,15"/>
-        <Setter Property="Margin" Value="10, 10"/>
+        <Setter Property="Margin" Value="10,10"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>

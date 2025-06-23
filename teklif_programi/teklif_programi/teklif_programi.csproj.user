@@ -5,7 +5,31 @@
     <Compile Update="view\anaEkran.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\FirmaEkle.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\Firmalarim.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\GecmisTekliflerim.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="view\girisEkrani.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\PersonelEkle.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\Personellerim.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\TeklifVer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\UrunEkle.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\Urunlerim.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

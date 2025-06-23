@@ -22,51 +22,16 @@ namespace teklif_programi.view
         public anaEkran()
         {
             InitializeComponent();
+            contentArea.Content = new Firmalarim(); // Varsayılan ekran
         }
 
-        private void btnMenuToggle_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnFirmalarim_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnUrunEkle_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnUrunlerim_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnPersonelEkle_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnPersonellerim_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnTeklifVer_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void btnGecmisTekliflerim_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
+        private void btnFirmalarim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new Firmalarim();
+        private void btnFirmaEkle_Click(object sender, RoutedEventArgs e) => contentArea.Content = new FirmaEkle();
+        private void btnUrunlerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new Urunlerim();
+        private void btnUrunEkle_Click(object sender, RoutedEventArgs e) => contentArea.Content = new UrunEkle();
+        private void btnPersonellerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new Personellerim();
+        private void btnPersonelEkle_Click(object sender, RoutedEventArgs e) => contentArea.Content = new PersonelEkle();
+        private void btnTeklifVer_Click(object sender, RoutedEventArgs e) => contentArea.Content = new TeklifVer();
+        private void btnGecmisTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new GecmisTekliflerim();
     }
 }
