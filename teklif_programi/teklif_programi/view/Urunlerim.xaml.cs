@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using teklif_programi.Data;
 
 namespace teklif_programi.view
 {
@@ -20,9 +21,18 @@ namespace teklif_programi.view
     /// </summary>
     public partial class Urunlerim : UserControl
     {
+        public TeklifDbContext _db = new TeklifDbContext();
+
         public Urunlerim()
         {
             InitializeComponent();
+            UrunListele();
+        }
+
+        private void UrunListele()
+        {
+            var urunler = _db.Urunler.ToList(); // Veritabanından çek
+            dataGridUrunler.ItemsSource = urunler;    // DataGrid'e bağla (dgFirmalar senin x:Name)
         }
     }
 }

@@ -64,14 +64,9 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <!-- Personel Kodu -->
-                <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                    <TextBlock Text="Personel Kodu" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtPersonelKodu" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
-                </StackPanel>
 
                 <!-- Adı Soyadı -->
-                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
                     <TextBlock Text="Adı Soyadı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtAdSoyad" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                 </StackPanel>
@@ -84,7 +79,7 @@
                 </Grid.ColumnDefinitions>
 
                 <!-- Pozisyon -->
-                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <StackPanel Grid.Column="0"  Margin="0,0,10,0">
                     <TextBlock Text="Pozisyon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtPozisyon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                 </StackPanel>
@@ -98,8 +93,8 @@
 
             <!-- Butonlar aynı hizada ve hemen altında -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
-                <Button Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="180" Margin="0,0,40,0"/>
-                <Button Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180"/>
+                <Button x:Name="Kaydet" Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="180" Margin="0,0,40,0" Click="Kaydet_Click"/>
+                <Button x:Name="iptal" Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180"/>
             </StackPanel>
         </StackPanel>
     </Grid>

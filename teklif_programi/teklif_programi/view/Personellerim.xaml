@@ -69,17 +69,17 @@
         </StackPanel>
 
         <!-- Personel Listesi -->
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" 
+        <DataGrid x:Name="dataGridPersonel" Grid.Row="2" AutoGenerateColumns="False" 
                   HeadersVisibility="Column" IsReadOnly="True" 
                   Margin="0,0,0,20" RowHeight="40" ColumnHeaderHeight="45"
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Personel Kodu" Width="1*" />
-                <DataGridTextColumn Header="Adı Soyadı" Width="2*" />
-                <DataGridTextColumn Header="Pozisyon" Width="2*" />
-                <DataGridTextColumn Header="Telefon" Width="2*" />
+                <DataGridTextColumn Header="Personel Kodu" Binding="{Binding PersonelKoduID}" Width="1*" />
+                <DataGridTextColumn Header="Adı Soyadı" Binding="{Binding AdSoyad}" Width="2*" />
+                <DataGridTextColumn Header="Pozisyon" Binding="{Binding Pozisyon}" Width="2*" />
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

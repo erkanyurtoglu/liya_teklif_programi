@@ -39,7 +39,7 @@ namespace teklif_programi.view
             // Zorunlu alan kontrolü yaaptım.
             if (string.IsNullOrEmpty(firmaAdi))
             {
-                MessageBox.Show("Lütfen Firma Adınız Giriniz.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Lütfen Firma Adını Giriniz.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 

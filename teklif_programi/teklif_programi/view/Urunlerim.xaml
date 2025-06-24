@@ -79,21 +79,21 @@
         </StackPanel>
 
         <!-- Ürün Listesi -->
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" 
+        <DataGrid x:Name="dataGridUrunler" Grid.Row="2" AutoGenerateColumns="False" 
                   HeadersVisibility="Column" IsReadOnly="True" 
                   Margin="0,0,0,20" RowHeight="40" ColumnHeaderHeight="45"
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ürün Kodu" Width="1*" />
-                <DataGridTextColumn Header="Kategori" Width="2*" />
-                <DataGridTextColumn Header="Açıklama" Width="3*" />
-                <DataGridTextColumn Header="Adet" Width="1*" />
-                <DataGridTextColumn Header="2025 Birim Satış Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="2025 Satış Toplam Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="Yurtiçi Maliyet Birim Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="Toplam Fiyat" Width="2*" />
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*" />
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="3*" />
+                <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" Width="1*" />
+                <DataGridTextColumn Header="2025 Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati}" Width="2*" />
+                <DataGridTextColumn Header="2025 Satış Toplam Fiyatı" Binding="{Binding SatisToplamFiyati}" Width="2*" />
+                <DataGridTextColumn Header="Yurtiçi Maliyet Birim Fiyatı" Binding="{Binding YurticiMaliyet}" Width="2*" />
+                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

@@ -11,6 +11,9 @@ namespace teklif_programi.Data
     public class TeklifDbContext : DbContext // DbContext'ten türetildi
     {
         public DbSet<Firma> Firmalar { get; set; }
+        public DbSet<UrunData> Urunler { get; set; }
+        public DbSet<PersonelData> Personeller { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
