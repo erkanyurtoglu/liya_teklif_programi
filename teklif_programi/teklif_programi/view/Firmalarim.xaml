@@ -79,17 +79,17 @@
         </StackPanel>
 
         <!-- Firma Listesi -->
-        <DataGrid Grid.Row="2" AutoGenerateColumns="False" 
+        <DataGrid x:Name="dgFirmalar" Grid.Row="2" AutoGenerateColumns="False" 
                   HeadersVisibility="Column" IsReadOnly="True" 
                   Margin="0,0,0,20" RowHeight="40" ColumnHeaderHeight="45"
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Firma Kodu" Width="1*" />
-                <DataGridTextColumn Header="Firma Adı" Width="2*" />
-                <DataGridTextColumn Header="Adres" Width="3*" />
-                <DataGridTextColumn Header="Telefon" Width="2*" />
+                <DataGridTextColumn Header="Firma Kodu" Binding="{Binding FirmaKoduID}" Width="1*" />
+                <DataGridTextColumn Header="Firma Adı" Binding="{Binding FirmaAdi}" Width="2*" />
+                <DataGridTextColumn Header="Adres" Binding="{Binding Adres}" Width="3*" />
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

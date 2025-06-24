@@ -72,8 +72,8 @@
 
             <!-- Butonlar aynı hizada ve hemen altında -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30">
-                <Button Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="180" Margin="0,0,40,0"/>
-                <Button Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180"/>
+                <Button Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="180" Margin="0,0,40,0" Click="Button_Click"/>
+                <Button Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180" Click="Button_Click_1"/>
                 
             </StackPanel>
         </StackPanel>
