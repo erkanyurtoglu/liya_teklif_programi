@@ -29,11 +29,20 @@ namespace teklif_programi.view
             FirmaListele(); // Sayfa açılınca firmaları yükle
         }
         
-        private void FirmaListele()
+        private void FirmaListele(string arama = "")
         {
-            var firmalar = _db.Firmalar.ToList(); // Veritabanından çek
-            dgFirmalar.ItemsSource = firmalar;    // DataGrid'e bağla (dgFirmalar senin x:Name)
+            var firmalar = string.IsNullOrWhiteSpace(arama)
+                ? _db.Firmalar.ToList()
+                : _db.Firmalar
+                      .Where(f => f.FirmaAdi.Contains(arama) || f.Telefon.Contains(arama))
+                      .ToList();
+
+            dgFirmalar.ItemsSource = firmalar;
         }
 
+        private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            FirmaListele(txtArama.Text.Trim());
+        }
     }
 }

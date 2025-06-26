@@ -29,10 +29,20 @@ namespace teklif_programi.view
             UrunListele();
         }
 
-        private void UrunListele()
+        private void UrunListele(string arama = "")
         {
-            var urunler = _db.Urunler.ToList(); // Veritabanından çek
-            dataGridUrunler.ItemsSource = urunler;    // DataGrid'e bağla (dgFirmalar senin x:Name)
+            var urunler = string.IsNullOrWhiteSpace(arama)
+                ? _db.Urunler.ToList()
+                : _db.Urunler
+                      .Where(f => f.Aciklama.Contains(arama) || f.UrunKoduID.Contains(arama))
+                      .ToList();
+
+            dataGridUrunler.ItemsSource = urunler;
+        }
+
+        private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UrunListele(txtArama.Text.Trim());
         }
     }
 }

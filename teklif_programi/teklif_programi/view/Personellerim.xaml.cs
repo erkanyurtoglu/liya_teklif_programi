@@ -28,10 +28,20 @@ namespace teklif_programi.view
             InitializeComponent();
             PersonelListele();
         }
-        private void PersonelListele()
+        private void PersonelListele(string arama = "")
         {
-            var personel = _db.Personeller.ToList(); // Veritabanından çek
-            dataGridPersonel.ItemsSource =personel;    // DataGrid'e bağla 
+            var personeller = string.IsNullOrWhiteSpace(arama)
+                ? _db.Personeller.ToList()
+                : _db.Personeller
+                      .Where(f => f.AdSoyad.Contains(arama) || f.Telefon.Contains(arama))
+                      .ToList();
+
+            dataGridPersonel.ItemsSource = personeller;
+        }
+
+        private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            PersonelListele(txtArama.Text.Trim());
         }
     }
 }

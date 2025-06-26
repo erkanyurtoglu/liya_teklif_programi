@@ -51,7 +51,7 @@
 
         <!-- Başlık ve Alt Çizgi -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="🏢 Firmalarım" 
+            <TextBlock Text="🏢 Müşteri Firmalarım" 
                        FontSize="32" 
                        FontWeight="Bold"
                        FontFamily="Segoe UI"
@@ -59,23 +59,16 @@
                        HorizontalAlignment="Center" 
                        Margin="0,0,0,5"/>
             <Border Height="2" 
-                    Width="220"
+                    Width="350"
                     Background="#13183E" 
                     HorizontalAlignment="Center" 
                     CornerRadius="1"/>
         </StackPanel>
-
         <!-- Arama Kutusu -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-            <TextBox Width="400" Height="38" Margin="0,0,10,0"
-                     VerticalContentAlignment="Center"
-                     FontFamily="Segoe UI" FontSize="14"
-                     Padding="10,0"
-                     BorderBrush="#ccc" BorderThickness="1"
-                     Background="White"
-                     Text="Firma adı veya telefon giriniz..."
-                     Foreground="Gray"/>
-            <Button Content="Ara" Style="{StaticResource ModernButtonStyle}" Width="100"/>
+            <TextBox x:Name="txtArama" Width="400" Height="38" FontSize="14" Padding="10,0"
+                     VerticalContentAlignment="Center" BorderBrush="#ccc" BorderThickness="1"
+                     Background="White" Foreground="Black" TextChanged="txtArama_TextChanged"/>
         </StackPanel>
 
         <!-- Firma Listesi -->

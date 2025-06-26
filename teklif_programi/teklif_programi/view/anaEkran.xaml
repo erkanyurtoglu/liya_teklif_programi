@@ -22,13 +22,13 @@
                 <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🏢" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,40,0"/>
-                        <TextBlock Text="Firmalarım" Margin="5,0"/>
+                        <TextBlock Text="Müşterilerim" Margin="5,0"/>
                     </StackPanel>
                 </Button>
                 <Button Click="btnFirmaEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🏢⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,35,0"/>
-                        <TextBlock Text="Firma Ekle" Margin="5,0"/>
+                        <TextBlock Text="Müşteri Ekle" Margin="5,0"/>
                     </StackPanel>
                 </Button>
                 <Button Click="btnUrunlerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">

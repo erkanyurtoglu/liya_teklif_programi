@@ -67,15 +67,14 @@
 
         <!-- Arama Kutusu -->
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
-            <TextBox Width="400" Height="38" Margin="0,0,10,0"
+            <TextBox x:Name="txtArama" Width="400" Height="38" Margin="0,0,10,0"
                      VerticalContentAlignment="Center"
                      FontFamily="Segoe UI" FontSize="14"
                      Padding="10,0"
                      BorderBrush="#ccc" BorderThickness="1"
                      Background="White"
-                     Text="Ürün kodu veya kategori giriniz..."
-                     Foreground="Gray"/>
-            <Button Content="Ara" Style="{StaticResource ModernButtonStyle}" Width="100"/>
+                     TextChanged="txtArama_TextChanged"
+                     Foreground="Black"/>
         </StackPanel>
 
         <!-- Ürün Listesi -->

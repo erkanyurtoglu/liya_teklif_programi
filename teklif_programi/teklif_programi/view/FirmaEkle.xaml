@@ -44,12 +44,12 @@
 
         <!-- Başlık -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20" HorizontalAlignment="Center">
-            <TextBlock Text="🏢⁺ Firma Ekle" 
+            <TextBlock Text="🏢⁺  Müşteri Firma Ekle" 
                        FontSize="32" 
                        FontWeight="Bold" 
                        FontFamily="Segoe UI"
                        Foreground="#13183E" />
-            <Border Height="2" Width="230" Background="#13183E" CornerRadius="1" Margin="0,8,0,0"/>
+            <Border Height="2" Width="360" Background="#13183E" CornerRadius="1" Margin="0,8,0,0"/>
         </StackPanel>
 
         <!-- Form ve Butonlar -->
