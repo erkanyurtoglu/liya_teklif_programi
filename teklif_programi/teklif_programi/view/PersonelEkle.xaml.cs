@@ -34,7 +34,8 @@ namespace teklif_programi.view
         {
             if (string.IsNullOrWhiteSpace(txtAdSoyad.Text) ||
                 string.IsNullOrWhiteSpace(txtPozisyon.Text) ||
-                string.IsNullOrWhiteSpace(txtTelefon.Text))
+                string.IsNullOrWhiteSpace(txtTelefon.Text) ||
+                string.IsNullOrWhiteSpace(txtSifre.Text))
             {
                 MessageBox.Show("Lütfen tüm alanları doldurunuz.", "Eksik Bilgi", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -44,7 +45,8 @@ namespace teklif_programi.view
             {
                 AdSoyad = txtAdSoyad.Text,
                 Pozisyon = txtPozisyon.Text,
-                Telefon = txtTelefon.Text
+                Telefon = txtTelefon.Text,
+                PersonelSifre = txtSifre.Text,
             };
 
             _db.Personeller.Add(personel);
@@ -55,6 +57,7 @@ namespace teklif_programi.view
             txtAdSoyad.Clear();
             txtPozisyon.Clear();
             txtTelefon.Clear();
+            txtSifre.Clear();
         }
     }
 }

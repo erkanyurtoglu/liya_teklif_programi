@@ -70,6 +70,10 @@
                     <TextBlock Text="Adı Soyadı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
                     <TextBox x:Name="txtAdSoyad" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                 </StackPanel>
+                <StackPanel Grid.Column="1"  Margin="10,0,0,0">
+                    <TextBlock Text="Pozisyon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtPozisyon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
             </Grid>
 
             <Grid Margin="0,0,0,20">
@@ -80,14 +84,14 @@
 
                 <!-- Pozisyon -->
                 <StackPanel Grid.Column="0"  Margin="0,0,10,0">
-                    <TextBlock Text="Pozisyon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtPozisyon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                    <TextBlock Text="Telefon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtTelefon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                 </StackPanel>
 
                 <!-- Telefon -->
                 <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                    <TextBlock Text="Telefon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                    <TextBox x:Name="txtTelefon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                    <TextBlock Text="Şifre" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtSifre" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                 </StackPanel>
             </Grid>
 

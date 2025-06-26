@@ -103,12 +103,5 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Alt Sayfalama ve Ekleme Butonu -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
-            <Button Content="1" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-            <Button Content="2" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-            <Button Content="3" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-
-        </StackPanel>
     </Grid>
 </UserControl>

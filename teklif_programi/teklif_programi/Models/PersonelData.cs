@@ -14,5 +14,6 @@ namespace teklif_programi.Models
         public string AdSoyad { get; set; }
         public string Pozisyon { get; set; }
         public string Telefon { get; set; }
+        public string PersonelSifre {  get; set; }
     }
 }
