@@ -15,6 +15,7 @@ namespace teklif_programi.Data
         public DbSet<PersonelData> Personeller { get; set; }
 
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer("Server=EXCALIBUR\\SQLEXPRESS;Database=TeklifSistemiDB;Integrated Security=True;Encrypt=False;");

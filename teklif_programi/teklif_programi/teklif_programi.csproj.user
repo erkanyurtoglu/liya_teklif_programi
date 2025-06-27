@@ -5,6 +5,9 @@
     <Compile Update="view\anaEkran.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\FirmaDetayWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="view\FirmaEkle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -17,6 +20,12 @@
     <Compile Update="view\girisEkrani.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\PasswordDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\PersonelDetayWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="view\PersonelEkle.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -24,6 +33,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="view\TeklifVer.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="view\UrunDetayWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="view\UrunEkle.xaml.cs">

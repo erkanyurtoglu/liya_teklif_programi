@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using teklif_programi.Data;
+using teklif_programi.Models;
 
 namespace teklif_programi.view
 {
@@ -43,6 +44,17 @@ namespace teklif_programi.view
         private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
         {
             FirmaListele(txtArama.Text.Trim());
+        }
+
+        private void BtnDetay_Click(object sender, RoutedEventArgs e)
+        {
+            var firma = (sender as Button)?.DataContext as Firma;
+            if (firma != null)
+            {
+                var detayPencere = new FirmaDetayWindow(firma);
+                detayPencere.ShowDialog();
+                FirmaListele(); // Güncellemeden sonra listeyi yenile
+            }
         }
     }
 }

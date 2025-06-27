@@ -29,5 +29,10 @@ namespace teklif_programi.view
             anaEkran anaEkran = new anaEkran();
             anaEkran.Show();
         }
+
+        private void chkBeniHatirla_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

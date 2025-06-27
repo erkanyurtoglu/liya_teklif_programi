@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using teklif_programi.Data;
+using teklif_programi.Models;
 
 namespace teklif_programi.view
 {
@@ -43,6 +44,22 @@ namespace teklif_programi.view
         private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
         {
             UrunListele(txtArama.Text.Trim());
+        }
+
+        private void BtnDetay_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var secilenUrun = button?.DataContext as UrunData;
+
+            if (secilenUrun != null)
+            {
+                var detayPencere = new UrunDetayWindow(secilenUrun);
+                detayPencere.ShowDialog();
+            }
+
+            // Değişiklikleri listeye yansıt
+            UrunListele(txtArama.Text.Trim());
+
         }
     }
 }

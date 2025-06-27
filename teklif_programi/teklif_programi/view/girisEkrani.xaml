@@ -133,7 +133,7 @@
                     </Grid.ColumnDefinitions>
 
                     <CheckBox x:Name="chkBeniHatirla" Content="Beni Hatırla" FontSize="12"
-                              Foreground="#13183E" VerticalContentAlignment="Center" FontFamily="Source Sans Pro" Grid.ColumnSpan="2"/>
+                              Foreground="#13183E" VerticalContentAlignment="Center" FontFamily="Source Sans Pro" Grid.ColumnSpan="2" Checked="chkBeniHatirla_Checked"/>
 
                     <Button x:Name="btnGirisYap" Grid.Column="2" Content="Giriş Yap" FontSize="14"
                             Background="#13183E" Foreground="White" Height="38" BorderThickness="0"
