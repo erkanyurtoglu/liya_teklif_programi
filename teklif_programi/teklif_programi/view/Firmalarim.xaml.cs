@@ -56,5 +56,54 @@ namespace teklif_programi.view
                 FirmaListele(); // Güncellemeden sonra listeyi yenile
             }
         }
+
+        private void BtnSil_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var secilenFirma = button?.DataContext as Firma;
+
+            if (secilenFirma == null)
+            {
+                MessageBox.Show("Silinecek firma bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Şifre penceresini aç
+            var pwdDialog = new PasswordDialog();
+            pwdDialog.Owner = Window.GetWindow(this); // UserControl içinden ana pencereyi alır
+
+            bool? result = pwdDialog.ShowDialog();
+
+            if (result == true)
+            {
+                const string dogruSifre = "Liya2015";
+
+                if (pwdDialog.EnteredPassword == dogruSifre)
+                {
+                    using (var db = new TeklifDbContext())
+                    {
+                        var firma = db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == secilenFirma.FirmaKoduID);
+
+                        if (firma != null)
+                        {
+                            if (MessageBox.Show("Firma kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                            {
+                                db.Firmalar.Remove(firma);
+                                db.SaveChanges();
+                                MessageBox.Show("Firma başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                        }
+                    }
+
+                    FirmaListele(txtArama.Text.Trim()); // Listeyi güncelle
+                }
+                else
+                {
+                    MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
+
     }
 }

@@ -64,5 +64,51 @@ namespace teklif_programi.view
                 }
             }
         }
+
+        private void BtnPersonelSil_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var secilenPersonel = button?.DataContext as PersonelData;
+
+            if (secilenPersonel == null)
+            {
+                MessageBox.Show("Silinecek personel bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var pwdDialog = new PasswordDialog();
+            pwdDialog.Owner = Window.GetWindow(this);
+
+            bool? result = pwdDialog.ShowDialog();
+
+            if (result == true)
+            {
+                const string dogruSifre = "Liya2015";
+
+                if (pwdDialog.EnteredPassword == dogruSifre)
+                {
+                    if (MessageBox.Show("Bu personel kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    {
+                        using (var db = new TeklifDbContext())
+                        {
+                            var silinecek = db.Personeller.FirstOrDefault(p => p.PersonelKoduID == secilenPersonel.PersonelKoduID);
+
+                            if (silinecek != null)
+                            {
+                                db.Personeller.Remove(silinecek);
+                                db.SaveChanges();
+                                MessageBox.Show("Personel başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                        }
+
+                        PersonelListele(txtArama.Text.Trim());
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
     }
 }

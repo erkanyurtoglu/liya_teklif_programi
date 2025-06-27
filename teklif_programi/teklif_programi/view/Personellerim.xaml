@@ -84,7 +84,7 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Detay" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Click="BtnDetay_Click"/>
-                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B"/>
+                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnPersonelSil_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -92,11 +92,5 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Sayfalama -->
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,10">
-            <Button Content="1" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-            <Button Content="2" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-            <Button Content="3" Width="40" Height="35" Style="{StaticResource ModernButtonStyle}" Margin="5,0"/>
-        </StackPanel>
     </Grid>
 </UserControl>

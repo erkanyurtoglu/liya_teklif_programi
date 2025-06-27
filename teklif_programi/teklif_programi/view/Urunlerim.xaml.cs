@@ -61,5 +61,53 @@ namespace teklif_programi.view
             UrunListele(txtArama.Text.Trim());
 
         }
+
+        private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var secilenUrun = button?.DataContext as UrunData;
+
+            if (secilenUrun == null)
+            {
+                MessageBox.Show("Silinecek ürün bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Şifre doğrulama penceresi açılır
+            var pwdDialog = new PasswordDialog();
+            pwdDialog.Owner = Window.GetWindow(this);
+
+            bool? result = pwdDialog.ShowDialog();
+
+            if (result == true)
+            {
+                const string dogruSifre = "Liya2015";
+
+                if (pwdDialog.EnteredPassword == dogruSifre)
+                {
+                    if (MessageBox.Show("Bu ürün kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    {
+                        using (var db = new TeklifDbContext())
+                        {
+                            var urun = db.Urunler.FirstOrDefault(u => u.UrunKoduID == secilenUrun.UrunKoduID);
+
+                            if (urun != null)
+                            {
+                                db.Urunler.Remove(urun);
+                                db.SaveChanges();
+                                MessageBox.Show("Ürün başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                            }
+                        }
+
+                        UrunListele(txtArama.Text.Trim());
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+
     }
 }

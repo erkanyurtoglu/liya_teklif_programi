@@ -88,10 +88,10 @@
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Detay" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Click="BtnDetay_Click"/>
-                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B"/>
+                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnSil_Click"/>
                             </StackPanel>
                         </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn.CellTemplate>  
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
