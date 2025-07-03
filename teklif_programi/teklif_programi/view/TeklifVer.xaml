@@ -80,7 +80,7 @@
                 <TextBlock x:Name="lblFirmaAdi" Text="-" FontSize="14" Foreground="#7F8C8D" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <Button Grid.Column="1" Content="Firma Bilgisi Getir" Style="{StaticResource ModernButtonStyle}" Height="38" Margin="230,19,193,5" Grid.ColumnSpan="2" />
+            <Button Grid.Column="1" Content="Firma Bilgisi Getir" Style="{StaticResource ModernButtonStyle}" Height="38" Margin="230,19,193,5" Grid.ColumnSpan="2" Click="BtnFirmaBilgisiGetir_Click" />
         </Grid>
 
         <!-- Ürün Satırı -->
@@ -102,32 +102,32 @@
                 <TextBlock x:Name="lblUrunAdi" Text="-" FontSize="14" Foreground="#7F8C8D" VerticalAlignment="Center"/>
             </StackPanel>
 
-            <Button Grid.Column="2" Content="Ürün Bilgisi Getir" Style="{StaticResource ModernButtonStyle}" Height="NaN" Margin="15,22,15,2" />
+            <Button Grid.Column="2" Content="Ürün Bilgisi Getir" Style="{StaticResource ModernButtonStyle}" Height="NaN" Margin="15,22,15,2" Click="BtnUrunBilgisiGetir_Click" />
 
-            <Button Grid.Column="3" Content="Ürünü Ekle" Style="{StaticResource ModernButtonStyle}" Height="NaN" Margin="15,22,0,2" />
+            <Button Grid.Column="3" Content="Ürünü Ekle" Style="{StaticResource ModernButtonStyle}" Height="NaN" Margin="15,22,0,2" Click="BtnUrunEkle_Click" />
         </Grid>
 
         <!-- Ürün Listesi -->
-        <DataGrid Grid.Row="3" AutoGenerateColumns="False" 
+        <DataGrid x:Name="dataGridTeklifUrunler" Grid.Row="3" AutoGenerateColumns="False" 
                   HeadersVisibility="Column" IsReadOnly="True" 
                   Margin="5,0,5,20" RowHeight="40" ColumnHeaderHeight="45"
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ürün Kodu" Width="1*" />
-                <DataGridTextColumn Header="Kategori" Width="2*" />
-                <DataGridTextColumn Header="Açıklama" Width="3*" />
-                <DataGridTextColumn Header="Adet" Width="1*" />
-                <DataGridTextColumn Header="2025 Birim Satış Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="2025 Satış Toplam Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="Yurtiçi Maliyet Birim Fiyatı" Width="2*" />
-                <DataGridTextColumn Header="Toplam Fiyat" Width="2*" />
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*" />
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="3*" />
+                <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" Width="1*" />
+                <DataGridTextColumn Header="2025 Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati}" Width="2*" />
+                <DataGridTextColumn Header="2025 Satış Toplam Fiyatı" Binding="{Binding SatisToplamFiyati}" Width="2*" />
+                <DataGridTextColumn Header="Yurtiçi Maliyet Birim Fiyatı" Binding="{Binding YurticiMaliyet}" Width="2*" />
+                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B"/>
+                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnUrunSil_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -137,7 +137,7 @@
 
         <!-- Teklif Oluştur Butonu -->
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Margin="0,10,0,10">
-            <Button Content="Teklif Oluştur ve PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="320" Height="38"/>
+            <Button Content="Teklif Oluştur ve PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="320" Height="38" Click="BtnTeklifOlusturVePdfIndir_Click"/>
         </StackPanel>
     </Grid>
 </UserControl>

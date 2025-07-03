@@ -13,6 +13,8 @@ namespace teklif_programi.Data
         public DbSet<Firma> Firmalar { get; set; }
         public DbSet<UrunData> Urunler { get; set; }
         public DbSet<PersonelData> Personeller { get; set; }
+        public DbSet<Teklif> Teklifler { get; set; }
+        public DbSet<TeklifDetay> TeklifDetaylari { get; set; }
 
 
 
