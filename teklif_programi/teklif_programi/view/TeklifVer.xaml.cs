@@ -133,14 +133,14 @@ namespace teklif_programi.view
             };
 
             _db.Teklifler.Add(yeniTeklif);
-            _db.SaveChanges(); // burada TeklifNoID oluşur
+            _db.SaveChanges(); // TeklifNoID burada oluşur
 
             // 2. TeklifDetaylari tablosuna ürünleri kaydet
             foreach (var urun in secilenUrunler)
             {
                 var detay = new TeklifDetay
                 {
-                    TeklifNoID = yeniTeklif.TeklifNoID, // yeni oluşan teklifin ID’si
+                    TeklifNoID = yeniTeklif.TeklifNoID, // Yeni oluşan teklifin ID’si
                     UrunKoduID = urun.UrunKoduID,
                     Adet = urun.Adet,
                     BirimFiyat = urun.BirimSatisFiyati,
@@ -149,8 +149,7 @@ namespace teklif_programi.view
                 _db.TeklifDetaylari.Add(detay);
             }
 
-            _db.SaveChanges(); // detayları kaydet
-
+            _db.SaveChanges(); // Detayları kaydet
 
             // SaveFileDialog ile kullanıcıdan kaydetme yeri ve ismi al
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -161,57 +160,71 @@ namespace teklif_programi.view
             {
                 try
                 {
-                    Document document = new Document(PageSize.A4, 50, 50, 25, 25);
-                    PdfWriter.GetInstance(document, new FileStream(saveFileDialog.FileName, FileMode.Create));
-                    document.Open();
+                    // Şablon PDF dosyasını oku
+                    string templatePath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\TeklifPDFCiktisi.pdf";
+                    PdfReader reader = new PdfReader(templatePath);
+                    PdfStamper stamper = new PdfStamper(reader, new FileStream(saveFileDialog.FileName, FileMode.Create));
+
+                    // Yazı tipleri
+                    var titleFont = FontFactory.GetFont("Arial", 18, Font.BOLD, BaseColor.BLUE);
+                    var firmaFont = FontFactory.GetFont("Arial", 12, Font.NORMAL, BaseColor.BLACK);
+                    var tableFont = FontFactory.GetFont("Arial", 10, Font.NORMAL, BaseColor.BLACK);
+
+                    // İkinci sayfaya içerik ekle
+                    PdfContentByte canvas = stamper.GetOverContent(2); // İkinci sayfaya yaz
+                    ColumnText ct = new ColumnText(canvas);
 
                     // Başlık
-                    var titleFont = FontFactory.GetFont("Arial", 18, Font.BOLD, BaseColor.BLUE);
-                    Paragraph title = new Paragraph("VOLISSE Teklif Belgesi", titleFont);
-                    title.Alignment = Element.ALIGN_CENTER;
-                    title.SpacingAfter = 20f;
-                    document.Add(title);
+                    Phrase titlePhrase = new Phrase("Liya Laboratuvar Test Cihazları A.Ş. Teklif Belgesi", titleFont);
+                    ct.SetSimpleColumn(titlePhrase, 50, 750, 550, 700, 20, Element.ALIGN_CENTER);
+                    ct.Go();
 
                     // Firma bilgileri
-                    var firmaFont = FontFactory.GetFont("Arial", 12, Font.NORMAL, BaseColor.BLACK);
-                    Paragraph firmaBilgileri = new Paragraph($"Firma Kodu: {txtFirmaKodu.Text}\nFirma Adı: {lblFirmaAdi.Text}\nTarih: {DateTime.Now.ToShortDateString()}", firmaFont);
-                    firmaBilgileri.SpacingAfter = 20f;
-                    document.Add(firmaBilgileri);
+                    Phrase firmaBilgileri = new Phrase(
+                        $"Firma Kodu: {txtFirmaKodu.Text}\n" +
+                        $"Firma Adı: {lblFirmaAdi.Text}\n" +
+                        $"Tarih: {DateTime.Now.ToShortDateString()}", firmaFont);
+                    ct.SetSimpleColumn(firmaBilgileri, 50, 680, 550, 600, 15, Element.ALIGN_LEFT);
+                    ct.Go();
 
                     // Ürün tablosu
                     PdfPTable table = new PdfPTable(6);
-                    table.WidthPercentage = 100;
+                    table.TotalWidth = 500f;
+                    table.LockedWidth = true;
                     float[] widths = new float[] { 15f, 25f, 10f, 15f, 15f, 20f };
                     table.SetWidths(widths);
 
                     // Tablo başlıkları
-                    AddCellToHeader(table, "Ürün Kodu");
-                    AddCellToHeader(table, "Açıklama");
-                    AddCellToHeader(table, "Adet");
-                    AddCellToHeader(table, "Birim Fiyatı");
-                    AddCellToHeader(table, "Toplam Fiyat");
-                    AddCellToHeader(table, "Kategori");
+                    AddCellToHeader(table, "Ürün Kodu", tableFont);
+                    AddCellToHeader(table, "Açıklama", tableFont);
+                    AddCellToHeader(table, "Adet", tableFont);
+                    AddCellToHeader(table, "Birim Fiyatı", tableFont);
+                    AddCellToHeader(table, "Toplam Fiyat", tableFont);
+                    AddCellToHeader(table, "Kategori", tableFont);
 
                     // Ürünleri tabloya ekle
                     foreach (var urun in secilenUrunler)
                     {
-                        AddCellToBody(table, urun.UrunKoduID);
-                        AddCellToBody(table, urun.Aciklama);
-                        AddCellToBody(table, urun.Adet.ToString());
-                        AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"));
-                        AddCellToBody(table, (urun.BirimSatisFiyati * urun.Adet).ToString("C2"));
-                        AddCellToBody(table, urun.Kategori);
+                        AddCellToBody(table, urun.UrunKoduID, tableFont);
+                        AddCellToBody(table, urun.Aciklama, tableFont);
+                        AddCellToBody(table, urun.Adet.ToString(), tableFont);
+                        AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableFont);
+                        AddCellToBody(table, (urun.BirimSatisFiyati * urun.Adet).ToString("C2"), tableFont);
+                        AddCellToBody(table, urun.Kategori, tableFont);
                     }
 
-                    document.Add(table);
+                    ct.SetSimpleColumn(50, 580, 550, 200, 15, Element.ALIGN_LEFT);
+                    ct.AddElement(table);
+                    ct.Go();
 
                     // Toplam fiyat
-                    Paragraph toplamFiyatParagraf = new Paragraph($"\nToplam Teklif Tutarı: {ToplamFiyatHesapla(secilenUrunler).ToString("C2")}", firmaFont);
-                    toplamFiyatParagraf.Alignment = Element.ALIGN_RIGHT;
-                    toplamFiyatParagraf.SpacingBefore = 20f;
-                    document.Add(toplamFiyatParagraf);
+                    Phrase toplamFiyat = new Phrase(
+                        $"Toplam Teklif Tutarı: {ToplamFiyatHesapla(secilenUrunler).ToString("C2")}", firmaFont);
+                    ct.SetSimpleColumn(toplamFiyat, 50, 190, 550, 150, 15, Element.ALIGN_RIGHT);
+                    ct.Go();
 
-                    document.Close();
+                    stamper.Close();
+                    reader.Close();
 
                     MessageBox.Show("Teklif PDF dosyası başarıyla oluşturuldu.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -238,18 +251,20 @@ namespace teklif_programi.view
             return secilenUrunler.Sum(u => u.BirimSatisFiyati * u.Adet);
         }
 
-        private void AddCellToHeader(PdfPTable table, string text)
+        // Tablo başlıkları için yardımcı metod
+        private void AddCellToHeader(PdfPTable table, string text, iTextSharp.text.Font font)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text));
+            PdfPCell cell = new PdfPCell(new Phrase(text, font));
             cell.BackgroundColor = BaseColor.GRAY;
             cell.HorizontalAlignment = Element.ALIGN_CENTER;
             cell.Padding = 5;
             table.AddCell(cell);
         }
 
-        private void AddCellToBody(PdfPTable table, string text)
+        // Tablo içeriği için yardımcı metod
+        private void AddCellToBody(PdfPTable table, string text, iTextSharp.text.Font font)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text));
+            PdfPCell cell = new PdfPCell(new Phrase(text, font));
             cell.HorizontalAlignment = Element.ALIGN_CENTER;
             cell.Padding = 5;
             table.AddCell(cell);
