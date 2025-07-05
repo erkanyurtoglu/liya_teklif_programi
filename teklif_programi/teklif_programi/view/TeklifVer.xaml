@@ -116,18 +116,28 @@
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
-                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*" />
-                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="3*" />
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="1.3*" />
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2.5*" />
                 <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" Width="1*" />
                 <DataGridTextColumn Header="2025 Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati}" Width="2*" />
                 <DataGridTextColumn Header="2025 Satış Toplam Fiyatı" Binding="{Binding SatisToplamFiyati}" Width="2*" />
                 <DataGridTextColumn Header="Yurtiçi Maliyet Birim Fiyatı" Binding="{Binding YurticiMaliyet}" Width="2*" />
-                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat}" Width="2*" />
-                <DataGridTemplateColumn Header="İşlemler" Width="170">
+                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat}" Width="1.3*" />
+                <DataGridTemplateColumn Header="İşlemler" Width="190">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnUrunSil_Click"/>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                                <Button Content="-" Width="25" Height="25" Margin="0,0,5,0" Click="BtnAdetAzalt_Click"/>
+
+                                <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                         Width="40" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                         PreviewTextInput="AdetTextBox_PreviewTextInput"
+                         VerticalAlignment="Center"/>
+
+                                <Button Content="+" Width="25" Height="25" Margin="5,0,10,0" Click="BtnAdetArttir_Click"/>
+
+                                <!-- SİL Butonu burada -->
+                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Background="#C0392B" Click="BtnUrunSil_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

@@ -200,10 +200,10 @@ namespace teklif_programi.view
                     ct.Go();
 
                     // Tablo oluştur
-                    PdfPTable table = new PdfPTable(8);
+                    PdfPTable table = new PdfPTable(6);
                     table.TotalWidth = 500f;
                     table.LockedWidth = true;
-                    float[] widths = new float[] { 1f, 2f, 3f, 1f, 2f, 2f, 2f, 2f };
+                    float[] widths = new float[] { 2f, 2f, 3f, 1f, 2f, 2f };
                     table.SetWidths(widths);
 
                     AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
@@ -211,8 +211,6 @@ namespace teklif_programi.view
                     AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "2025 Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "2025 Satış Toplam Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Yurtiçi Maliyet Birim Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
 
                     int rowCount = 0;
@@ -224,8 +222,6 @@ namespace teklif_programi.view
                         AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
                         AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.SatisToplamFiyati.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.YurticiMaliyet.ToString("C2"), tableBodyFont, rowColor);
                         AddCellToBody(table, urun.ToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
                         rowCount++;
                     }
@@ -276,16 +272,6 @@ namespace teklif_programi.view
             }
         }
 
-        private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
-            if (urun != null)
-            {
-                secilenUrunler.Remove(urun);
-                dataGridTeklifUrunler.Items.Refresh();
-            }
-        }
 
         private void AddCellToHeader(PdfPTable table, string text, iTextSharp.text.Font font, BaseColor backgroundColor)
         {
@@ -313,6 +299,50 @@ namespace teklif_programi.view
         {
             return secilenUrunler.Sum(u => u.BirimSatisFiyati * u.Adet);
         }
+
+        private void BtnAdetArttir_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var urun = button?.DataContext as UrunData;
+            if (urun != null)
+            {
+                urun.Adet++;
+                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
+                urun.ToplamFiyat = urun.SatisToplamFiyati;
+                dataGridTeklifUrunler.Items.Refresh();
+            }
+        }
+
+        private void BtnAdetAzalt_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var urun = button?.DataContext as UrunData;
+            if (urun != null && urun.Adet > 1)  // adet en az 1 olmalı
+            {
+                urun.Adet--;
+                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
+                urun.ToplamFiyat = urun.SatisToplamFiyati;
+                dataGridTeklifUrunler.Items.Refresh();
+            }
+        }
+
+        private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var urun = button?.DataContext as UrunData;
+            if (urun != null)
+            {
+                secilenUrunler.Remove(urun);
+                dataGridTeklifUrunler.Items.Refresh();
+            }
+        }
+
+        private void AdetTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Sadece sayı girişi kabul et
+            e.Handled = !int.TryParse(e.Text, out _);
+        }
+
 
     }
 }
