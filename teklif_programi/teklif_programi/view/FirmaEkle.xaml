@@ -53,22 +53,83 @@
         </StackPanel>
 
         <!-- Form ve Butonlar -->
-        <StackPanel Grid.Row="1" Width="600" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="70" >
-            <!-- Firma Adı -->
-            <TextBlock Text="Firma Adı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtFirmaAdi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White" Margin="0,0,0,15"/>
+        <StackPanel Grid.Row="1" Width="700" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="70,70,70,0" >
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Adres -->
-            <TextBlock Text="Adres" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtAdres" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White" Margin="0,0,0,15"/>
+                <!-- Firma Adı -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Firma Ad" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtFirmaAdi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
 
-            <!-- Telefon -->
-            <TextBlock Text="Telefon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtTelefon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White" Margin="0,0,0,15"/>
+                <!-- Firma Adresi -->
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="Firma Adres" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtAdres" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+            </Grid>
 
-            <!-- E-posta -->
-            <TextBlock Text="E-posta" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-            <TextBox x:Name="txtEmail" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White" Margin="0,0,0,20"/>
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Firma Telefonu -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Firma Telefon" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtTelefon" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+
+                <!-- Firma Emaili -->
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="Firma Email" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtEmail" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Firma Vergi Numarası -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Vergi Numarası" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtVergiNumarasi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+
+                <!-- Firma Vergi Dairesi     -->
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="Vergi Dairesi" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtVergiDairesi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Firma İlgili Kişi -->
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="İlgili Kişi" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtilgiliKisi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+
+                <!-- Firma İlgili Kişi Telefonu -->
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="İlgili Kişi Telefonu" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtilgiliKisiTelefonu" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+            </Grid>
+
 
             <!-- Butonlar aynı hizada ve hemen altında -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="30">

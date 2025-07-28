@@ -34,6 +34,10 @@ namespace teklif_programi.view
             string adres = txtAdres.Text.Trim();
             string telefon = txtTelefon.Text.Trim();
             string email = txtEmail.Text.Trim();
+            string vergiNumarasi = txtVergiNumarasi.Text.Trim();
+            string vergiDairesi = txtVergiDairesi.Text.Trim();
+            string ilgiliKisi = txtilgiliKisi.Text.Trim();
+            string ilgiliKisiTelefon = txtilgiliKisiTelefonu.Text.Trim();
 
 
             // Zorunlu alan kontrolü yaaptım.
@@ -49,7 +53,11 @@ namespace teklif_programi.view
                 FirmaAdi = firmaAdi,
                 Adres = adres,
                 Telefon = telefon,
-                Email = email
+                Email = email,
+                VergiNumarasi = vergiNumarasi,
+                VergiDairesi = vergiDairesi,
+                ilgiliKisi = ilgiliKisi,
+                ilgiliKisiTelefon = ilgiliKisiTelefon
             };
 
             // Veritabanına ekle
@@ -66,6 +74,10 @@ namespace teklif_programi.view
                     txtAdres.Text = "";
                     txtTelefon.Text = "";
                     txtEmail.Text = "";
+                    txtVergiNumarasi.Text = "";
+                    txtVergiDairesi.Text = ""; 
+                    txtilgiliKisi.Text = "";
+                    txtilgiliKisiTelefonu.Text = "";
                 }
                 catch (Exception ex)
                 {
@@ -84,6 +96,10 @@ namespace teklif_programi.view
             txtAdres.Text = "";
             txtTelefon.Text = "";
             txtEmail.Text = "";
+            txtVergiNumarasi.Text = "";
+            txtVergiDairesi.Text = "";
+            txtilgiliKisi.Text = "";
+            txtilgiliKisiTelefonu.Text = "";
         }
     }
 }
