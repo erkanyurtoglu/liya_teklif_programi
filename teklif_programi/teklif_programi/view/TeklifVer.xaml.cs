@@ -23,42 +23,32 @@ namespace teklif_programi.view
             InitializeComponent();
             dataGridUrunSepeti.ItemsSource = secilenUrunler;
             dataGridUrunListesi.ItemsSource = _db.Urunler.ToList();
+            UrunListele();
         }
 
         private void txtFirmaKodu_TextChanged(object sender, TextChangedEventArgs e)
         {
-            int firmaKodu;
-            if (int.TryParse(txtFirmaKodu.Text, out firmaKodu))
+            string searchText = txtFirmaKodu.Text.Trim();
+            if (string.IsNullOrEmpty(searchText))
+            {
+                lblFirmaAdi.Text = "-";
+                return;
+            }
+
+            // Önce FirmaKoduID ile arama yapmayı dene
+            if (int.TryParse(searchText, out int firmaKodu))
             {
                 var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
                 lblFirmaAdi.Text = firma != null ? firma.FirmaAdi : "-";
             }
             else
             {
-                lblFirmaAdi.Text = "-";
-            }
+                // FirmaKoduID bir sayı değilse, FirmaAdi ile arama yap
+                var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaAdi.ToLower().Contains(searchText.ToLower()));
+                lblFirmaAdi.Text = firma != null ? firma.FirmaAdi : "-";
+            }   
         }
 
-        private void txtUrunKodu_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string urunKodu = txtUrunKodu.Text.Trim();
-            if (!string.IsNullOrEmpty(urunKodu))
-            {
-                var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
-                if (urun != null)
-                {
-                    lblUrunAdi.Text = urun.Aciklama;
-                }
-                else
-                {
-                    lblUrunAdi.Text = "-";
-                }
-            }
-            else
-            {
-                lblUrunAdi.Text = "-";
-            }
-        }
 
         private void BtnSepeteEkle_Click(object sender, RoutedEventArgs e)
         {
@@ -72,26 +62,6 @@ namespace teklif_programi.view
             }
         }
 
-        private void BtnSepeteEkleManuel_Click(object sender, RoutedEventArgs e)
-        {
-            string urunKodu = txtUrunKodu.Text.Trim();
-            if (string.IsNullOrEmpty(urunKodu))
-            {
-                MessageBox.Show("Lütfen geçerli bir ürün kodu giriniz.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
-            if (urun == null)
-            {
-                MessageBox.Show("Ürün bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            AddUrunToSepet(urun);
-            txtUrunKodu.Clear();
-            lblUrunAdi.Text = "-";
-        }
 
         private void AddUrunToSepet(UrunData urunData)
         {
@@ -345,6 +315,28 @@ namespace teklif_programi.view
         private decimal ToplamFiyatHesapla(List<UrunData> secilenUrunler)
         {
             return secilenUrunler.Sum(u => u.SatisToplamFiyati);
+        }
+
+        private void txtUrunFiltrele_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UrunListele(txtUrunFiltrele.Text.Trim());
+        }
+
+        private void UrunListele(string arama = "")
+        {
+            var urunler = string.IsNullOrWhiteSpace(arama)
+                ? _db.Urunler.ToList()
+                : _db.Urunler
+                    .Where(u => u.UrunKoduID.ToLower().Contains(arama.ToLower()) ||
+                                u.Aciklama.ToLower().Contains(arama.ToLower()))
+                    .ToList();
+
+            dataGridUrunListesi.ItemsSource = urunler;
+        }
+
+        private void dataGridUrunListesi_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

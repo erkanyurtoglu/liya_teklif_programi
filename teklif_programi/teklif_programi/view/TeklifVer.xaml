@@ -45,12 +45,12 @@
     <Grid Background="#ededed" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" MinHeight="78.96"/>
+            <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30">
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30" Width="360">
             <TextBlock Text="📝 Müşteriye Teklif Ver"
                        FontSize="32" FontWeight="Bold"
                        FontFamily="Segoe UI" Foreground="#13183E"
@@ -58,37 +58,23 @@
             <Border Height="2" Width="360" Background="#13183E" CornerRadius="1" Margin="0,8,0,0"/>
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="0,0,0,20">
+        <Grid Grid.Row="1" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="431*" />
+                <ColumnDefinition Width="879*" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Margin="20,0,20,0">
-                <TextBlock Text="Firma Kodu" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtFirmaKodu" Height="38" FontSize="14" Padding="10,0"
+            <StackPanel Grid.Column="0" Margin="10,0,20,0">
+                <TextBlock FontWeight="SemiBold"  Foreground="#13183E" Margin="0,0,0,5"><Run Text="Firma Kodu"/><Run Language="tr-tr" Text=" veya Firma Adı"/></TextBlock>
+                <TextBox x:Name="txtFirmaKodu" Height="38" FontSize="14" Padding="5"
                          BorderBrush="#ccc" BorderThickness="1" Background="White"
-                         TextChanged="txtFirmaKodu_TextChanged"/>
-                <TextBlock Text="Firma Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,10,0,5"/>
-                <TextBlock x:Name="lblFirmaAdi" Text="-" FontSize="14" Foreground="#7F8C8D"/>
+                         TextChanged="txtFirmaKodu_TextChanged"
+                         VerticalContentAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="20,0,20,0">
-                <TextBlock Text="Ürün Kodu" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
-                <TextBox x:Name="txtUrunKodu" Height="38" FontSize="14" Padding="10,0"
-                 BorderBrush="#ccc" BorderThickness="1" Background="White"
-                 TextChanged="txtUrunKodu_TextChanged"/>
-
-                <TextBlock Text="Ürün Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,10,0,5"/>
-
-                <!-- Bu panel ikisini yatay hizalayacak -->
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Width="608">
-                    <TextBlock x:Name="lblUrunAdi" Text="-" FontSize="14" Foreground="#7F8C8D"
-                   Width="449" VerticalAlignment="Center"/>
-                    <Button Content="Sepete Ekle" Style="{StaticResource ModernButtonStyle}" 
-                    Width="120" Height="30" Margin="10,0,10,0" Background="#2980B9" 
-                    Click="BtnSepeteEkleManuel_Click"/>
-                </StackPanel>
+            <StackPanel Grid.Column="1" Margin="10,0,20,0">
+                <TextBlock Text="Firma Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
+                <TextBlock x:Name="lblFirmaAdi" Text="-" FontSize="14" Foreground="#7F8C8D" Margin="0,10,0,0"/>
             </StackPanel>
 
         </Grid>
@@ -99,8 +85,17 @@
                 <ColumnDefinition Width="889*" />
             </Grid.ColumnDefinitions>
 
+            <StackPanel Grid.Column="0" Margin="10,0,10,10">
+                <TextBlock Text="Ürün Filtrele" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
+                <TextBox x:Name="txtUrunFiltrele" Height="44" FontSize="14" Padding="5" 
+                 BorderBrush="#ccc" 
+                 BorderThickness="1" Background="White" TextChanged="txtUrunFiltrele_TextChanged"
+                 VerticalContentAlignment="Center"/>
+            </StackPanel>
+
+
             <DataGrid x:Name="dataGridUrunListesi"
-                      Grid.Column="0" Margin="10,10,10,0"
+                      Grid.Column="0" Margin="10,90,10,10"
                       AutoGenerateColumns="False" IsReadOnly="True"
                       HeadersVisibility="Column"
                       CanUserAddRows="False"
@@ -108,7 +103,7 @@
                       RowHeight="40" ColumnHeaderHeight="45"
                       AlternatingRowBackground="#ededed"
                       FontFamily="Segoe UI" FontSize="13"
-                      BorderBrush="#ededed" BorderThickness="1">
+                      BorderBrush="#ededed" BorderThickness="1" SelectionChanged="dataGridUrunListesi_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="1.5*" />
@@ -117,7 +112,7 @@
             </DataGrid>
 
             <DataGrid x:Name="dataGridUrunSepeti"
-                      Grid.Column="1" Margin="10"
+                      Grid.Column="1" Margin="10,19,10,10"
                       AutoGenerateColumns="False" IsReadOnly="True"
                       HeadersVisibility="Column"
                       RowHeight="40" ColumnHeaderHeight="45"
@@ -157,7 +152,7 @@
             </DataGrid>
         </Grid>
 
-        <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0,20,0,10">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0,20,0,10" Width="320">
             <Button Content="Teklif Oluştur ve PDF İndir" Width="320" Height="38" Style="{StaticResource ModernButtonStyle}" Click="BtnTeklifOlusturVePdfIndir_Click"/>
         </StackPanel>
     </Grid>

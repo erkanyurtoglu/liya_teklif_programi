@@ -28,9 +28,10 @@
               "RelativeDocumentMoniker": "teklif_programi\\view\\TeklifVer.xaml.cs",
               "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\TeklifVer.xaml.cs",
               "RelativeToolTip": "teklif_programi\\view\\TeklifVer.xaml.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAowDgAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAHIAAAAAAAAAAIAwwIIAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-29T08:18:19.64Z",
+              "IsPinned": true,
               "EditorCaption": ""
             },
             {
@@ -43,6 +44,7 @@
               "RelativeToolTip": "teklif_programi\\view\\TeklifVer.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-07-29T07:47:04.452Z",
+              "IsPinned": true,
               "EditorCaption": ""
             }
           ]
