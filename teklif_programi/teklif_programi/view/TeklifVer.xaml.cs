@@ -48,18 +48,15 @@ namespace teklif_programi.view
                 if (urun != null)
                 {
                     lblUrunAdi.Text = urun.Aciklama;
-                    lblUrunFiyati.Text = urun.BirimSatisFiyati.ToString("C2");
                 }
                 else
                 {
                     lblUrunAdi.Text = "-";
-                    lblUrunFiyati.Text = "-";
                 }
             }
             else
             {
                 lblUrunAdi.Text = "-";
-                lblUrunFiyati.Text = "-";
             }
         }
 
@@ -94,7 +91,6 @@ namespace teklif_programi.view
             AddUrunToSepet(urun);
             txtUrunKodu.Clear();
             lblUrunAdi.Text = "-";
-            lblUrunFiyati.Text = "-";
         }
 
         private void AddUrunToSepet(UrunData urunData)

@@ -76,16 +76,21 @@
             <StackPanel Grid.Column="1" Margin="20,0,20,0">
                 <TextBlock Text="Ürün Kodu" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtUrunKodu" Height="38" FontSize="14" Padding="10,0"
-                         BorderBrush="#ccc" BorderThickness="1" Background="White"
-                         TextChanged="txtUrunKodu_TextChanged"/>
+                 BorderBrush="#ccc" BorderThickness="1" Background="White"
+                 TextChanged="txtUrunKodu_TextChanged"/>
+
                 <TextBlock Text="Ürün Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,10,0,5"/>
-                <TextBlock x:Name="lblUrunAdi" Text="-" FontSize="14" Foreground="#7F8C8D"/>
-                <TextBlock Text="Birim Fiyat" FontWeight="SemiBold" Foreground="#13183E" Margin="0,10,0,5"/>
-                <TextBlock x:Name="lblUrunFiyati" Text="-" FontSize="14" Foreground="#7F8C8D"/>
-                <Button Content="Sepete Ekle" Style="{StaticResource ModernButtonStyle}" 
-                        Width="120" Height="30" Margin="0,10,0,0" Background="#2980B9" 
-                        Click="BtnSepeteEkleManuel_Click"/>
+
+                <!-- Bu panel ikisini yatay hizalayacak -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,0" Width="608">
+                    <TextBlock x:Name="lblUrunAdi" Text="-" FontSize="14" Foreground="#7F8C8D"
+                   Width="449" VerticalAlignment="Center"/>
+                    <Button Content="Sepete Ekle" Style="{StaticResource ModernButtonStyle}" 
+                    Width="120" Height="30" Margin="10,0,10,0" Background="#2980B9" 
+                    Click="BtnSepeteEkleManuel_Click"/>
+                </StackPanel>
             </StackPanel>
+
         </Grid>
 
         <Grid Grid.Row="2">
@@ -95,16 +100,17 @@
             </Grid.ColumnDefinitions>
 
             <DataGrid x:Name="dataGridUrunListesi"
-                      Grid.Column="0" Margin="10"
+                      Grid.Column="0" Margin="10,10,10,0"
                       AutoGenerateColumns="False" IsReadOnly="True"
                       HeadersVisibility="Column"
+                      CanUserAddRows="False"
+                      GridLinesVisibility="None"
                       RowHeight="40" ColumnHeaderHeight="45"
                       AlternatingRowBackground="#ededed"
                       FontFamily="Segoe UI" FontSize="13"
                       BorderBrush="#ededed" BorderThickness="1">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
-                    <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="1*" />
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="1.5*" />
                     <DataGridTemplateColumn Header="İşlem" Width="70" CellTemplate="{StaticResource SepeteEkleTemplate}" />
                 </DataGrid.Columns>
@@ -117,6 +123,8 @@
                       RowHeight="40" ColumnHeaderHeight="45"
                       AlternatingRowBackground="#ededed"
                       FontFamily="Segoe UI" FontSize="13"
+                      CanUserAddRows="False"
+                      GridLinesVisibility="None"
                       BorderBrush="#ededed" BorderThickness="1">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
@@ -137,7 +145,6 @@
                     </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.4*" />
                     <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.4*" />
-                    <DataGridTextColumn Header="Satış Toplam Fiyatı" Binding="{Binding SatisToplamFiyati, StringFormat=C2}" Width="1.4*" />
                     <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat, StringFormat=C2}" Width="1.2*" />
                     <DataGridTemplateColumn Header="İşlemler" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
