@@ -7,14 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using teklif_programi.Data;
 using teklif_programi.Models;
 
 namespace teklif_programi.view
 {
-    /// <summary>
-    /// Interaction logic for TeklifVer.xaml
-    /// </summary>
     public partial class TeklifVer : UserControl
     {
         private TeklifDbContext _db = new TeklifDbContext();
@@ -23,92 +21,139 @@ namespace teklif_programi.view
         public TeklifVer()
         {
             InitializeComponent();
-            dataGridTeklifUrunler.ItemsSource = secilenUrunler;
+            dataGridUrunSepeti.ItemsSource = secilenUrunler;
+            dataGridUrunListesi.ItemsSource = _db.Urunler.ToList();
         }
 
-        private void BtnFirmaBilgisiGetir_Click(object sender, RoutedEventArgs e)
+        private void txtFirmaKodu_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (!int.TryParse(txtFirmaKodu.Text.Trim(), out int firmaKodu))
+            int firmaKodu;
+            if (int.TryParse(txtFirmaKodu.Text, out firmaKodu))
             {
-                MessageBox.Show("Lütfen geçerli bir Firma Kodu giriniz.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
-            if (firma != null)
-            {
-                lblFirmaAdi.Text = firma.FirmaAdi;
+                var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
+                lblFirmaAdi.Text = firma != null ? firma.FirmaAdi : "-";
             }
             else
             {
-                MessageBox.Show("Firma bulunamadı.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
                 lblFirmaAdi.Text = "-";
             }
         }
 
-        private void BtnUrunBilgisiGetir_Click(object sender, RoutedEventArgs e)
+        private void txtUrunKodu_TextChanged(object sender, TextChangedEventArgs e)
         {
             string urunKodu = txtUrunKodu.Text.Trim();
-
-            if (string.IsNullOrEmpty(urunKodu))
+            if (!string.IsNullOrEmpty(urunKodu))
             {
-                MessageBox.Show("Lütfen geçerli bir Ürün Kodu giriniz.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
-
-            if (urun != null)
-            {
-                lblUrunAdi.Text = urun.Aciklama;
+                var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
+                if (urun != null)
+                {
+                    lblUrunAdi.Text = urun.Aciklama;
+                    lblUrunFiyati.Text = urun.BirimSatisFiyati.ToString("C2");
+                }
+                else
+                {
+                    lblUrunAdi.Text = "-";
+                    lblUrunFiyati.Text = "-";
+                }
             }
             else
             {
-                MessageBox.Show("Ürün bulunamadı.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
                 lblUrunAdi.Text = "-";
+                lblUrunFiyati.Text = "-";
             }
         }
 
-        private void BtnUrunEkle_Click(object sender, RoutedEventArgs e)
+        private void BtnSepeteEkle_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is UrunData urunData)
+            {
+                AddUrunToSepet(urunData);
+            }
+            else
+            {
+                MessageBox.Show("Ürün seçilemedi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void BtnSepeteEkleManuel_Click(object sender, RoutedEventArgs e)
         {
             string urunKodu = txtUrunKodu.Text.Trim();
-
             if (string.IsNullOrEmpty(urunKodu))
             {
-                MessageBox.Show("Lütfen ürün kodunu giriniz.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Lütfen geçerli bir ürün kodu giriniz.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
-
             if (urun == null)
             {
-                MessageBox.Show("Ürün bulunamadı.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Ürün bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
-            if (secilenUrunler.Any(x => x.UrunKoduID == urun.UrunKoduID))
+            AddUrunToSepet(urun);
+            txtUrunKodu.Clear();
+            lblUrunAdi.Text = "-";
+            lblUrunFiyati.Text = "-";
+        }
+
+        private void AddUrunToSepet(UrunData urunData)
+        {
+            var sepettekiUrun = secilenUrunler.FirstOrDefault(u => u.UrunKoduID == urunData.UrunKoduID);
+            if (sepettekiUrun != null)
             {
-                MessageBox.Show("Bu ürün zaten listede var.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                sepettekiUrun.Adet++; // INotifyPropertyChanged ile SatisToplamFiyati ve ToplamFiyat güncellenir
             }
-
-            UrunData yeniUrun = new UrunData
+            else
             {
-                UrunKoduID = urun.UrunKoduID,
-                Kategori = urun.Kategori,
-                Aciklama = urun.Aciklama,
-                Adet = 1,
-                BirimSatisFiyati = urun.BirimSatisFiyati,
-                SatisToplamFiyati = urun.BirimSatisFiyati * 1,
-                YurticiMaliyet = urun.YurticiMaliyet,
-                ToplamFiyat = urun.BirimSatisFiyati * 1
-            };
+                secilenUrunler.Add(new UrunData
+                {
+                    UrunKoduID = urunData.UrunKoduID,
+                    Kategori = urunData.Kategori,
+                    Aciklama = urunData.Aciklama,
+                    BirimSatisFiyati = urunData.BirimSatisFiyati,
+                    YurticiMaliyet = urunData.YurticiMaliyet,
+                    Adet = 1,
+                    SatisToplamFiyati = urunData.BirimSatisFiyati,
+                    ToplamFiyat = urunData.BirimSatisFiyati
+                });
+            }
+            dataGridUrunSepeti.Items.Refresh();
+        }
 
-            secilenUrunler.Add(yeniUrun);
+        private void BtnAdetArttir_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is UrunData urun)
+            {
+                urun.Adet++; // INotifyPropertyChanged otomatik günceller
+                dataGridUrunSepeti.Items.Refresh();
+            }
+        }
 
-            dataGridTeklifUrunler.ItemsSource = null;
-            dataGridTeklifUrunler.ItemsSource = secilenUrunler;
+        private void BtnAdetAzalt_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is UrunData urun)
+            {
+                if (urun.Adet > 1)
+                {
+                    urun.Adet--; // INotifyPropertyChanged otomatik günceller
+                    dataGridUrunSepeti.Items.Refresh();
+                }
+            }
+        }
+
+        private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.DataContext is UrunData urun)
+            {
+                secilenUrunler.Remove(urun);
+                dataGridUrunSepeti.Items.Refresh();
+            }
+        }
+
+        private void AdetTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !int.TryParse(e.Text, out _);
         }
 
         private void BtnTeklifOlusturVePdfIndir_Click(object sender, RoutedEventArgs e)
@@ -119,8 +164,14 @@ namespace teklif_programi.view
                 return;
             }
 
-            int firmaKodu = int.Parse(txtFirmaKodu.Text);
-            int personelKodu = 1;
+            int firmaKodu;
+            if (!int.TryParse(txtFirmaKodu.Text, out firmaKodu))
+            {
+                MessageBox.Show("Firma kodu geçerli bir sayı olmalıdır.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            int personelKodu = 1; // Sabit personel kodu, dinamik yapılabilir
 
             var yeniTeklif = new Teklif
             {
@@ -141,7 +192,7 @@ namespace teklif_programi.view
                     UrunKoduID = urun.UrunKoduID,
                     Adet = urun.Adet,
                     BirimFiyat = urun.BirimSatisFiyati,
-                    ToplamFiyat = urun.BirimSatisFiyati * urun.Adet
+                    ToplamFiyat = urun.SatisToplamFiyati
                 };
                 _db.TeklifDetaylari.Add(detay);
             }
@@ -149,119 +200,116 @@ namespace teklif_programi.view
             _db.SaveChanges();
 
             string templatePath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\LiyaTeklifBelgesi.pdf";
+
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "PDF dosyası (*.pdf)|*.pdf",
-                FileName = $"Teklif_{lblFirmaAdi.Text}_{DateTime.Now:yyyyMMdd}.pdf"
+                FileName = $"Teklif_{lblFirmaAdi.Text}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf" // 20250729_101700 gibi
             };
 
             if (saveFileDialog.ShowDialog() == true)
             {
                 try
                 {
-                    PdfReader reader = new PdfReader(templatePath);
-                    PdfStamper stamper = new PdfStamper(reader, new FileStream(saveFileDialog.FileName, FileMode.Create));
-
-                    string fontPath = @"C:\Windows\Fonts\arial.ttf";
-                    if (!File.Exists(fontPath))
+                    if (!File.Exists(templatePath))
                     {
-                        MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("PDF şablon dosyası bulunamadı: " + templatePath, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                    var firmaFont = new Font(baseFont, 10, Font.NORMAL, new BaseColor(128, 128, 128));
-                    var tableHeaderFont = new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK);
-                    var tableBodyFont = new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK);
-
-                    // Sayfa 2 için canvas ve içerik başlat
-                    int currentPage = 2;
-                    PdfContentByte canvas = stamper.GetOverContent(currentPage);
-                    ColumnText ct = new ColumnText(canvas);
-
-                    // Firma Bilgileri ve başlık
-                    Phrase firmaBilgileri = new Phrase();
-
-                    // Kalın & siyah başlıklar, normal gri içerik
-                    firmaBilgileri.Add(new Chunk("Firma Kodu: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                    firmaBilgileri.Add(new Chunk(txtFirmaKodu.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
-
-                    firmaBilgileri.Add(new Chunk("Firma Ad: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                    firmaBilgileri.Add(new Chunk(lblFirmaAdi.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
-
-                    firmaBilgileri.Add(new Chunk("Tarih: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                    firmaBilgileri.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy"), new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
-
-                    ct.SetSimpleColumn(firmaBilgileri, 50, 650, 550, 600, 15, Element.ALIGN_LEFT);
-                    ct.Go();
-
-                    Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
-                    ct.SetSimpleColumn(urunBaslik, 50, 580, 550, 560, 15, Element.ALIGN_LEFT);
-                    ct.Go();
-
-                    // Tablo oluştur
-                    PdfPTable table = new PdfPTable(6);
-                    table.TotalWidth = 500f;
-                    table.LockedWidth = true;
-                    float[] widths = new float[] { 2f, 2f, 3f, 1f, 2f, 2f };
-                    table.SetWidths(widths);
-
-                    AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Kategori", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "2025 Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
-
-                    int rowCount = 0;
-                    foreach (var urun in secilenUrunler)
+                    using (PdfReader reader = new PdfReader(templatePath))
+                    using (PdfStamper stamper = new PdfStamper(reader, new FileStream(saveFileDialog.FileName, FileMode.Create)))
                     {
-                        BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(240, 240, 240);
-                        AddCellToBody(table, urun.UrunKoduID, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Kategori, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.ToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
-                        rowCount++;
+                        string fontPath = @"C:\Windows\Fonts\arial.ttf";
+                        if (!File.Exists(fontPath))
+                        {
+                            MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                            return;
+                        }
+
+                        BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                        var tableHeaderFont = new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK);
+                        var tableBodyFont = new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK);
+
+                        int currentPage = 2;
+                        PdfContentByte canvas = stamper.GetOverContent(currentPage);
+                        ColumnText ct = new ColumnText(canvas);
+
+                        Phrase firmaBilgileri = new Phrase();
+                        firmaBilgileri.Add(new Chunk("Firma Kodu: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                        firmaBilgileri.Add(new Chunk(txtFirmaKodu.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+
+                        firmaBilgileri.Add(new Chunk("Firma Ad: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                        firmaBilgileri.Add(new Chunk(lblFirmaAdi.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+
+                        firmaBilgileri.Add(new Chunk("Tarih: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                        firmaBilgileri.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy HH:mm"), new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+
+                        ct.SetSimpleColumn(firmaBilgileri, 50, 650, 550, 600, 15, Element.ALIGN_LEFT);
+                        ct.Go();
+
+                        Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
+                        ct.SetSimpleColumn(urunBaslik, 50, 580, 550, 560, 15, Element.ALIGN_LEFT);
+                        ct.Go();
+
+                        PdfPTable table = new PdfPTable(6);
+                        table.TotalWidth = 500f;
+                        table.LockedWidth = true;
+                        float[] widths = { 2f, 2f, 3f, 1f, 2f, 2f };
+                        table.SetWidths(widths);
+
+                        AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Kategori", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "2025 Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
+
+                        int rowCount = 0;
+                        foreach (var urun in secilenUrunler)
+                        {
+                            BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(240, 240, 240);
+                            AddCellToBody(table, urun.UrunKoduID, tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.Kategori, tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.SatisToplamFiyati.ToString("C2"), tableBodyFont, rowColor);
+                            rowCount++;
+                        }
+
+                        ct = new ColumnText(canvas);
+                        ct.AddElement(table);
+                        ct.SetSimpleColumn(50, 540, 550, 200, 15, Element.ALIGN_LEFT);
+                        int status = ct.Go();
+
+                        while (ColumnText.HasMoreText(status))
+                        {
+                            currentPage++;
+                            stamper.InsertPage(currentPage, PageSize.A4);
+                            PdfContentByte newCanvas = stamper.GetOverContent(currentPage);
+
+                            PdfImportedPage templatePage = stamper.GetImportedPage(reader, 2);
+                            newCanvas.AddTemplate(templatePage, 0, 0);
+
+                            ct = new ColumnText(newCanvas);
+                            ct.SetSimpleColumn(50, 800, 550, 200, 15, Element.ALIGN_LEFT);
+                            status = ct.Go();
+
+                            canvas = newCanvas;
+                        }
+
+                        canvas.BeginText();
+                        canvas.SetFontAndSize(baseFont, 12);
+                        canvas.SetColorFill(BaseColor.BLACK);
+                        canvas.ShowTextAligned(
+                            Element.ALIGN_RIGHT,
+                            $"Toplam Teklif Tutarı: {ToplamFiyatHesapla(secilenUrunler):C2}",
+                            550f, 60f,
+                            0
+                        );
+                        canvas.EndText();
                     }
-
-                    ct = new ColumnText(canvas);
-                    ct.AddElement(table);
-                    ct.SetSimpleColumn(50, 540, 550, 200, 15, Element.ALIGN_LEFT);
-                    int status = ct.Go();
-
-                    // Sayfa taşma kontrolü
-                    while (ColumnText.HasMoreText(status))
-                    {
-                        currentPage++;
-                        stamper.InsertPage(currentPage, PageSize.A4);
-                        PdfContentByte newCanvas = stamper.GetOverContent(currentPage);
-
-                        PdfImportedPage templatePage = stamper.GetImportedPage(reader, 2); // Şablon tekrar kullan
-                        newCanvas.AddTemplate(templatePage, 0, 0);
-
-                        ct = new ColumnText(newCanvas);
-                        ct.SetSimpleColumn(50, 800, 550, 200, 15, Element.ALIGN_LEFT);
-                        status = ct.Go();
-
-                        canvas = newCanvas; // Son sayfayı sakla
-                    }
-
-                    // Sadece SON sayfaya toplam fiyat yaz
-                    canvas.BeginText(); 
-                    canvas.SetFontAndSize(baseFont, 12);
-                    canvas.SetColorFill(BaseColor.BLACK);
-                    canvas.ShowTextAligned(
-                        Element.ALIGN_RIGHT,
-                        $"Toplam Teklif Tutarı: {ToplamFiyatHesapla(secilenUrunler).ToString("C2")}",
-                        550f, 60f,
-                        0
-                    );
-                    canvas.EndText();
-
-                    stamper.Close();
-                    reader.Close();
 
                     MessageBox.Show("Teklif PDF dosyası başarıyla oluşturuldu.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -272,77 +320,35 @@ namespace teklif_programi.view
             }
         }
 
-
         private void AddCellToHeader(PdfPTable table, string text, iTextSharp.text.Font font, BaseColor backgroundColor)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font));
-            cell.BackgroundColor = backgroundColor;
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cell.Padding = 5;
-            cell.BorderColor = BaseColor.LIGHT_GRAY;
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5,
+                BorderColor = BaseColor.LIGHT_GRAY
+            };
             table.AddCell(cell);
         }
 
         private void AddCellToBody(PdfPTable table, string text, iTextSharp.text.Font font, BaseColor backgroundColor)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font));
-            cell.BackgroundColor = backgroundColor;
-            cell.HorizontalAlignment = Element.ALIGN_CENTER;
-            cell.VerticalAlignment = Element.ALIGN_MIDDLE;
-            cell.Padding = 5;
-            cell.BorderColor = BaseColor.LIGHT_GRAY;
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5,
+                BorderColor = BaseColor.LIGHT_GRAY
+            };
             table.AddCell(cell);
         }
 
         private decimal ToplamFiyatHesapla(List<UrunData> secilenUrunler)
         {
-            return secilenUrunler.Sum(u => u.BirimSatisFiyati * u.Adet);
+            return secilenUrunler.Sum(u => u.SatisToplamFiyati);
         }
-
-        private void BtnAdetArttir_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
-            if (urun != null)
-            {
-                urun.Adet++;
-                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
-                urun.ToplamFiyat = urun.SatisToplamFiyati;
-                dataGridTeklifUrunler.Items.Refresh();
-            }
-        }
-
-        private void BtnAdetAzalt_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
-            if (urun != null && urun.Adet > 1)  // adet en az 1 olmalı
-            {
-                urun.Adet--;
-                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
-                urun.ToplamFiyat = urun.SatisToplamFiyati;
-                dataGridTeklifUrunler.Items.Refresh();
-            }
-        }
-
-        private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
-            if (urun != null)
-            {
-                secilenUrunler.Remove(urun);
-                dataGridTeklifUrunler.Items.Refresh();
-            }
-        }
-
-        private void AdetTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            // Sadece sayı girişi kabul et
-            e.Handled = !int.TryParse(e.Text, out _);
-        }
-
-
     }
 }

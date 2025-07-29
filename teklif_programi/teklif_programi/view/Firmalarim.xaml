@@ -83,6 +83,8 @@
                 <DataGridTextColumn Header="Firma Adı" Binding="{Binding FirmaAdi}" Width="2*" />
                 <DataGridTextColumn Header="Adres" Binding="{Binding Adres}" Width="3*" />
                 <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="2*" />
+                <DataGridTextColumn Header="İlgili Kişi" Binding="{Binding ilgiliKisi}" Width="1*"/>
+                <DataGridTextColumn Header="İlgili Kişi Telefon" Binding="{Binding ilgiliKisiTelefon}" Width="1*"/>
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
