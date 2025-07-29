@@ -123,7 +123,6 @@
                       BorderBrush="#ededed" BorderThickness="1">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
-                    <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="1*" />
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*" />
                     <DataGridTemplateColumn Header="Adet" Width="1.5*" >
                         <DataGridTemplateColumn.CellTemplate>
