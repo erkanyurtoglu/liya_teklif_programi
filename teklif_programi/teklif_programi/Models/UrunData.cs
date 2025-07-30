@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace teklif_programi.Models
 {
@@ -21,8 +22,8 @@ namespace teklif_programi.Models
                 if (value != _adet)
                 {
                     _adet = value;
-                    // Adet değişince toplam fiyatlar güncellenir
-                    SatisToplamFiyati = BirimSatisFiyati * _adet;
+                    // Adet değişince indirimi de dikkate alarak güncelle
+                    SatisToplamFiyati = BirimSatisFiyati * _adet * (1 - indirim / 100m);
                     ToplamFiyat = SatisToplamFiyati;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(SatisToplamFiyati));
@@ -30,6 +31,27 @@ namespace teklif_programi.Models
                 }
             }
         }
+
+        private decimal _indirim;
+
+        [NotMapped]
+        public decimal indirim
+        {
+            get => _indirim;
+            set
+            {
+                if (_indirim != value)
+                {
+                    _indirim = value;
+                    SatisToplamFiyati = BirimSatisFiyati * Adet * (1 - _indirim / 100m);
+                    ToplamFiyat = SatisToplamFiyati;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(SatisToplamFiyati));
+                    OnPropertyChanged(nameof(ToplamFiyat));
+                }
+            }
+        }
+
 
         public decimal BirimSatisFiyati { get; set; }
 

@@ -80,6 +80,7 @@ namespace teklif_programi.view
                     BirimSatisFiyati = urunData.BirimSatisFiyati,
                     YurticiMaliyet = urunData.YurticiMaliyet,
                     Adet = 1,
+                    indirim = 0, // İndirim başlangıçta 0
                     SatisToplamFiyati = urunData.BirimSatisFiyati,
                     ToplamFiyat = urunData.BirimSatisFiyati
                 });
@@ -120,6 +121,11 @@ namespace teklif_programi.view
         private void AdetTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !int.TryParse(e.Text, out _);
+        }
+
+        private void indirimTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+
         }
 
         private void BtnTeklifOlusturVePdfIndir_Click(object sender, RoutedEventArgs e)

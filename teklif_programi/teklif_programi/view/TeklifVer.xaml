@@ -124,21 +124,61 @@
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*" />
-                    <DataGridTemplateColumn Header="Adet" Width="1.5*" >
+                    <!-- Adet Kolonu -->
+                    <DataGridTemplateColumn Header="Adet" Width="2*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                    <Button Content="-" Width="25" Height="25" Margin="0,0,5,0" Click="BtnAdetAzalt_Click"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Button Content="−"
+                                    Width="30" Height="30"
+                                    FontSize="16" FontWeight="Bold"
+                                    Background="#2980B9" Foreground="White"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="BtnAdetAzalt_Click"
+                                    Margin="0,0,5,0" />
+
                                     <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                             Width="40" HorizontalContentAlignment="Center"
-                                             PreviewTextInput="AdetTextBox_PreviewTextInput"/>
-                                    <Button Content="+" Width="25" Height="25" Margin="5,0,0,0" Click="BtnAdetArttir_Click"/>
+                                     Width="60" Height="30"
+                                     FontSize="14" FontWeight="SemiBold"
+                                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                     Background="White" Foreground="#13183E"
+                                     BorderBrush="#13183E" BorderThickness="1"
+                                     Padding="2"
+                                     Cursor="IBeam"
+                                     PreviewTextInput="AdetTextBox_PreviewTextInput"
+                                     Margin="0,0,5,0" />
+
+                                    <Button Content="+"
+                                    Width="30" Height="30"
+                                    FontSize="16" FontWeight="Bold"
+                                    Background="#2980B9" Foreground="White"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="BtnAdetArttir_Click" />
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
+
                     <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.4*" />
                     <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.4*" />
+                    <!-- İndirim Oranı Kolonu -->
+                    <DataGridTemplateColumn Header="İndirim Oranı" Width="1.2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding indirim, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 Width="60" Height="30"
+                                 FontSize="14" FontWeight="SemiBold"
+                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                 Background="White" Foreground="#13183E"
+                                 BorderBrush="#13183E" BorderThickness="1"
+                                 Padding="2"
+                                 Cursor="IBeam"
+                                 PreviewTextInput="indirimTextBox_PreviewTextInput" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat, StringFormat=C2}" Width="1.2*" />
                     <DataGridTemplateColumn Header="İşlemler" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
