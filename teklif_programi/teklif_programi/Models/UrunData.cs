@@ -63,13 +63,13 @@ namespace teklif_programi.Models
         public decimal BirimSatisFiyati { get; set; }
         public decimal YurticiMaliyet { get; set; }
 
-        public decimal IndirimliBirimFiyat => BirimSatisFiyati * (1 - GenelIndirim / 100m);
-        public decimal IndirimliToplamFiyat => IndirimliBirimFiyat * Adet;
+        public decimal ToplamSatisFiyati => BirimSatisFiyati * Adet;
+        public decimal IndirimliToplamFiyat => ToplamSatisFiyati * (1 - GenelIndirim / 100m);
         public decimal KdvDahilToplamFiyat => IndirimliToplamFiyat * (1 + KdvOrani / 100m);
 
         private void RecalculatePrices()
         {
-            OnPropertyChanged(nameof(IndirimliBirimFiyat));
+            OnPropertyChanged(nameof(ToplamSatisFiyati));
             OnPropertyChanged(nameof(IndirimliToplamFiyat));
             OnPropertyChanged(nameof(KdvDahilToplamFiyat));
         }

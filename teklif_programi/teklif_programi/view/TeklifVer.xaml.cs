@@ -355,6 +355,11 @@ namespace teklif_programi.view
         {
         }
 
+        private void dataGridUrunSepeti_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Seçim değiştiğinde yapılacak işlemler (isteğe bağlı)
+        }
+
         private void UpdateToplamlar()
         {
             decimal genelIndirim = string.IsNullOrEmpty(txtGenelIndirim.Text) ? 0 : decimal.Parse(txtGenelIndirim.Text);
@@ -366,7 +371,6 @@ namespace teklif_programi.view
                 urun.KdvOrani = kdvOrani;
             }
 
-            // UI güncellemeleri
             lblToplam.Text = ToplamTutar.ToString("C2");
             lblKDV.Text = KdvTutar.ToString("C2");
             lblGenelToplam.Text = GenelToplam.ToString("C2");

@@ -156,7 +156,7 @@
                       FontFamily="Segoe UI" FontSize="13"
                       CanUserAddRows="False"
                       GridLinesVisibility="None"
-                      BorderBrush="#ededed" BorderThickness="1">
+                      BorderBrush="#ededed" BorderThickness="1" SelectionChanged="dataGridUrunSepeti_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*"/>
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*"/>
@@ -193,9 +193,10 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.4*"/>
-                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.4*"/>
-                    <DataGridTextColumn Header="Toplam Satış Fiyatı" Binding="{Binding IndirimliToplamFiyat, StringFormat=C2}" Width="1.2*"/>
+                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.45*"/>
+                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.25*"/>
+                    <DataGridTextColumn Header="Satış Fiyatı" Binding="{Binding ToplamSatisFiyati, StringFormat=C2}" Width="1.7*"/>
+                    <DataGridTextColumn Header="İndirimli Satış Fiyatı" Binding="{Binding IndirimliToplamFiyat, StringFormat=C2}" Width="1.7*"/>
                     <DataGridTemplateColumn Header="İşlemler" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
