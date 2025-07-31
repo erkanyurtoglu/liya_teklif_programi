@@ -241,14 +241,14 @@ namespace teklif_programi.view
                         PdfPTable table = new PdfPTable(6);
                         table.TotalWidth = 500f;
                         table.LockedWidth = true;
-                        float[] widths = { 2f, 2f, 3f, 1f, 2f, 2f };
+                        float[] widths = { 2f, 4f, 1f, 3f, 3f, 3f };
                         table.SetWidths(widths);
 
                         AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Kategori", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Özellikler", tableHeaderFont, new BaseColor(240, 240, 240));
                         AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Birim Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, $"İskontolu Birim Fiyatı: ({txtGenelIndirim.Text}%)", tableHeaderFont, new BaseColor(240, 240, 240));
                         AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
 
                         int rowCount = 0;
@@ -256,11 +256,11 @@ namespace teklif_programi.view
                         {
                             BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(240, 240, 240);
                             AddCellToBody(table, urun.UrunKoduID, tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.Kategori, tableBodyFont, rowColor);
                             AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
                             AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
                             AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
                             AddCellToBody(table, urun.IndirimliToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.ToplamSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
                             rowCount++;
                         }
 
