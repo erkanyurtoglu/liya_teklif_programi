@@ -188,10 +188,10 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.6*"/>
-                    <DataGridTextColumn Header="İndirimli Birim Satış Fiyatı" Binding="{Binding IndirimliToplamFiyat, StringFormat=C2}" Width="2.4*"/>
-                    <DataGridTextColumn Header="Satış Fiyatı" Binding="{Binding ToplamSatisFiyati, StringFormat=C2}" Width="1.2*"/>
-                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.5*"/>
+                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat={}{0:N2} ₺}" Width="1.6*"/>
+                    <DataGridTextColumn Header="İndirimli Birim Satış Fiyatı" Binding="{Binding IndirimliToplamFiyat, StringFormat={}{0:N2} ₺}" Width="2.4*"/>
+                    <DataGridTextColumn Header="Satış Fiyatı" Binding="{Binding ToplamSatisFiyati, StringFormat={}{0:N2} ₺}" Width="1.2*"/>
+                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat={}{0:N2} ₺}" Width="1.5*"/>
                     <DataGridTemplateColumn Header="İşlemler" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -205,11 +205,11 @@
 
         <StackPanel Grid.Row="3" HorizontalAlignment="Right" Margin="0,10,20,10" Orientation="Horizontal">
             <TextBlock Text="Toplam:" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
-            <TextBlock x:Name="lblToplam" Text="{Binding ToplamTutar, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
+            <TextBlock x:Name="lblToplam" Text="{Binding ToplamTutar, StringFormat={}{0:N2} ₺}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
             <TextBlock Text="KDV:" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
-            <TextBlock x:Name="lblKDV" Text="{Binding KdvTutar, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
+            <TextBlock x:Name="lblKDV" Text="{Binding KdvTutar, StringFormat={}{0:N2} ₺}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
             <TextBlock Text="Genel Toplam:" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
-            <TextBlock x:Name="lblGenelToplam" Text="{Binding GenelToplam, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E"/>
+            <TextBlock x:Name="lblGenelToplam" Text="{Binding GenelToplam, StringFormat={}{0:N2} ₺}" FontWeight="Bold" FontSize="14" Foreground="#13183E"/>
         </StackPanel>
 
         <StackPanel Grid.Row="4" HorizontalAlignment="Center" Margin="0,20,0,10" Width="320">
