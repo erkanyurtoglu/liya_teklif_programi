@@ -89,28 +89,6 @@ namespace teklif_programi.view
             dataGridUrunSepeti.Items.Refresh();
         }
 
-        private void BtnAdetArttir_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is UrunData urun)
-            {
-                urun.Adet++;
-                UpdateToplamlar();
-                dataGridUrunSepeti.Items.Refresh();
-            }
-        }
-
-        private void BtnAdetAzalt_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button button && button.DataContext is UrunData urun)
-            {
-                if (urun.Adet > 1)
-                {
-                    urun.Adet--;
-                    UpdateToplamlar();
-                    dataGridUrunSepeti.Items.Refresh();
-                }
-            }
-        }
 
         private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
         {
@@ -356,6 +334,8 @@ namespace teklif_programi.view
             UrunListele(txtUrunFiltrele.Text.Trim());
         }
 
+
+
         private void UrunListele(string arama = "")
         {
             var urunler = string.IsNullOrWhiteSpace(arama)
@@ -374,7 +354,12 @@ namespace teklif_programi.view
 
         private void dataGridUrunSepeti_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Seçim değiştiğinde yapılacak işlemler (isteğe bağlı)
+
+        }
+
+        private void cmbParaBirimi_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
 
         private void UpdateToplamlar()

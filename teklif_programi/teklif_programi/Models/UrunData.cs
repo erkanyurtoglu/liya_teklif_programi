@@ -68,6 +68,7 @@ namespace teklif_programi.Models
 
         public decimal KdvDahilToplamFiyat => ToplamSatisFiyati * (1 + KdvOrani / 100m);
 
+
         private void RecalculatePrices()
         {
             OnPropertyChanged(nameof(IndirimliToplamFiyat));
