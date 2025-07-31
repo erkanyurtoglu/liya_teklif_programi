@@ -62,10 +62,11 @@ namespace teklif_programi.Models
 
         public decimal BirimSatisFiyati { get; set; }
         public decimal YurticiMaliyet { get; set; }
+        public decimal IndirimliToplamFiyat => BirimSatisFiyati * (1 - GenelIndirim / 100m);
 
-        public decimal ToplamSatisFiyati => BirimSatisFiyati * Adet;
-        public decimal IndirimliToplamFiyat => ToplamSatisFiyati * (1 - GenelIndirim / 100m);
-        public decimal KdvDahilToplamFiyat => IndirimliToplamFiyat * (1 + KdvOrani / 100m);
+        public decimal ToplamSatisFiyati => IndirimliToplamFiyat * Adet;
+
+        public decimal KdvDahilToplamFiyat => ToplamSatisFiyati * (1 + KdvOrani / 100m);
 
         private void RecalculatePrices()
         {

@@ -377,7 +377,7 @@ namespace teklif_programi.view
             dataGridUrunSepeti.Items.Refresh();
         }
 
-        public decimal ToplamTutar => secilenUrunler.Sum(u => u.IndirimliToplamFiyat);
+        public decimal ToplamTutar => secilenUrunler.Sum(u => u.ToplamSatisFiyati);
         public decimal KdvTutar => ToplamTutar * (KdvOrani / 100m);
         public decimal GenelToplam => ToplamTutar + KdvTutar;
         public decimal KdvOrani => string.IsNullOrEmpty(txtKDV.Text) ? 0 : decimal.Parse(txtKDV.Text);
