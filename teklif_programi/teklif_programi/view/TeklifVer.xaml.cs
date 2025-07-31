@@ -157,6 +157,13 @@ namespace teklif_programi.view
                 return;
             }
 
+            var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
+            if (firma == null)
+            {
+                MessageBox.Show("Firma bilgileri bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             int personelKodu = 1;
 
             var yeniTeklif = new Teklif
@@ -214,59 +221,77 @@ namespace teklif_programi.view
                         }
 
                         BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                        var tableHeaderFont = new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK);
-                        var tableBodyFont = new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK);
+                        var infoFont = new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80));
+                        var labelFont = new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK);
 
                         int currentPage = 2;
                         PdfContentByte canvas = stamper.GetOverContent(currentPage);
                         ColumnText ct = new ColumnText(canvas);
 
+                        // Sol tarafta firma bilgileri
                         Phrase firmaBilgileri = new Phrase();
-                        firmaBilgileri.Add(new Chunk("Firma Kodu: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                        firmaBilgileri.Add(new Chunk(txtFirmaKodu.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                        firmaBilgileri.Add(new Chunk("Firma Ad: ", labelFont));
+                        firmaBilgileri.Add(new Chunk(lblFirmaAdi.Text + "\n", infoFont));
 
-                        firmaBilgileri.Add(new Chunk("Firma Ad: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                        firmaBilgileri.Add(new Chunk(lblFirmaAdi.Text + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                        firmaBilgileri.Add(new Chunk("\nMobil: ", labelFont));
+                        firmaBilgileri.Add(new Chunk(firma.Telefon ?? "Bilgi Yok" + "\n", infoFont));
 
-                        firmaBilgileri.Add(new Chunk("Tarih: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                        firmaBilgileri.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy HH:mm"), new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                        firmaBilgileri.Add(new Chunk("\nS.N.: ", labelFont));
+                        firmaBilgileri.Add(new Chunk(firma.ilgiliKisi ?? "Bilgi Yok" + "\n", infoFont)); 
 
-                        ct.SetSimpleColumn(firmaBilgileri, 50, 650, 550, 600, 15, Element.ALIGN_LEFT);
+                        firmaBilgileri.Add(new Chunk("\nTelefon: ", labelFont));
+                        firmaBilgileri.Add(new Chunk(firma.ilgiliKisiTelefon ?? "Bilgi Yok" + "\n", infoFont));
+
+                        firmaBilgileri.Add(new Chunk("\ne-posta: ", labelFont));
+                        firmaBilgileri.Add(new Chunk(firma.Email ?? "Bilgi Yok" + "\n", infoFont));
+
+                        ct.SetSimpleColumn(firmaBilgileri, 50, 700, 300, 500, 15, Element.ALIGN_LEFT);
                         ct.Go();
 
+                        // Sağ tarafta tarih ve talep no
+                        Phrase tarihTalep = new Phrase();
+                        tarihTalep.Add(new Chunk("Tarih: ", labelFont));
+                        tarihTalep.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy"), infoFont));
+                        tarihTalep.Add(new Chunk("\nTalep No: ", labelFont));
+                        tarihTalep.Add(new Chunk(yeniTeklif.TeklifNoID.ToString(), infoFont));
+                        ct.SetSimpleColumn(tarihTalep, 350, 700, 550, 500, 15, Element.ALIGN_LEFT);
+                        ct.Go();
+
+                        // Ürün Başlığı
                         Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
-                        ct.SetSimpleColumn(urunBaslik, 50, 580, 550, 560, 15, Element.ALIGN_LEFT);
+                        ct.SetSimpleColumn(urunBaslik, 50, 480, 550, 460, 15, Element.ALIGN_LEFT);
                         ct.Go();
 
+                        // Ürün Tablosu
                         PdfPTable table = new PdfPTable(6);
                         table.TotalWidth = 500f;
                         table.LockedWidth = true;
                         float[] widths = { 2f, 7f, 1f, 2f, 2f, 2f };
                         table.SetWidths(widths);
 
-                        AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Özellikler", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Birim Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, $"İskontolu Birim Fiyatı: ({txtGenelIndirim.Text}%)", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Ürün Kodu", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Özellikler", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Adet", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Birim Fiyatı", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, $"İskontolu Birim Fiyatı: ({txtGenelIndirim.Text}%)", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Toplam Fiyat", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK), new BaseColor(240, 240, 240));
 
                         int rowCount = 0;
                         foreach (var urun in secilenUrunler)
                         {
                             BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(240, 240, 240);
-                            AddCellToBody(table, urun.UrunKoduID, tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.IndirimliToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.ToplamSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.UrunKoduID, new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
+                            AddCellToBody(table, urun.Aciklama, new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
+                            AddCellToBody(table, urun.Adet.ToString(), new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
+                            AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
+                            AddCellToBody(table, urun.IndirimliToplamFiyat.ToString("C2"), new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
+                            AddCellToBody(table, urun.ToplamSatisFiyati.ToString("C2"), new Font(baseFont, 10, Font.NORMAL, BaseColor.BLACK), rowColor);
                             rowCount++;
                         }
 
                         ct = new ColumnText(canvas);
                         ct.AddElement(table);
-                        ct.SetSimpleColumn(50, 540, 550, 200, 15, Element.ALIGN_LEFT);
+                        ct.SetSimpleColumn(50, 450, 550, 150, 15, Element.ALIGN_LEFT);
                         int status = ct.Go();
 
                         while (ColumnText.HasMoreText(status))
@@ -274,23 +299,24 @@ namespace teklif_programi.view
                             currentPage++;
                             stamper.InsertPage(currentPage, PageSize.A4);
                             PdfContentByte newCanvas = stamper.GetOverContent(currentPage);
-
                             PdfImportedPage templatePage = stamper.GetImportedPage(reader, 2);
                             newCanvas.AddTemplate(templatePage, 0, 0);
 
                             ct = new ColumnText(newCanvas);
-                            ct.SetSimpleColumn(50, 800, 550, 200, 15, Element.ALIGN_LEFT);
+                            ct.AddElement(table);
+                            ct.SetSimpleColumn(50, 800, 550, 150, 15, Element.ALIGN_LEFT);
                             status = ct.Go();
 
                             canvas = newCanvas;
                         }
 
+                        // Alt Toplamlar
                         canvas.BeginText();
                         canvas.SetFontAndSize(baseFont, 12);
                         canvas.SetColorFill(BaseColor.BLACK);
-                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Toplam: {ToplamTutar:C2}", 550f, 100f, 0);
-                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"KDV ({KdvOrani}%): {KdvTutar:C2}", 550f, 80f, 0);
-                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Genel Toplam: {GenelToplam:C2}", 550f, 60f, 0);
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Toplam: {ToplamTutar:C2}", 550f, 120f, 0);
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"KDV ({KdvOrani}%): {KdvTutar:C2}", 550f, 100f, 0);
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Genel Toplam: {GenelToplam:C2}", 550f, 80f, 0);
                         canvas.EndText();
                     }
 
