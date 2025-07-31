@@ -22,67 +22,56 @@ namespace teklif_programi.Models
                 if (value != _adet)
                 {
                     _adet = value;
-                    // Adet değişince indirimi de dikkate alarak güncelle
-                    SatisToplamFiyati = BirimSatisFiyati * _adet * (1 - indirim / 100m);
-                    ToplamFiyat = SatisToplamFiyati;
+                    RecalculatePrices();
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(SatisToplamFiyati));
-                    OnPropertyChanged(nameof(ToplamFiyat));
                 }
             }
         }
 
-        private decimal _indirim;
-
+        private decimal _genelIndirim;
         [NotMapped]
-        public decimal indirim
+        public decimal GenelIndirim
         {
-            get => _indirim;
+            get => _genelIndirim;
             set
             {
-                if (_indirim != value)
+                if (_genelIndirim != value)
                 {
-                    _indirim = value;
-                    SatisToplamFiyati = BirimSatisFiyati * Adet * (1 - _indirim / 100m);
-                    ToplamFiyat = SatisToplamFiyati;
+                    _genelIndirim = value;
+                    RecalculatePrices();
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(SatisToplamFiyati));
-                    OnPropertyChanged(nameof(ToplamFiyat));
                 }
             }
         }
 
+        private decimal _kdvOrani;
+        [NotMapped]
+        public decimal KdvOrani
+        {
+            get => _kdvOrani;
+            set
+            {
+                if (_kdvOrani != value)
+                {
+                    _kdvOrani = value;
+                    RecalculatePrices();
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public decimal BirimSatisFiyati { get; set; }
-
-        private decimal _satisToplamFiyati;
-        public decimal SatisToplamFiyati
-        {
-            get => _satisToplamFiyati;
-            set
-            {
-                if (value != _satisToplamFiyati)
-                {
-                    _satisToplamFiyati = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         public decimal YurticiMaliyet { get; set; }
 
-        private decimal _toplamFiyat;
-        public decimal ToplamFiyat
+        public decimal IndirimliBirimFiyat => BirimSatisFiyati * (1 - GenelIndirim / 100m);
+        public decimal IndirimliToplamFiyat => IndirimliBirimFiyat * Adet;
+        public decimal KdvDahilToplamFiyat => IndirimliToplamFiyat * (1 + KdvOrani / 100m);
+
+        private void RecalculatePrices()
         {
-            get => _toplamFiyat;
-            set
-            {
-                if (value != _toplamFiyat)
-                {
-                    _toplamFiyat = value;
-                    OnPropertyChanged();
-                }
-            }
+            OnPropertyChanged(nameof(IndirimliBirimFiyat));
+            OnPropertyChanged(nameof(IndirimliToplamFiyat));
+            OnPropertyChanged(nameof(KdvDahilToplamFiyat));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -48,6 +48,7 @@
             <RowDefinition Height="Auto" MinHeight="78.96"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,30" Width="360">
@@ -60,39 +61,73 @@
 
         <Grid Grid.Row="1" Margin="0,0,0,10">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="431*" />
-                <ColumnDefinition Width="879*" />
+                <ColumnDefinition Width="431*"/>
+                <ColumnDefinition Width="879*"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="10,0,20,0">
-                <TextBlock FontWeight="SemiBold"  Foreground="#13183E" Margin="0,0,0,5"><Run Text="Firma Kodu"/><Run Language="tr-tr" Text=" veya Firma Adı"/></TextBlock>
+                <TextBlock FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5">
+                    <Run Text="Firma Kodu"/><Run Language="tr-tr" Text=" veya Firma Adı"/>
+                </TextBlock>
                 <TextBox x:Name="txtFirmaKodu" Height="38" FontSize="14" Padding="5"
                          BorderBrush="#ccc" BorderThickness="1" Background="White"
                          TextChanged="txtFirmaKodu_TextChanged"
                          VerticalContentAlignment="Center"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="10,0,20,0">
-                <TextBlock Text="Firma Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
-                <TextBlock x:Name="lblFirmaAdi" Text="-" FontSize="14" Foreground="#7F8C8D" Margin="0,10,0,0"/>
-            </StackPanel>
+            <Grid Grid.Column="1" Margin="10,0,20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="424*"/>
+                    <ColumnDefinition Width="233*"/>
+                    <ColumnDefinition Width="192*"/>
+                </Grid.ColumnDefinitions>
 
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Firma Adı" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="lblFirmaAdi" Text="-" FontSize="14" Foreground="#7F8C8D" Margin="0,10,0,0"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Width="96">
+                    <TextBlock Text="Genel İndirim (%)" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtGenelIndirim"
+                             Width="60" Height="30"
+                             FontSize="14" FontWeight="SemiBold"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                             Background="White" Foreground="#13183E"
+                             BorderBrush="#13183E" BorderThickness="1"
+                             Padding="2" Cursor="IBeam"
+                             PreviewTextInput="GenelIndirimTextBox_PreviewTextInput"
+                             TextChanged="txtGenelIndirim_TextChanged"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" HorizontalAlignment="Center" Width="96">
+                    <TextBlock Text="KDV" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="txtKDV"
+                             Width="60" Height="30"
+                             FontSize="14" FontWeight="SemiBold"
+                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                             Background="White" Foreground="#13183E"
+                             BorderBrush="#13183E" BorderThickness="1"
+                             Padding="2" Cursor="IBeam"
+                             PreviewTextInput="KDVTextBox_PreviewTextInput"
+                             TextChanged="KDV_TextChanged"/>
+                </StackPanel>
+            </Grid>
         </Grid>
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="421*" />
-                <ColumnDefinition Width="889*" />
+                <ColumnDefinition Width="421*"/>
+                <ColumnDefinition Width="889*"/>
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="0" Margin="10,0,10,10">
                 <TextBlock Text="Ürün Filtrele" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,0,5"/>
                 <TextBox x:Name="txtUrunFiltrele" Height="44" FontSize="14" Padding="5" 
-                 BorderBrush="#ccc" 
-                 BorderThickness="1" Background="White" TextChanged="txtUrunFiltrele_TextChanged"
-                 VerticalContentAlignment="Center"/>
+                         BorderBrush="#ccc" BorderThickness="1" Background="White" 
+                         TextChanged="txtUrunFiltrele_TextChanged"
+                         VerticalContentAlignment="Center"/>
             </StackPanel>
-
 
             <DataGrid x:Name="dataGridUrunListesi"
                       Grid.Column="0" Margin="10,90,10,10"
@@ -103,11 +138,12 @@
                       RowHeight="40" ColumnHeaderHeight="45"
                       AlternatingRowBackground="#ededed"
                       FontFamily="Segoe UI" FontSize="13"
-                      BorderBrush="#ededed" BorderThickness="1" SelectionChanged="dataGridUrunListesi_SelectionChanged">
+                      BorderBrush="#ededed" BorderThickness="1" 
+                      SelectionChanged="dataGridUrunListesi_SelectionChanged">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
-                    <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="1.5*" />
-                    <DataGridTemplateColumn Header="İşlem" Width="70" CellTemplate="{StaticResource SepeteEkleTemplate}" />
+                    <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*"/>
+                    <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="1.5*"/>
+                    <DataGridTemplateColumn Header="İşlem" Width="70" CellTemplate="{StaticResource SepeteEkleTemplate}"/>
                 </DataGrid.Columns>
             </DataGrid>
 
@@ -122,64 +158,44 @@
                       GridLinesVisibility="None"
                       BorderBrush="#ededed" BorderThickness="1">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*" />
-                    <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*" />
-                    <!-- Adet Kolonu -->
+                    <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKoduID}" Width="1*"/>
+                    <DataGridTextColumn Header="Açıklama" Binding="{Binding Aciklama}" Width="2*"/>
                     <DataGridTemplateColumn Header="Adet" Width="2*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                                     <Button Content="−"
-                                    Width="30" Height="30"
-                                    FontSize="16" FontWeight="Bold"
-                                    Background="#2980B9" Foreground="White"
-                                    BorderThickness="0"
-                                    Cursor="Hand"
-                                    Click="BtnAdetAzalt_Click"
-                                    Margin="0,0,5,0" />
-
+                                            Width="30" Height="30"
+                                            FontSize="16" FontWeight="Bold"
+                                            Background="#2980B9" Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Click="BtnAdetAzalt_Click"
+                                            Margin="0,0,5,0"/>
                                     <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                     Width="60" Height="30"
-                                     FontSize="14" FontWeight="SemiBold"
-                                     HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                     Background="White" Foreground="#13183E"
-                                     BorderBrush="#13183E" BorderThickness="1"
-                                     Padding="2"
-                                     Cursor="IBeam"
-                                     PreviewTextInput="AdetTextBox_PreviewTextInput"
-                                     Margin="0,0,5,0" />
-
+                                             Width="60" Height="30"
+                                             FontSize="14" FontWeight="SemiBold"
+                                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                             Background="White" Foreground="#13183E"
+                                             BorderBrush="#13183E" BorderThickness="1"
+                                             Padding="2"
+                                             Cursor="IBeam"
+                                             PreviewTextInput="AdetTextBox_PreviewTextInput"
+                                             Margin="0,0,5,0"/>
                                     <Button Content="+"
-                                    Width="30" Height="30"
-                                    FontSize="16" FontWeight="Bold"
-                                    Background="#2980B9" Foreground="White"
-                                    BorderThickness="0"
-                                    Cursor="Hand"
-                                    Click="BtnAdetArttir_Click" />
+                                            Width="30" Height="30"
+                                            FontSize="16" FontWeight="Bold"
+                                            Background="#2980B9" Foreground="White"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Click="BtnAdetArttir_Click"/>
                                 </StackPanel>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-
-                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.4*" />
-                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.4*" />
-                    <!-- İndirim Oranı Kolonu -->
-                    <DataGridTemplateColumn Header="İndirim Oranı" Width="1.2*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <TextBox Text="{Binding indirim, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                 Width="60" Height="30"
-                                 FontSize="14" FontWeight="SemiBold"
-                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                 Background="White" Foreground="#13183E"
-                                 BorderBrush="#13183E" BorderThickness="1"
-                                 Padding="2"
-                                 Cursor="IBeam"
-                                 PreviewTextInput="indirimTextBox_PreviewTextInput" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat, StringFormat=C2}" Width="1.2*" />
+                    <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimSatisFiyati, StringFormat=C2}" Width="1.4*"/>
+                    <DataGridTextColumn Header="Yurtiçi Maliyet" Binding="{Binding YurticiMaliyet, StringFormat=C2}" Width="1.4*"/>
+                    <DataGridTextColumn Header="Toplam Satış Fiyatı" Binding="{Binding IndirimliToplamFiyat, StringFormat=C2}" Width="1.2*"/>
                     <DataGridTemplateColumn Header="İşlemler" Width="100">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
@@ -191,7 +207,16 @@
             </DataGrid>
         </Grid>
 
-        <StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0,20,0,10" Width="320">
+        <StackPanel Grid.Row="3" HorizontalAlignment="Right" Margin="0,10,20,10" Orientation="Horizontal">
+            <TextBlock Text="Toplam:" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
+            <TextBlock x:Name="lblToplam" Text="{Binding ToplamTutar, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
+            <TextBlock Text="KDV (%20):" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
+            <TextBlock x:Name="lblKDV" Text="{Binding KdvTutar, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,20,0"/>
+            <TextBlock Text="Genel Toplam:" FontWeight="Bold" FontSize="14" Foreground="#13183E" Margin="0,0,10,0"/>
+            <TextBlock x:Name="lblGenelToplam" Text="{Binding GenelToplam, StringFormat=C2}" FontWeight="Bold" FontSize="14" Foreground="#13183E"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="4" HorizontalAlignment="Center" Margin="0,20,0,10" Width="320">
             <Button Content="Teklif Oluştur ve PDF İndir" Width="320" Height="38" Style="{StaticResource ModernButtonStyle}" Click="BtnTeklifOlusturVePdfIndir_Click"/>
         </StackPanel>
     </Grid>

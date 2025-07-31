@@ -2,7 +2,7 @@
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -16,7 +16,7 @@ namespace teklif_programi.view
     public partial class TeklifVer : UserControl
     {
         private TeklifDbContext _db = new TeklifDbContext();
-        private List<UrunData> secilenUrunler = new List<UrunData>();
+        private ObservableCollection<UrunData> secilenUrunler = new ObservableCollection<UrunData>();
 
         public TeklifVer()
         {
@@ -24,6 +24,8 @@ namespace teklif_programi.view
             dataGridUrunSepeti.ItemsSource = secilenUrunler;
             dataGridUrunListesi.ItemsSource = _db.Urunler.ToList();
             UrunListele();
+            secilenUrunler.CollectionChanged += (s, e) => UpdateToplamlar();
+            DataContext = this; // Bağlamayı bu sınıfa ayarla
         }
 
         private void txtFirmaKodu_TextChanged(object sender, TextChangedEventArgs e)
@@ -35,7 +37,6 @@ namespace teklif_programi.view
                 return;
             }
 
-            // Önce FirmaKoduID ile arama yapmayı dene
             if (int.TryParse(searchText, out int firmaKodu))
             {
                 var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
@@ -43,12 +44,10 @@ namespace teklif_programi.view
             }
             else
             {
-                // FirmaKoduID bir sayı değilse, FirmaAdi ile arama yap
                 var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaAdi.ToLower().Contains(searchText.ToLower()));
                 lblFirmaAdi.Text = firma != null ? firma.FirmaAdi : "-";
-            }   
+            }
         }
-
 
         private void BtnSepeteEkle_Click(object sender, RoutedEventArgs e)
         {
@@ -62,13 +61,15 @@ namespace teklif_programi.view
             }
         }
 
-
         private void AddUrunToSepet(UrunData urunData)
         {
             var sepettekiUrun = secilenUrunler.FirstOrDefault(u => u.UrunKoduID == urunData.UrunKoduID);
+            decimal genelIndirim = string.IsNullOrEmpty(txtGenelIndirim.Text) ? 0 : decimal.Parse(txtGenelIndirim.Text);
+            decimal kdvOrani = string.IsNullOrEmpty(txtKDV.Text) ? 0 : decimal.Parse(txtKDV.Text);
+
             if (sepettekiUrun != null)
             {
-                sepettekiUrun.Adet++; // INotifyPropertyChanged ile SatisToplamFiyati ve ToplamFiyat güncellenir
+                sepettekiUrun.Adet++;
             }
             else
             {
@@ -80,11 +81,11 @@ namespace teklif_programi.view
                     BirimSatisFiyati = urunData.BirimSatisFiyati,
                     YurticiMaliyet = urunData.YurticiMaliyet,
                     Adet = 1,
-                    indirim = 0, // İndirim başlangıçta 0
-                    SatisToplamFiyati = urunData.BirimSatisFiyati,
-                    ToplamFiyat = urunData.BirimSatisFiyati
+                    GenelIndirim = genelIndirim,
+                    KdvOrani = kdvOrani
                 });
             }
+            UpdateToplamlar();
             dataGridUrunSepeti.Items.Refresh();
         }
 
@@ -92,7 +93,8 @@ namespace teklif_programi.view
         {
             if (sender is Button button && button.DataContext is UrunData urun)
             {
-                urun.Adet++; // INotifyPropertyChanged otomatik günceller
+                urun.Adet++;
+                UpdateToplamlar();
                 dataGridUrunSepeti.Items.Refresh();
             }
         }
@@ -103,7 +105,8 @@ namespace teklif_programi.view
             {
                 if (urun.Adet > 1)
                 {
-                    urun.Adet--; // INotifyPropertyChanged otomatik günceller
+                    urun.Adet--;
+                    UpdateToplamlar();
                     dataGridUrunSepeti.Items.Refresh();
                 }
             }
@@ -114,6 +117,7 @@ namespace teklif_programi.view
             if (sender is Button button && button.DataContext is UrunData urun)
             {
                 secilenUrunler.Remove(urun);
+                UpdateToplamlar();
                 dataGridUrunSepeti.Items.Refresh();
             }
         }
@@ -123,9 +127,24 @@ namespace teklif_programi.view
             e.Handled = !int.TryParse(e.Text, out _);
         }
 
-        private void indirimTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void GenelIndirimTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
+            e.Handled = !decimal.TryParse(e.Text, out _) || decimal.Parse(e.Text) > 100;
+        }
 
+        private void KDVTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !decimal.TryParse(e.Text, out _) || decimal.Parse(e.Text) > 100;
+        }
+
+        private void KDV_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateToplamlar();
+        }
+
+        private void txtGenelIndirim_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateToplamlar();
         }
 
         private void BtnTeklifOlusturVePdfIndir_Click(object sender, RoutedEventArgs e)
@@ -143,14 +162,14 @@ namespace teklif_programi.view
                 return;
             }
 
-            int personelKodu = 1; // Sabit personel kodu, dinamik yapılabilir
+            int personelKodu = 1;
 
             var yeniTeklif = new Teklif
             {
                 FirmaKoduID = firmaKodu,
                 PersonelKoduID = personelKodu,
                 TeklifTarihi = DateTime.Now,
-                ToplamTutar = ToplamFiyatHesapla(secilenUrunler)
+                ToplamTutar = ToplamTutar
             };
 
             _db.Teklifler.Add(yeniTeklif);
@@ -164,7 +183,7 @@ namespace teklif_programi.view
                     UrunKoduID = urun.UrunKoduID,
                     Adet = urun.Adet,
                     BirimFiyat = urun.BirimSatisFiyati,
-                    ToplamFiyat = urun.SatisToplamFiyati
+                    ToplamFiyat = urun.IndirimliToplamFiyat
                 };
                 _db.TeklifDetaylari.Add(detay);
             }
@@ -176,7 +195,7 @@ namespace teklif_programi.view
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
                 Filter = "PDF dosyası (*.pdf)|*.pdf",
-                FileName = $"Teklif_{lblFirmaAdi.Text}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf" // 20250729_101700 gibi
+                FileName = $"Teklif_{lblFirmaAdi.Text}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
             };
 
             if (saveFileDialog.ShowDialog() == true)
@@ -234,7 +253,7 @@ namespace teklif_programi.view
                         AddCellToHeader(table, "Kategori", tableHeaderFont, new BaseColor(240, 240, 240));
                         AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
                         AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
-                        AddCellToHeader(table, "2025 Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                        AddCellToHeader(table, "Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
                         AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
 
                         int rowCount = 0;
@@ -246,7 +265,7 @@ namespace teklif_programi.view
                             AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
                             AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
                             AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
-                            AddCellToBody(table, urun.SatisToplamFiyati.ToString("C2"), tableBodyFont, rowColor);
+                            AddCellToBody(table, urun.IndirimliToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
                             rowCount++;
                         }
 
@@ -274,12 +293,9 @@ namespace teklif_programi.view
                         canvas.BeginText();
                         canvas.SetFontAndSize(baseFont, 12);
                         canvas.SetColorFill(BaseColor.BLACK);
-                        canvas.ShowTextAligned(
-                            Element.ALIGN_RIGHT,
-                            $"Toplam Teklif Tutarı: {ToplamFiyatHesapla(secilenUrunler):C2}",
-                            550f, 60f,
-                            0
-                        );
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Toplam: {ToplamTutar:C2}", 550f, 100f, 0);
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"KDV ({KdvOrani}%): {KdvTutar:C2}", 550f, 80f, 0);
+                        canvas.ShowTextAligned(Element.ALIGN_RIGHT, $"Genel Toplam: {GenelToplam:C2}", 550f, 60f, 0);
                         canvas.EndText();
                     }
 
@@ -318,11 +334,6 @@ namespace teklif_programi.view
             table.AddCell(cell);
         }
 
-        private decimal ToplamFiyatHesapla(List<UrunData> secilenUrunler)
-        {
-            return secilenUrunler.Sum(u => u.SatisToplamFiyati);
-        }
-
         private void txtUrunFiltrele_TextChanged(object sender, TextChangedEventArgs e)
         {
             UrunListele(txtUrunFiltrele.Text.Trim());
@@ -342,7 +353,29 @@ namespace teklif_programi.view
 
         private void dataGridUrunListesi_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
+
+        private void UpdateToplamlar()
+        {
+            decimal genelIndirim = string.IsNullOrEmpty(txtGenelIndirim.Text) ? 0 : decimal.Parse(txtGenelIndirim.Text);
+            decimal kdvOrani = string.IsNullOrEmpty(txtKDV.Text) ? 0 : decimal.Parse(txtKDV.Text);
+
+            foreach (var urun in secilenUrunler)
+            {
+                urun.GenelIndirim = genelIndirim;
+                urun.KdvOrani = kdvOrani;
+            }
+
+            // UI güncellemeleri
+            lblToplam.Text = ToplamTutar.ToString("C2");
+            lblKDV.Text = KdvTutar.ToString("C2");
+            lblGenelToplam.Text = GenelToplam.ToString("C2");
+            dataGridUrunSepeti.Items.Refresh();
+        }
+
+        public decimal ToplamTutar => secilenUrunler.Sum(u => u.IndirimliToplamFiyat);
+        public decimal KdvTutar => ToplamTutar * (KdvOrani / 100m);
+        public decimal GenelToplam => ToplamTutar + KdvTutar;
+        public decimal KdvOrani => string.IsNullOrEmpty(txtKDV.Text) ? 0 : decimal.Parse(txtKDV.Text);
     }
 }

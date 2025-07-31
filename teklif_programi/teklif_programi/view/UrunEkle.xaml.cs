@@ -1,17 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using teklif_programi.Data;
 using teklif_programi.Models;
 
@@ -33,22 +22,37 @@ namespace teklif_programi.view
         {
             try
             {
-                UrunData yeniUrun = new UrunData()
+                if (!int.TryParse(txtUrunAdedi.Text.Trim(), out int adet) ||
+                    !decimal.TryParse(txtBirimSatisFiyati.Text.Trim(), out decimal birimSatisFiyati) ||
+                    !decimal.TryParse(txtYurtiçiMaliyet.Text.Trim(), out decimal yurticiMaliyet))
+                {
+                    MessageBox.Show("Lütfen geçerli bir adet, birim satış fiyatı ve yurtiçi maliyet girin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                UrunData yeniUrun = new UrunData
                 {
                     UrunKoduID = txtUrunKodu.Text.Trim(),
                     Kategori = txtUrunKategori.Text.Trim(),
                     Aciklama = txtUrunAciklama.Text.Trim(),
-                    Adet = int.Parse(txtUrunAdedi.Text.Trim()),
-                    BirimSatisFiyati = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    SatisToplamFiyati = decimal.Parse(txtSatisToplamFiyati.Text.Trim()),
-                    YurticiMaliyet = decimal.Parse(txtYurtiçiMaliyet.Text.Trim()),
-                    ToplamFiyat = decimal.Parse(txtToplamFiyat.Text.Trim())
+                    Adet = adet,
+                    BirimSatisFiyati = birimSatisFiyati,
+                    YurticiMaliyet = yurticiMaliyet,
+                    GenelIndirim = 0,
+                    KdvOrani = 0
                 };
 
                 _db.Urunler.Add(yeniUrun);
                 _db.SaveChanges();
 
                 MessageBox.Show("Ürün başarıyla kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                txtUrunKodu.Text = "";
+                txtUrunKategori.Text = "";
+                txtUrunAciklama.Text = "";
+                txtUrunAdedi.Text = "";
+                txtBirimSatisFiyati.Text = "";
+                txtYurtiçiMaliyet.Text = "";
             }
             catch (Exception ex)
             {
