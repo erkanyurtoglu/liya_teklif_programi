@@ -241,7 +241,7 @@ namespace teklif_programi.view
                         PdfPTable table = new PdfPTable(6);
                         table.TotalWidth = 500f;
                         table.LockedWidth = true;
-                        float[] widths = { 2f, 4f, 1f, 3f, 3f, 3f };
+                        float[] widths = { 2f, 7f, 1f, 2f, 2f, 2f };
                         table.SetWidths(widths);
 
                         AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
