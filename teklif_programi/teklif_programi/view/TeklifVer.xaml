@@ -163,33 +163,17 @@
                     <DataGridTemplateColumn Header="Adet" Width="1.2*">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Button Content="−"
-                                            Width="30" Height="30"
-                                            FontSize="16" FontWeight="Bold"
-                                            Background="#2980B9" Foreground="White"
-                                            BorderThickness="0"
-                                            Cursor="Hand"
-                                            Click="BtnAdetAzalt_Click"
-                                            Margin="0,0,5,0"/>
-                                    <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                                             Width="60" Height="30"
-                                             FontSize="14" FontWeight="SemiBold"
-                                             HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                                             Background="White" Foreground="#13183E"
-                                             BorderBrush="#13183E" BorderThickness="1"
-                                             Padding="2"
-                                             Cursor="IBeam"
-                                             PreviewTextInput="AdetTextBox_PreviewTextInput"
-                                             Margin="0,0,5,0"/>
-                                    <Button Content="+"
-                                            Width="30" Height="30"
-                                            FontSize="16" FontWeight="Bold"
-                                            Background="#2980B9" Foreground="White"
-                                            BorderThickness="0"
-                                            Cursor="Hand"
-                                            Click="BtnAdetArttir_Click"/>
-                                </StackPanel>
+                                <TextBox Text="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                 Width="60" Height="30"
+                                 FontSize="14" FontWeight="SemiBold"
+                                 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                                 Background="White" Foreground="#13183E"
+                                 BorderBrush="#13183E" BorderThickness="1"
+                                 Padding="2"
+                                 Cursor="IBeam"
+                                 PreviewTextInput="AdetTextBox_PreviewTextInput"
+                                 LostFocus="AdetTextBox_LostFocus" 
+                                    Margin="0"/>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

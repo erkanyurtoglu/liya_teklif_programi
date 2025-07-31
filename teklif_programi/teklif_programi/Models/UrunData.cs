@@ -70,8 +70,8 @@ namespace teklif_programi.Models
 
         private void RecalculatePrices()
         {
-            OnPropertyChanged(nameof(ToplamSatisFiyati));
             OnPropertyChanged(nameof(IndirimliToplamFiyat));
+            OnPropertyChanged(nameof(ToplamSatisFiyati));
             OnPropertyChanged(nameof(KdvDahilToplamFiyat));
         }
 

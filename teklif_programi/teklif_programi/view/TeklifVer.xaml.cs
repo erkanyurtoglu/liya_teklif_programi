@@ -25,7 +25,7 @@ namespace teklif_programi.view
             dataGridUrunListesi.ItemsSource = _db.Urunler.ToList();
             UrunListele();
             secilenUrunler.CollectionChanged += (s, e) => UpdateToplamlar();
-            DataContext = this; // Bağlamayı bu sınıfa ayarla
+            DataContext = this;
         }
 
         private void txtFirmaKodu_TextChanged(object sender, TextChangedEventArgs e)
@@ -125,6 +125,23 @@ namespace teklif_programi.view
         private void AdetTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !int.TryParse(e.Text, out _);
+        }
+
+        private void AdetTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox textBox && textBox.DataContext is UrunData urun)
+            {
+                if (int.TryParse(textBox.Text, out int newAdet) && newAdet > 0)
+                {
+                    urun.Adet = newAdet;
+                    UpdateToplamlar();
+                    dataGridUrunSepeti.Items.Refresh();
+                }
+                else
+                {
+                    textBox.Text = urun.Adet.ToString();
+                }
+            }
         }
 
         private void GenelIndirimTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
