@@ -4,37 +4,128 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         mc:Ignorable="d" 
-        d:DesignHeight="600" d:DesignWidth="800">
-    <Grid>
+        Title="Teklif Detayları"
+        Background="#ededed"
+        Height="600" Width="800" 
+        FontFamily="Segoe UI" FontSize="14" >
+
+    <Window.Resources>
+        <!-- Modern Button Style -->
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Background" Value="#13183E"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="FontFamily" Value="Source Sans Pro"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="5,0"/>
+            <Setter Property="Padding" Value="10,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#0E1227"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Label Style for Headings -->
+        <Style TargetType="Label" x:Key="HeaderLabelStyle">
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#13183E"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="FontSize" Value="15"/>
+        </Style>
+
+        <!-- DataGrid Style -->
+        <Style TargetType="DataGrid" x:Key="ModernDataGridStyle">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="AlternatingRowBackground" Value="#ededed"/>
+            <Setter Property="GridLinesVisibility" Value="None"/>
+            <Setter Property="BorderBrush" Value="#ededed"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="ColumnHeaderHeight" Value="45"/>
+            <Setter Property="Margin" Value="5,0,5,20"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <Label Content="Firma:"/>
-            <Label x:Name="lblFirma" Margin="5,0"/>
+
+        <!-- Başlık Kısmı -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10" HorizontalAlignment="Center">
+            <TextBlock Text="📄 Teklif Detayları"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       Foreground="#13183E"
+                       FontFamily="Segoe UI"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,5"/>
+            <Border Height="2"
+                    Width="250"
+                    Background="#13183E"
+                    HorizontalAlignment="Center"
+                    CornerRadius="1"/>
         </StackPanel>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="5">
-            <Label Content="Tarih:"/>
-            <Label x:Name="lblTarih" Margin="5,0"/>
+
+        <!-- Firma ve Tarih Bilgileri -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,15" >
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Firma:" Style="{StaticResource HeaderLabelStyle}"/>
+                <Label x:Name="lblFirma" VerticalAlignment="Center" FontSize="14"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Tarih:" Style="{StaticResource HeaderLabelStyle}"/>
+                <Label x:Name="lblTarih" VerticalAlignment="Center" FontSize="14"/>
+            </StackPanel>
         </StackPanel>
-        <DataGrid x:Name="dataGridDetaylar" Grid.Row="2" Margin="5" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False">
+
+        <!-- DataGrid -->
+        <DataGrid x:Name="dataGridDetaylar" Grid.Row="2" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" 
+                  IsReadOnly="False"
+                  Style="{StaticResource ModernDataGridStyle}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding Urun.UrunKoduID}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Açıklama" Binding="{Binding Urun.Aciklama}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Adet" Binding="{Binding Adet, UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat=C2, UpdateSourceTrigger=LostFocus}" />
-                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat, StringFormat=C2}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding Urun.UrunKoduID}" IsReadOnly="True" Width="1.5*"/>
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Urun.Aciklama}" IsReadOnly="True" Width="3*"/>
+                <DataGridTextColumn Header="Adet" Binding="{Binding Adet, UpdateSourceTrigger=LostFocus}" Width="1*"/>
+                <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat,StringFormat={}{0:N2} ₺, UpdateSourceTrigger=LostFocus}" Width="1.5*"/>
+                <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding ToplamFiyat, StringFormat={}{0:N2} ₺}" IsReadOnly="True" Width="1.8*"/>
             </DataGrid.Columns>
         </DataGrid>
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Label Content="Toplam Tutar:"/>
-            <Label x:Name="lblToplamTutar" Margin="5,0"/>
-            <Button Content="Güncelle" Click="BtnGuncelle_Click" Margin="10,0" Width="100"/>
-            <Button Content="PDF İndir" Click="BtnPdfIndir_Click" Margin="10,0" Width="100"/>
-            <Button Content="İptal" Click="Window_Closed" Margin="10,0" Width="100"/>
+
+        <!-- Butonlar ve Toplam Tutar -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0" >
+            <Label Content="Toplam Tutar:" Style="{StaticResource HeaderLabelStyle}" VerticalAlignment="Center"/>
+            <Label x:Name="lblToplamTutar" VerticalAlignment="Center" FontSize="15" FontWeight="SemiBold" Foreground="#13183E" Margin="0,0,15,0"/>
+
+            <Button Content="Güncelle" Click="BtnGuncelle_Click" Width="110" Style="{StaticResource ModernButtonStyle}"/>
+            <Button Content="PDF İndir" Click="BtnPdfIndir_Click" Width="110" Style="{StaticResource ModernButtonStyle}"/>
+            <Button Content="İptal" Click="Window_Closed" Width="110" Background="#C0392B" Style="{StaticResource ModernButtonStyle}"/>
         </StackPanel>
+
     </Grid>
 </Window>
