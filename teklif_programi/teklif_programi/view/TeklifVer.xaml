@@ -77,10 +77,10 @@
 
             <Grid Grid.Column="1" Margin="10,0,20,0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="354*"/>
-                    <ColumnDefinition Width="165*"/>
-                    <ColumnDefinition Width="165*"/>
-                    <ColumnDefinition Width="174*"/>
+                    <ColumnDefinition Width="491*"/>
+                    <ColumnDefinition Width="125*"/>
+                    <ColumnDefinition Width="125*"/>
+                    <ColumnDefinition Width="125*"/>
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="0">
@@ -94,8 +94,7 @@
                              Width="60" Height="30"
                              FontSize="14" FontWeight="SemiBold"
                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                             Background="White" Foreground="#13183E"
-                             BorderBrush="#13183E" BorderThickness="1"
+                             Background="White" Foreground="#13183E" BorderThickness="1"
                              Padding="2" Cursor="IBeam"
                              PreviewTextInput="GenelIndirimTextBox_PreviewTextInput"
                              TextChanged="txtGenelIndirim_TextChanged"/>
@@ -107,14 +106,13 @@
                              Width="60" Height="30"
                              FontSize="14" FontWeight="SemiBold"
                              HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
-                             Background="White" Foreground="#13183E"
-                             BorderBrush="#13183E" BorderThickness="1"
+                             Background="White" Foreground="#13183E" BorderThickness="1"
                              Padding="2" Cursor="IBeam"
                              PreviewTextInput="KDVTextBox_PreviewTextInput"
                              TextChanged="KDV_TextChanged"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96">
+                <StackPanel Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Width="96" Height="30">
                     <ComboBox x:Name="cmbParaBirimi" Width="80" Height="30" FontSize="14"
                              SelectedIndex="2" SelectionChanged="cmbParaBirimi_SelectionChanged">
                         <ComboBoxItem>USD</ComboBoxItem>

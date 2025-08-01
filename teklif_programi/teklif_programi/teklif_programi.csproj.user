@@ -32,6 +32,9 @@
     <Compile Update="view\Personellerim.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\TeklifDetayWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="view\TeklifVer.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

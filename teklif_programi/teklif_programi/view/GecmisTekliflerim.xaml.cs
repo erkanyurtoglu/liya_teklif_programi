@@ -1,29 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.EntityFrameworkCore;
 using teklif_programi.Data;
 using teklif_programi.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace teklif_programi.view
 {
-
-
-    /// <summary>
-    /// Interaction logic for GecmisTekliflerim.xaml
-    /// </summary>
     public partial class GecmisTekliflerim : UserControl
     {
         private TeklifDbContext _db = new TeklifDbContext();
@@ -40,6 +25,8 @@ namespace teklif_programi.view
             var tekliflerQuery = _db.Teklifler
                 .Include(t => t.Firma)
                 .Include(t => t.Personel)
+                .Include(t => t.TeklifDetaylari)
+                .ThenInclude(td => td.Urun)
                 .Where(t => string.IsNullOrEmpty(arama)
                     || t.TeklifNoID.ToString().Contains(arama)
                     || (t.Firma != null && t.Firma.FirmaAdi.Contains(arama))
@@ -56,19 +43,17 @@ namespace teklif_programi.view
             dataGridTeklifler.ItemsSource = TekliflerListesi;
         }
 
-        private void BtnAra_Click(object sender, RoutedEventArgs e)
-        {
-            string arama = txtArama.Text.Trim();
-            TeklifListele(arama);
-        }
-
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
             var secilenTeklif = button?.DataContext as Teklif;
             if (secilenTeklif != null)
             {
-                MessageBox.Show($"Teklif No: {secilenTeklif.TeklifNoID}\nFirma: {secilenTeklif.Firma.FirmaAdi}\nPersonel: {secilenTeklif.Personel.AdSoyad}\nToplam Tutar: {secilenTeklif.ToplamTutar:C2}");
+                var detayPencere = new TeklifDetayWindow(secilenTeklif);
+                if (detayPencere.ShowDialog() == true)
+                {
+
+                }
             }
         }
 
