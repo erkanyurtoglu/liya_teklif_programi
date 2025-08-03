@@ -24,13 +24,12 @@ namespace teklif_programi.ViewModels
         private string _firmaArama = string.Empty;
         private Musteri? _firmaBilgisi;
         private string _urunArama = string.Empty;
-        private Urun? _seciliUrun;
 
         public TeklifVerViewModel()
         {
             UrunleriYukle();
 
-            SepeteEkleCommand = new RelayCommand(SepeteEkle, CanSepeteEkle);
+            SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
             AdetArttirCommand = new RelayCommand<TeklifUrunModel>(AdetArttir, CanAdetArttir);
             AdetAzaltCommand = new RelayCommand<TeklifUrunModel>(AdetAzalt, CanAdetAzalt);
@@ -97,20 +96,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        public Urun? SeciliUrun
-        {
-            get => _seciliUrun;
-            set
-            {
-                if (_seciliUrun != value)
-                {
-                    _seciliUrun = value;
-                    OnPropertyChanged();
-                    SepeteEkleCommand.NotifyCanExecuteChanged();
-                }
-            }
-        }
-
         public ObservableCollection<Urun> TumUrunler { get; set; } = new();
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
 
@@ -148,18 +133,18 @@ namespace teklif_programi.ViewModels
         // Sepet ve komutlar
         public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = new();
 
-        public RelayCommand SepeteEkleCommand { get; }
+        public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
         public RelayCommand<TeklifUrunModel> AdetArttirCommand { get; }
         public RelayCommand<TeklifUrunModel> AdetAzaltCommand { get; }
 
-        private bool CanSepeteEkle() => SeciliUrun != null;
+        private bool CanSepeteEkle(Urun? urun) => urun != null;
 
-        private void SepeteEkle()
+        private void SepeteEkle(Urun? urun)
         {
-            if (SeciliUrun == null) return;
+            if (urun == null) return;
 
-            var mevcutUrun = SecilenUrunler.FirstOrDefault(u => u.urun_id == SeciliUrun.urun_id);
+            var mevcutUrun = SecilenUrunler.FirstOrDefault(u => u.urun_id == urun.urun_id);
             if (mevcutUrun != null)
             {
                 mevcutUrun.adet++;
@@ -169,10 +154,10 @@ namespace teklif_programi.ViewModels
             {
                 var model = new TeklifUrunModel
                 {
-                    urun_id = SeciliUrun.urun_id,
-                    urun_kodu = SeciliUrun.urun_kodu,
-                    urun_aciklamasi = SeciliUrun.urun_aciklamasi,
-                    birim_fiyat = SeciliUrun.birim_fiyat,
+                    urun_id = urun.urun_id,
+                    urun_kodu = urun.urun_kodu,
+                    urun_aciklamasi = urun.urun_aciklamasi,
+                    birim_fiyat = urun.birim_fiyat,
                     adet = 1
                 };
                 HesaplaIndirimliFiyat(model);
@@ -229,6 +214,7 @@ namespace teklif_programi.ViewModels
         {
             decimal indirim = GenelIndirimOrani / 100;
             model.indirimli_fiyat = model.birim_fiyat * (1 - indirim);
+            model.toplam = model.indirimli_fiyat * model.adet; // Toplam fiyatı güncelle
             OnPropertyChanged(nameof(SecilenUrunler)); // Toplam güncellemesi için
         }
 
@@ -395,6 +381,37 @@ namespace teklif_programi.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
-}
 
+    public class TeklifUrunModel : INotifyPropertyChanged
+    {
+        private int _adet = 1;
+
+        public int urun_id { get; set; }
+        public string urun_kodu { get; set; } = string.Empty;
+        public string urun_aciklamasi { get; set; } = string.Empty;
+        public decimal birim_fiyat { get; set; }
+        public decimal indirimli_fiyat { get; set; }
+        public decimal toplam { get; set; }
+
+        public int adet
+        {
+            get => _adet;
+            set
+            {
+                if (_adet != value)
+                {
+                    _adet = value;
+                    OnPropertyChanged();
+                    // Adet değiştiğinde toplamı güncellemek için bir mekanizma eklenebilir
+                    // Ancak bu ViewModel tarafından HesaplaIndirimliFiyat ile yapılıyor
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
+    }
+}
 #nullable restore
