@@ -37,6 +37,7 @@ namespace teklif_programi.Models
 
         public virtual ICollection<TeklifUrun> TeklifUrunleri { get; set; } = new List<TeklifUrun>();
 
-        public virtual TeklifToplam TeklifToplam { get; set; }
+        public decimal TeklifToplam { get; set; }
+
     }
 }
