@@ -100,9 +100,7 @@ namespace teklif_programi.view
                 Aciklama = urun.Aciklama,
                 Adet = 1,
                 BirimSatisFiyati = urun.BirimSatisFiyati,
-                SatisToplamFiyati = urun.BirimSatisFiyati * 1,
                 YurticiMaliyet = urun.YurticiMaliyet,
-                ToplamFiyat = urun.BirimSatisFiyati * 1
             };
 
             secilenUrunler.Add(yeniUrun);
@@ -222,7 +220,6 @@ namespace teklif_programi.view
                         AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
                         AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.ToplamFiyat.ToString("C2"), tableBodyFont, rowColor);
                         rowCount++;
                     }
 
@@ -307,8 +304,6 @@ namespace teklif_programi.view
             if (urun != null)
             {
                 urun.Adet++;
-                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
-                urun.ToplamFiyat = urun.SatisToplamFiyati;
                 dataGridTeklifUrunler.Items.Refresh();
             }
         }
@@ -320,8 +315,6 @@ namespace teklif_programi.view
             if (urun != null && urun.Adet > 1)  // adet en az 1 olmalı
             {
                 urun.Adet--;
-                urun.SatisToplamFiyati = urun.BirimSatisFiyati * urun.Adet;
-                urun.ToplamFiyat = urun.SatisToplamFiyati;
                 dataGridTeklifUrunler.Items.Refresh();
             }
         }

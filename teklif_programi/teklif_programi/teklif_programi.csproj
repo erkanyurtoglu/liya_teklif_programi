@@ -9,12 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="resimler\arkaplan.png" />
-    <None Remove="resimler\liya_logo.png" />
+    <Compile Remove="viewModel\**" />
+    <EmbeddedResource Remove="viewModel\**" />
+    <None Remove="viewModel\**" />
+    <Page Remove="viewModel\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="viewModel\" />
+    <None Remove="resimler\arkaplan.png" />
+    <None Remove="resimler\liya_logo.png" />
   </ItemGroup>
 
   <ItemGroup>

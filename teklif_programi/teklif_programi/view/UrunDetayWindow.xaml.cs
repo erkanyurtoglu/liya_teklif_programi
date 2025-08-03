@@ -35,9 +35,7 @@ namespace teklif_programi.view
             txtAciklama.Text = _urun.Aciklama;
             txtAdet.Text = _urun.Adet.ToString();
             txt2025BirimSatisFiyati.Text = _urun.BirimSatisFiyati.ToString("F2");
-            txt2025SatisToplamFiyati.Text = _urun.SatisToplamFiyati.ToString("F2");
             txtYurticiMaliyetBirimFiyati.Text = _urun.YurticiMaliyet.ToString("F2");
-            txtToplamFiyat.Text = _urun.ToplamFiyat.ToString("F2");
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -52,9 +50,7 @@ namespace teklif_programi.view
                 _urun.Aciklama = txtAciklama.Text;
                 _urun.Adet = int.Parse(txtAdet.Text);
                 _urun.BirimSatisFiyati = decimal.Parse(txt2025BirimSatisFiyati.Text);
-                _urun.SatisToplamFiyati = decimal.Parse(txt2025SatisToplamFiyati.Text);
                 _urun.YurticiMaliyet = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
-                _urun.ToplamFiyat = decimal.Parse(txtToplamFiyat.Text);
 
                 _db.Urunler.Update(_urun);
                 _db.SaveChanges();

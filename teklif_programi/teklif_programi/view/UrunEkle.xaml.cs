@@ -40,9 +40,7 @@ namespace teklif_programi.view
                     Aciklama = txtUrunAciklama.Text.Trim(),
                     Adet = int.Parse(txtUrunAdedi.Text.Trim()),
                     BirimSatisFiyati = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    SatisToplamFiyati = decimal.Parse(txtSatisToplamFiyati.Text.Trim()),
-                    YurticiMaliyet = decimal.Parse(txtYurtiçiMaliyet.Text.Trim()),
-                    ToplamFiyat = decimal.Parse(txtToplamFiyat.Text.Trim())
+                    YurticiMaliyet = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
                 };
 
                 _db.Urunler.Add(yeniUrun);

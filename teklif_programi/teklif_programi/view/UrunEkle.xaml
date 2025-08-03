@@ -103,35 +103,17 @@
 
                     <!-- 2025 Birim Satış Fiyatı -->
                     <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="2025 Birim Satış Fiyatı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                        <TextBlock Text="Birim Satış Fiyatı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
                         <TextBox x:Name="txtBirimSatisFiyati" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                     </StackPanel>
 
                     <!-- 2025 Satış Toplam Fiyatı -->
                     <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="2025 Satış Toplam Fiyatı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtSatisToplamFiyati" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
-                    </StackPanel>
-                </Grid>
-
-                <Grid Margin="0,0,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Yurtiçi Maliyet Birim Fiyatı -->
-                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
                         <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtYurtiçiMaliyet" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
-                    </StackPanel>
-
-                    <!-- Toplam Fiyat -->
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="Toplam Fiyat" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtToplamFiyat" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                    <TextBox x:Name="txtYurticiMaliyet" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
                     </StackPanel>
                 </Grid>
+
 
                 <!-- Butonlar aynı hizada ve hemen altında -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
