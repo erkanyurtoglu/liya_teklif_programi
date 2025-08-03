@@ -20,8 +20,11 @@ namespace teklif_programi.view
 
         private void DecimalValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !decimal.TryParse(((TextBox)sender).Text + e.Text, out _);
+            if (sender is TextBox textBox)
+            {
+                string newText = textBox.Text + e.Text;
+                e.Handled = !decimal.TryParse(newText, out _);
+            }
         }
-
     }
 }
