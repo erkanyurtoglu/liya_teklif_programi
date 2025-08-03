@@ -90,8 +90,6 @@
                 <DataGridTextColumn Header="Firma Kodu" Binding="{Binding FirmaKoduID}" Width="1.1*" />
                 <DataGridTextColumn Header="Firma Adı" Binding="{Binding Firma.FirmaAdi}" Width="2*" />
                 <DataGridTextColumn Header="Teklifi Veren Personel" Binding="{Binding Personel.AdSoyad}" Width="2*" />
-                <DataGridTextColumn Header="Teklif Tarihi" Binding="{Binding TeklifTarihi, StringFormat=d}" Width="1.5*" />
-                <DataGridTextColumn Header="Toplam Tutar" Binding="{Binding ToplamTutar, StringFormat=C2}" Width="1.3*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

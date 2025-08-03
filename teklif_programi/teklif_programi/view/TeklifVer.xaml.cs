@@ -125,7 +125,6 @@ namespace teklif_programi.view
                 FirmaKoduID = firmaKodu,
                 PersonelKoduID = personelKodu,
                 TeklifTarihi = DateTime.Now,
-                ToplamTutar = ToplamFiyatHesapla(secilenUrunler)
             };
 
             _db.Teklifler.Add(yeniTeklif);
@@ -139,7 +138,6 @@ namespace teklif_programi.view
                     UrunKoduID = urun.UrunKoduID,
                     Adet = urun.Adet,
                     BirimFiyat = urun.BirimSatisFiyati,
-                    ToplamFiyat = urun.BirimSatisFiyati * urun.Adet
                 };
                 _db.TeklifDetaylari.Add(detay);
             }

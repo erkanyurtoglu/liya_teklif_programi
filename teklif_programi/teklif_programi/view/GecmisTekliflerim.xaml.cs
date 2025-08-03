@@ -68,7 +68,7 @@ namespace teklif_programi.view
             var secilenTeklif = button?.DataContext as Teklif;
             if (secilenTeklif != null)
             {
-                MessageBox.Show($"Teklif No: {secilenTeklif.TeklifNoID}\nFirma: {secilenTeklif.Firma.FirmaAdi}\nPersonel: {secilenTeklif.Personel.AdSoyad}\nToplam Tutar: {secilenTeklif.ToplamTutar:C2}");
+                MessageBox.Show($"Teklif No: {secilenTeklif.TeklifNoID}\nFirma: {secilenTeklif.Firma.FirmaAdi}\nPersonel: {secilenTeklif.Personel.AdSoyad}");
             }
         }
 

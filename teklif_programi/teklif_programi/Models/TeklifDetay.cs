@@ -21,7 +21,9 @@ namespace teklif_programi.Models
 
         public decimal BirimFiyat { get; set; }
 
-        public decimal ToplamFiyat { get; set; }
+        public decimal IndirimliBirimFiyat { get; set; }
+
+        public decimal IndirimliToplamFiyat { get; set; }
 
         [ForeignKey("TeklifNoID")]
         public virtual Teklif Teklif { get; set; }
