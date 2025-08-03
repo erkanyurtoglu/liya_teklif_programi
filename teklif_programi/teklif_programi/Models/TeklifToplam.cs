@@ -27,7 +27,7 @@ namespace teklif_programi.Models
         public decimal genel_toplam { get; set; }
 
         // Navigation property: Teklif ile 1:1 ilişki
-        [ForeignKey("TeklifId")]
+        [ForeignKey("teklif_id")] // Düzeltildi: "TeklifId" yerine "teklif_id" kullanıldı
         public virtual Teklif Teklif { get; set; }
     }
 }

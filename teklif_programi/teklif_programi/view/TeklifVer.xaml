@@ -3,11 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:teklif_programi"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1350"
              Background="#F5F7FA">
 
     <UserControl.Resources>
+        <!-- Null to Visibility Converter -->
+        <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+
         <!-- Modern TextBox Style -->
         <Style x:Key="ModernTextBox" TargetType="TextBox">
             <Setter Property="Height" Value="36"/>
@@ -53,6 +57,10 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Background" Value="#1D4ED8"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#A3BFFA"/>
+                                <Setter Property="Foreground" Value="#E5E7EB"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -126,7 +134,7 @@
                     <TextBlock Text="Firma Kodu veya Adı" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#1F2937"/>
                     <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding FirmaArama, UpdateSourceTrigger=PropertyChanged}"/>
                 </StackPanel>
-                <Border Background="#F3F4F6" CornerRadius="6" Padding="10" Visibility="{Binding  FirmaBilgisi}">
+                <Border Background="#F3F4F6" CornerRadius="6" Padding="10" Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="{Binding FirmaBilgisi.firma_adi}" FontWeight="Bold" FontSize="14" Foreground="#1F2937"/>
                         <TextBlock Text="{Binding FirmaBilgisi.firma_adresi}" FontSize="12" Foreground="#6B7280"/>
@@ -142,13 +150,13 @@
             <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,20,0">
                 <StackPanel Width="150">
                     <TextBlock Text="Genel İndirim (%)" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#1F2937"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding GenelIndirimOrani, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding GenelIndirimOrani, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
                 </StackPanel>
             </Border>
             <Border Background="White" CornerRadius="8" Padding="15">
                 <StackPanel Width="150">
                     <TextBlock Text="KDV Oranı (%)" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#1F2937"/>
-                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding KdvOrani, UpdateSourceTrigger=PropertyChanged}"/>
+                    <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding KdvOrani, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
                 </StackPanel>
             </Border>
         </StackPanel>
@@ -166,7 +174,7 @@
                 <StackPanel>
                     <TextBlock Text="Ürün Ara" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#1F2937"/>
                     <TextBox Style="{StaticResource ModernTextBox}" Margin="0,0,0,10" Text="{Binding UrunArama, UpdateSourceTrigger=PropertyChanged}"/>
-                    <DataGrid Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding FiltrelenmisUrunler}" SelectionMode="Single">
+                    <DataGrid x:Name="dataGridUrunler" Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding FiltrelenmisUrunler}" SelectedItem="{Binding SeciliUrun}" SelectionMode="Single">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Kod" Binding="{Binding urun_kodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
                             <DataGridTextColumn Header="Açıklama" Binding="{Binding urun_aciklamasi}" Width="2*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
@@ -177,7 +185,7 @@
             </Border>
 
             <!-- Sepete Ekle Butonu -->
-            <Button Content="→" Grid.Column="1" Style="{StaticResource ModernButton}" Width="50" Height="50" VerticalAlignment="Center" Command="{Binding SepeteEkleCommand}"/>
+            <Button Content="→" Grid.Column="1" Style="{StaticResource ModernButton}" Width="50" Height="50" VerticalAlignment="Center" Command="{Binding SepeteEkleCommand}" IsEnabled="{Binding SeciliUrun, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Inverse}"/>
 
             <!-- Sepet -->
             <Border Grid.Column="2" Background="White" CornerRadius="8" Padding="15" BorderBrush="#E5E7EB" BorderThickness="1">
@@ -189,7 +197,7 @@
                             <DataGridTemplateColumn Header="Adet" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <TextBox Text="{Binding adet, UpdateSourceTrigger=PropertyChanged}" Width="60" Style="{StaticResource ModernTextBox}"/>
+                                        <TextBox Text="{Binding adet, UpdateSourceTrigger=PropertyChanged}" Width="60" Style="{StaticResource ModernTextBox}" PreviewTextInput="OnlyAllowNumbers"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
@@ -225,6 +233,8 @@
         </Border>
 
         <!-- Teklifi Kaydet ve PDF İndir Butonu -->
-        <Button Content="Teklifi Kaydet ve PDF İndir" Grid.Row="4" Style="{StaticResource ModernButton}" HorizontalAlignment="Right" Margin="0,0,0,0" Command="{Binding KaydetVePdfIndirCommand}"/>
+        <Button Content="Teklifi Kaydet ve PDF İndir" Grid.Row="4" Style="{StaticResource ModernButton}" HorizontalAlignment="Right" Margin="0,0,0,0" 
+                Command="{Binding KaydetVePdfIndirCommand}" 
+                IsEnabled="{Binding CanSave, Mode=OneWay}"/>
     </Grid>
 </UserControl>

@@ -1,11 +1,16 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿#nullable enable
+
+using CommunityToolkit.Mvvm.Input;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
 using teklif_programi.Data;
 using teklif_programi.Models;
 
@@ -13,61 +18,96 @@ namespace teklif_programi.ViewModels
 {
     public class TeklifVerViewModel : INotifyPropertyChanged
     {
-        private readonly TeklifDbContext _context = new TeklifDbContext();
+        private readonly TeklifDbContext _context = new();
+
+        // Alanlar - sadece 1 kere tanımla
+        private string _firmaArama = string.Empty;
+        private Musteri? _firmaBilgisi;
+        private string _urunArama = string.Empty;
+        private Urun? _seciliUrun;
 
         public TeklifVerViewModel()
         {
             UrunleriYukle();
-            SepeteEkleCommand = new RelayCommand(SepeteEkle);
+
+            SepeteEkleCommand = new RelayCommand(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
-            AdetArttirCommand = new RelayCommand<TeklifUrunModel>(urun => urun.adet++);
-            AdetAzaltCommand = new RelayCommand<TeklifUrunModel>(urun =>
-            {
-                if (urun.adet > 1) urun.adet--;
-            });
-            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir);
+            AdetArttirCommand = new RelayCommand<TeklifUrunModel>(AdetArttir, CanAdetArttir);
+            AdetAzaltCommand = new RelayCommand<TeklifUrunModel>(AdetAzalt, CanAdetAzalt);
+            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir, CanKaydetVePdfIndir);
         }
 
-        #region Firma Arama
-        private string _firmaArama;
+        // Firma arama alanı ve arama işlemi
         public string FirmaArama
         {
             get => _firmaArama;
             set
             {
-                _firmaArama = value;
-                OnPropertyChanged(nameof(FirmaArama));
+                if (_firmaArama != value)
+                {
+                    _firmaArama = value;
+                    OnPropertyChanged();
 
-                int.TryParse(_firmaArama, out int idArama);
-                FirmaBilgisi = _context.Musteriler
-                    .FirstOrDefault(f =>
-                        f.firma_adi.Contains(_firmaArama) ||
-                        f.musteri_id == idArama);
+                    int.TryParse(_firmaArama, out int idArama);
+                    var musteriler = _context.Musteriler.ToList();
+
+                    FirmaBilgisi = musteriler.FirstOrDefault(f =>
+                        f.firma_adi.Contains(_firmaArama, StringComparison.OrdinalIgnoreCase) ||
+                        f.musteri_id == idArama ||
+                        (!string.IsNullOrEmpty(f.firma_telefonu) && f.firma_telefonu.Contains(_firmaArama)));
+
+                    // Debug amaçlı (istersen çıkarabilirsin)
+                    if (FirmaBilgisi == null)
+                        MessageBox.Show("Firma bulunamadı: " + _firmaArama);
+                    else
+                        MessageBox.Show("Firma bulundu: " + FirmaBilgisi.firma_adi);
+
+                    OnPropertyChanged(nameof(FirmaBilgisi));
+                    OnPropertyChanged(nameof(CanSave));
+                }
             }
         }
 
-        private Musteri _firmaBilgisi;
-        public Musteri FirmaBilgisi
+        public Musteri? FirmaBilgisi
         {
             get => _firmaBilgisi;
             set
             {
-                _firmaBilgisi = value;
-                OnPropertyChanged(nameof(FirmaBilgisi));
+                if (_firmaBilgisi != value)
+                {
+                    _firmaBilgisi = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(CanSave));
+                }
             }
         }
-        #endregion
 
-        #region Ürün Listesi
-        private string _urunArama;
+        // Ürün arama ve filtreleme
         public string UrunArama
         {
             get => _urunArama;
             set
             {
-                _urunArama = value;
-                OnPropertyChanged(nameof(UrunArama));
-                UrunleriFiltrele();
+                if (_urunArama != value)
+                {
+                    _urunArama = value;
+                    OnPropertyChanged();
+                    UrunleriFiltrele();
+                }
+            }
+        }
+
+        public Urun? SeciliUrun
+        {
+            get => _seciliUrun;
+            set
+            {
+                if (_seciliUrun != value)
+                {
+                    _seciliUrun = value;
+                    OnPropertyChanged();
+                    SepeteEkleCommand.NotifyCanExecuteChanged();
+                }
             }
         }
 
@@ -76,8 +116,16 @@ namespace teklif_programi.ViewModels
 
         private void UrunleriYukle()
         {
-            TumUrunler = new ObservableCollection<Urun>(_context.Urunler.ToList());
-            FiltrelenmisUrunler = new ObservableCollection<Urun>(TumUrunler);
+            try
+            {
+                TumUrunler = new ObservableCollection<Urun>(_context.Urunler.ToList());
+                FiltrelenmisUrunler = new ObservableCollection<Urun>(TumUrunler);
+                OnPropertyChanged(nameof(FiltrelenmisUrunler));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ürünler yüklenirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void UrunleriFiltrele()
@@ -96,129 +144,257 @@ namespace teklif_programi.ViewModels
             }
             OnPropertyChanged(nameof(FiltrelenmisUrunler));
         }
-        #endregion
 
-        #region Sepet
+        // Sepet ve komutlar
         public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = new();
 
-        public ICommand SepeteEkleCommand { get; }
-        public ICommand SepettenCikarCommand { get; }
-        public ICommand AdetArttirCommand { get; }
-        public ICommand AdetAzaltCommand { get; }
+        public RelayCommand SepeteEkleCommand { get; }
+        public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
+        public RelayCommand<TeklifUrunModel> AdetArttirCommand { get; }
+        public RelayCommand<TeklifUrunModel> AdetAzaltCommand { get; }
+
+        private bool CanSepeteEkle() => SeciliUrun != null;
 
         private void SepeteEkle()
         {
-            if (FiltrelenmisUrunler.FirstOrDefault() is Urun secili)
+            if (SeciliUrun == null) return;
+
+            var mevcutUrun = SecilenUrunler.FirstOrDefault(u => u.urun_id == SeciliUrun.urun_id);
+            if (mevcutUrun != null)
+            {
+                mevcutUrun.adet++;
+                HesaplaIndirimliFiyat(mevcutUrun);
+            }
+            else
             {
                 var model = new TeklifUrunModel
                 {
-                    urun_id = secili.urun_id,
-                    urun_kodu = secili.urun_kodu,
-                    urun_aciklamasi = secili.urun_aciklamasi,
-                    birim_fiyat = secili.birim_fiyat,
+                    urun_id = SeciliUrun.urun_id,
+                    urun_kodu = SeciliUrun.urun_kodu,
+                    urun_aciklamasi = SeciliUrun.urun_aciklamasi,
+                    birim_fiyat = SeciliUrun.birim_fiyat,
                     adet = 1
                 };
                 HesaplaIndirimliFiyat(model);
                 SecilenUrunler.Add(model);
-                OnPropertyChanged(nameof(SecilenUrunler));
             }
-        }
 
-        private void SepettenCikar(TeklifUrunModel urun)
-        {
-            SecilenUrunler.Remove(urun);
             OnPropertyChanged(nameof(SecilenUrunler));
             OnPropertyChanged(nameof(ToplamFiyat));
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
         }
 
-        private void HesaplaIndirimliFiyat(TeklifUrunModel model)
+        private void SepettenCikar(TeklifUrunModel? urun)
         {
-            decimal indirim = GenelIndirimOrani / 100;
-            model.indirimli_fiyat = model.birim_fiyat * (1 - indirim);
-        }
-        #endregion
-
-        #region İndirim - KDV - Toplamlar
-
-        private decimal _genelIndirimOrani = 0;
-        public decimal GenelIndirimOrani
-        {
-            get => _genelIndirimOrani;
-            set
+            if (urun != null)
             {
-                _genelIndirimOrani = value < 0 ? 0 : value;  // eksiye karşı da önlem
-                OnPropertyChanged(nameof(GenelIndirimOrani));
-                foreach (var urun in SecilenUrunler)
-                    HesaplaIndirimliFiyat(urun);
+                SecilenUrunler.Remove(urun);
+                OnPropertyChanged(nameof(SecilenUrunler));
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
                 OnPropertyChanged(nameof(GenelToplam));
             }
         }
 
-        private decimal _kdvOrani = 0;
+        private bool CanAdetArttir(TeklifUrunModel? urun) => urun != null;
+        private void AdetArttir(TeklifUrunModel? urun)
+        {
+            if (urun != null)
+            {
+                urun.adet++;
+                HesaplaIndirimliFiyat(urun);
+                OnPropertyChanged(nameof(SecilenUrunler));
+                OnPropertyChanged(nameof(ToplamFiyat));
+                OnPropertyChanged(nameof(KdvUcreti));
+                OnPropertyChanged(nameof(GenelToplam));
+            }
+        }
+
+        private bool CanAdetAzalt(TeklifUrunModel? urun) => urun != null && urun.adet > 1;
+        private void AdetAzalt(TeklifUrunModel? urun)
+        {
+            if (urun != null && urun.adet > 1)
+            {
+                urun.adet--;
+                HesaplaIndirimliFiyat(urun);
+                OnPropertyChanged(nameof(SecilenUrunler));
+                OnPropertyChanged(nameof(ToplamFiyat));
+                OnPropertyChanged(nameof(KdvUcreti));
+                OnPropertyChanged(nameof(GenelToplam));
+            }
+        }
+
+        private void HesaplaIndirimliFiyat(TeklifUrunModel model)
+        {
+            decimal indirim = GenelIndirimOrani / 100;
+            model.indirimli_fiyat = model.birim_fiyat * (1 - indirim);
+            OnPropertyChanged(nameof(SecilenUrunler)); // Toplam güncellemesi için
+        }
+
+        // İndirim-KDV-Toplam hesaplamaları
+        private decimal _genelIndirimOrani = 0;
+        public decimal GenelIndirimOrani
+        {
+            get => _genelIndirimOrani;
+            set
+            {
+                _genelIndirimOrani = value < 0 ? 0 : value;
+                OnPropertyChanged();
+                RecalculateAll();
+            }
+        }
+
+        private decimal _kdvOrani = 20;
         public decimal KdvOrani
         {
             get => _kdvOrani;
             set
             {
                 _kdvOrani = value < 0 ? 0 : value;
-                OnPropertyChanged(nameof(KdvOrani));
-                OnPropertyChanged(nameof(KdvUcreti));
-                OnPropertyChanged(nameof(GenelToplam));
+                OnPropertyChanged();
+                RecalculateAll();
             }
+        }
+
+        private void RecalculateAll()
+        {
+            foreach (var urun in SecilenUrunler)
+                HesaplaIndirimliFiyat(urun);
+
+            OnPropertyChanged(nameof(ToplamFiyat));
+            OnPropertyChanged(nameof(KdvUcreti));
+            OnPropertyChanged(nameof(GenelToplam));
         }
 
         public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.toplam);
         public decimal KdvUcreti => ToplamFiyat * (KdvOrani / 100);
         public decimal GenelToplam => ToplamFiyat + KdvUcreti;
 
-        #endregion
+        public bool CanSave => FirmaBilgisi != null && SecilenUrunler.Any();
 
-        #region Kaydet ve PDF
+        // Kaydet ve PDF oluşturma komutu
+        public RelayCommand KaydetVePdfIndirCommand { get; }
 
-        public ICommand KaydetVePdfIndirCommand { get; }
+        private bool CanKaydetVePdfIndir() => CanSave;
 
         private void KaydetVePdfIndir()
         {
-            if (FirmaBilgisi == null || !SecilenUrunler.Any()) return;
-
-            // 1. Veritabanına teklif kaydı ekle
-            var teklif = new Teklif
+            if (FirmaBilgisi == null || !SecilenUrunler.Any())
             {
-                musteri_id = FirmaBilgisi.musteri_id,
-                olusturma_tarihi = DateTime.Now,
-                genel_indirim_orani = GenelIndirimOrani,
-                kdv_orani = KdvOrani,
-                TeklifToplam = GenelToplam
-            };
-            _context.Teklifler.Add(teklif);
-            _context.SaveChanges();
-
-            foreach (var urun in SecilenUrunler)
-            {
-                _context.TeklifUrunleri.Add(new TeklifUrun
-                {
-                    teklif_id = teklif.teklif_id,
-                    urun_id = urun.urun_id,
-                    adet = urun.adet,
-                    birim_fiyat = urun.birim_fiyat,
-                    indirimli_birim_fiyat = urun.indirimli_fiyat
-                });
+                MessageBox.Show("Lütfen bir firma seçin ve en az bir ürün ekleyin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
             }
 
-            _context.SaveChanges();
+            try
+            {
+                using var transaction = _context.Database.BeginTransaction();
 
-            // 2. PDF oluştur (iTextSharp kullanıyordun, o kodu ayrıca yazabiliriz.)
+                var teklif = new Teklif
+                {
+                    musteri_id = FirmaBilgisi.musteri_id,
+                    olusturma_tarihi = DateTime.Now,
+                    genel_indirim_orani = GenelIndirimOrani,
+                    kdv_orani = KdvOrani
+                };
+
+                _context.Teklifler.Add(teklif);
+                _context.SaveChanges();
+
+                foreach (var urun in SecilenUrunler)
+                {
+                    _context.TeklifUrunleri.Add(new TeklifUrun
+                    {
+                        teklif_id = teklif.teklif_id,
+                        urun_id = urun.urun_id,
+                        adet = urun.adet,
+                        birim_fiyat = urun.birim_fiyat,
+                        indirimli_birim_fiyat = urun.indirimli_fiyat,
+                        toplam_tutar = urun.toplam
+                    });
+                }
+                _context.SaveChanges();
+
+                var toplam = new TeklifToplam
+                {
+                    teklif_id = teklif.teklif_id,
+                    indirimli_toplam = ToplamFiyat,
+                    kdv_tutari = KdvUcreti,
+                    genel_toplam = GenelToplam
+                };
+
+                _context.TeklifToplamlari.Add(toplam);
+                _context.SaveChanges();
+
+                transaction.Commit();
+
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "PDF Dosyaları (*.pdf)|*.pdf",
+                    FileName = $"Teklif_{teklif.teklif_id}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    using FileStream fs = new(saveFileDialog.FileName, FileMode.Create);
+                    Document doc = new(PageSize.A4, 25, 25, 30, 30);
+                    PdfWriter.GetInstance(doc, fs);
+                    doc.Open();
+
+                    BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    Font titleFont = new(baseFont, 18, Font.BOLD);
+                    Font normalFont = new(baseFont, 12);
+                    Font boldFont = new(baseFont, 12, Font.BOLD);
+
+                    doc.Add(new Paragraph("Teklif Belgesi", titleFont) { Alignment = Element.ALIGN_CENTER, SpacingAfter = 20 });
+                    doc.Add(new Paragraph($"Firma: {FirmaBilgisi!.firma_adi}", normalFont));
+                    doc.Add(new Paragraph($"Adres: {FirmaBilgisi.firma_adresi}", normalFont));
+                    doc.Add(new Paragraph($"Telefon: {FirmaBilgisi.firma_telefonu}", normalFont));
+                    doc.Add(new Paragraph($"E-posta: {FirmaBilgisi.firma_eposta}", normalFont));
+                    doc.Add(new Paragraph($"Tarih: {DateTime.Now:dd.MM.yyyy HH:mm}", normalFont) { SpacingAfter = 20 });
+
+                    PdfPTable table = new(5);
+                    table.WidthPercentage = 100;
+                    table.SetWidths(new float[] { 1, 3, 1, 1, 1 });
+
+                    table.AddCell(new PdfPCell(new Phrase("Kod", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                    table.AddCell(new PdfPCell(new Phrase("Açıklama", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                    table.AddCell(new PdfPCell(new Phrase("Adet", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                    table.AddCell(new PdfPCell(new Phrase("İnd. Fiyat", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+                    table.AddCell(new PdfPCell(new Phrase("Toplam", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
+
+                    foreach (var urun in SecilenUrunler)
+                    {
+                        table.AddCell(new PdfPCell(new Phrase(urun.urun_kodu, normalFont)));
+                        table.AddCell(new PdfPCell(new Phrase(urun.urun_aciklamasi, normalFont)));
+                        table.AddCell(new PdfPCell(new Phrase(urun.adet.ToString(), normalFont)));
+                        table.AddCell(new PdfPCell(new Phrase(urun.indirimli_fiyat.ToString("C2"), normalFont)));
+                        table.AddCell(new PdfPCell(new Phrase(urun.toplam.ToString("C2"), normalFont)));
+                    }
+
+                    doc.Add(table);
+
+                    doc.Add(new Paragraph($"Toplam Fiyat: {ToplamFiyat:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT, SpacingBefore = 10 });
+                    doc.Add(new Paragraph($"KDV (%{KdvOrani}): {KdvUcreti:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT });
+                    doc.Add(new Paragraph($"Genel Toplam: {GenelToplam:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT });
+
+                    doc.Close();
+                }
+
+                MessageBox.Show("Teklif başarıyla kaydedildi ve PDF oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        #endregion
+        // PropertyChanged event, nullable destekli
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
-
-
 }
+
+#nullable restore

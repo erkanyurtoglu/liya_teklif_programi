@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-//Sepetteki ürünlerin temsilini yapacak model.
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace teklif_programi.Models
 {
@@ -25,17 +19,27 @@ namespace teklif_programi.Models
                 if (_adet != value)
                 {
                     _adet = value;
-                    OnPropertyChanged(nameof(adet));
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(toplam));
                 }
             }
         }
 
-        public decimal indirimli_fiyat { get; set; }
+        private decimal _indirimli_fiyat;
+        public decimal indirimli_fiyat
+        {
+            get => _indirimli_fiyat;
+            set
+            {
+                _indirimli_fiyat = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(toplam));
+            }
+        }
 
         public decimal toplam => adet * indirimli_fiyat;
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }

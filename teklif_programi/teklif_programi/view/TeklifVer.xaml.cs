@@ -1,15 +1,6 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
-using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using teklif_programi.Data;
-using teklif_programi.Models;
 using teklif_programi.ViewModels;
 
 namespace teklif_programi.view
@@ -24,7 +15,13 @@ namespace teklif_programi.view
 
         private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !decimal.TryParse(e.Text, out _);
+            e.Handled = !decimal.TryParse(e.Text, out _) && e.Text != ".";
         }
+
+        private void DecimalValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !decimal.TryParse(((TextBox)sender).Text + e.Text, out _);
+        }
+
     }
 }
