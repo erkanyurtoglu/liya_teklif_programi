@@ -22,14 +22,14 @@ namespace teklif_programi.view
     public partial class PersonelDetayWindow : Window
     {
         private readonly TeklifDbContext _db = new TeklifDbContext();
-        private PersonelData _personel;
+        private Personel _personel;
 
-        public PersonelDetayWindow(PersonelData secilenPersonel)
+        public PersonelDetayWindow(Personel secilenPersonel)
         {
             InitializeComponent();
 
             // Veritabanından personel bilgilerini çekiyoruz (ID bazlı)
-            _personel = _db.Personeller.FirstOrDefault(p => p.PersonelKoduID == secilenPersonel.PersonelKoduID);
+            _personel = _db.Personeller.FirstOrDefault(p => p.personel_id == secilenPersonel.personel_id);
 
             if (_personel != null)
             {
@@ -44,13 +44,13 @@ namespace teklif_programi.view
 
         private void VeriDoldur()
         {
-            txtPersonelKodu.Text = _personel.PersonelKoduID.ToString();
-            txtAdSoyad.Text = _personel.AdSoyad;
-            txtPozisyon.Text = _personel.Pozisyon;
-            txtTelefon.Text = _personel.Telefon;
+            txtPersonelKodu.Text = _personel.personel_id.ToString();
+            txtAdSoyad.Text = _personel.ad_soyad;
+            txtPozisyon.Text = _personel.pozisyon;
+            txtTelefon.Text = _personel.telefon;
 
             // Şifre veritabanındaki gibi gözüksün
-            txtSifre.Text = _personel.PersonelSifre ?? string.Empty;
+            txtSifre.Text = _personel.sifre ?? string.Empty;
         }
 
 
@@ -74,14 +74,14 @@ namespace teklif_programi.view
                 if (pwdDialog.EnteredPassword == dogruSifre)
                 {
                     // Güncellemeleri al
-                    _personel.AdSoyad = txtAdSoyad.Text;
-                    _personel.Pozisyon = txtPozisyon.Text;
-                    _personel.Telefon = txtTelefon.Text;
+                    _personel.ad_soyad = txtAdSoyad.Text;
+                    _personel.pozisyon = txtPozisyon.Text;
+                    _personel.telefon = txtTelefon.Text;
 
                     // Şifre boş değilse güncelle
                     if (!string.IsNullOrWhiteSpace(txtSifre.Text))
                     {
-                        _personel.PersonelSifre = txtSifre.Text;
+                        _personel.sifre = txtSifre.Text;
                     }
 
                     _db.Personeller.Update(_personel);

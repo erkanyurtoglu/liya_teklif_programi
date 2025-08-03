@@ -18,7 +18,7 @@ namespace teklif_programi.view
     public partial class TeklifVer : UserControl
     {
         private TeklifDbContext _db = new TeklifDbContext();
-        private List<UrunData> secilenUrunler = new List<UrunData>();
+        private List<Urun> secilenUrunler = new List<Urun>();
 
         public TeklifVer()
         {
@@ -34,10 +34,10 @@ namespace teklif_programi.view
                 return;
             }
 
-            var firma = _db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == firmaKodu);
+            var firma = _db.Musteriler.FirstOrDefault(f => f.musteri_id == firmaKodu);
             if (firma != null)
             {
-                lblFirmaAdi.Text = firma.FirmaAdi;
+                lblFirmaAdi.Text = firma.firma_adi;
             }
             else
             {
@@ -56,11 +56,11 @@ namespace teklif_programi.view
                 return;
             }
 
-            var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
+            var urun = _db.Urunler.FirstOrDefault(u => u.urun_kodu == urunKodu);
 
             if (urun != null)
             {
-                lblUrunAdi.Text = urun.Aciklama;
+                lblUrunAdi.Text = urun.urun_aciklamasi;
             }
             else
             {
@@ -79,7 +79,7 @@ namespace teklif_programi.view
                 return;
             }
 
-            var urun = _db.Urunler.FirstOrDefault(u => u.UrunKoduID == urunKodu);
+            var urun = _db.Urunler.FirstOrDefault(u => u.urun_kodu == urunKodu);
 
             if (urun == null)
             {
@@ -87,20 +87,20 @@ namespace teklif_programi.view
                 return;
             }
 
-            if (secilenUrunler.Any(x => x.UrunKoduID == urun.UrunKoduID))
+            if (secilenUrunler.Any(x => x.urun_kodu == urun.urun_kodu))
             {
                 MessageBox.Show("Bu ürün zaten listede var.", "Uyarı", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            UrunData yeniUrun = new UrunData
+            Urun yeniUrun = new Urun
             {
-                UrunKoduID = urun.UrunKoduID,
-                Kategori = urun.Kategori,
-                Aciklama = urun.Aciklama,
-                Adet = 1,
-                BirimSatisFiyati = urun.BirimSatisFiyati,
-                YurticiMaliyet = urun.YurticiMaliyet,
+                urun_kodu = urun.urun_kodu,
+                kategori = urun.kategori,
+                urun_aciklamasi = urun.urun_aciklamasi,
+                adet = 1,
+                birim_fiyat = urun.birim_fiyat,
+                maliyet_fiyati = urun.maliyet_fiyati,
             };
 
             secilenUrunler.Add(yeniUrun);
@@ -122,9 +122,9 @@ namespace teklif_programi.view
 
             var yeniTeklif = new Teklif
             {
-                FirmaKoduID = firmaKodu,
-                PersonelKoduID = personelKodu,
-                TeklifTarihi = DateTime.Now,
+                musteri_id = firmaKodu,
+                personel_id = personelKodu,
+                olusturma_tarihi = DateTime.Now,
             };
 
             _db.Teklifler.Add(yeniTeklif);
@@ -132,14 +132,14 @@ namespace teklif_programi.view
 
             foreach (var urun in secilenUrunler)
             {
-                var detay = new TeklifDetay
+                var detay = new TeklifUrun
                 {
-                    TeklifNoID = yeniTeklif.TeklifNoID,
-                    UrunKoduID = urun.UrunKoduID,
-                    Adet = urun.Adet,
-                    BirimFiyat = urun.BirimSatisFiyati,
+                    teklif_id = yeniTeklif.teklif_id,
+                    urun_id = urun.urun_id,
+                    adet = urun.adet,
+                    birim_fiyat = urun.birim_fiyat,
                 };
-                _db.TeklifDetaylari.Add(detay);
+                _db.TeklifUrunleri.Add(detay);
             }
 
             _db.SaveChanges();
@@ -213,11 +213,11 @@ namespace teklif_programi.view
                     foreach (var urun in secilenUrunler)
                     {
                         BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(240, 240, 240);
-                        AddCellToBody(table, urun.UrunKoduID, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Kategori, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Aciklama, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.BirimSatisFiyati.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.urun_kodu, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.kategori, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.urun_aciklamasi, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.adet.ToString(), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.birim_fiyat.ToString("C2"), tableBodyFont, rowColor);
                         rowCount++;
                     }
 
@@ -290,18 +290,18 @@ namespace teklif_programi.view
             table.AddCell(cell);
         }
 
-        private decimal ToplamFiyatHesapla(List<UrunData> secilenUrunler)
+        private decimal ToplamFiyatHesapla(List<Urun> secilenUrunler)
         {
-            return secilenUrunler.Sum(u => u.BirimSatisFiyati * u.Adet);
+            return secilenUrunler.Sum(u => u.birim_fiyat * u.adet);
         }
 
         private void BtnAdetArttir_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
+            var urun = button?.DataContext as Urun;
             if (urun != null)
             {
-                urun.Adet++;
+                urun.adet++;
                 dataGridTeklifUrunler.Items.Refresh();
             }
         }
@@ -309,10 +309,10 @@ namespace teklif_programi.view
         private void BtnAdetAzalt_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
-            if (urun != null && urun.Adet > 1)  // adet en az 1 olmalı
+            var urun = button?.DataContext as Urun;
+            if (urun != null && urun.adet > 1)  // adet en az 1 olmalı
             {
-                urun.Adet--;
+                urun.adet--;
                 dataGridTeklifUrunler.Items.Refresh();
             }
         }
@@ -320,7 +320,7 @@ namespace teklif_programi.view
         private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var urun = button?.DataContext as UrunData;
+            var urun = button?.DataContext as Urun;
             if (urun != null)
             {
                 secilenUrunler.Remove(urun);

@@ -41,12 +41,12 @@ namespace teklif_programi.view
                 return;
             }
 
-            var personel = new PersonelData
+            var personel = new Personel
             {
-                AdSoyad = txtAdSoyad.Text,
-                Pozisyon = txtPozisyon.Text,
-                Telefon = txtTelefon.Text,
-                PersonelSifre = txtSifre.Text,
+                ad_soyad = txtAdSoyad.Text,
+                pozisyon = txtPozisyon.Text,
+                telefon = txtTelefon.Text,
+                sifre = txtSifre.Text,
             };
 
             _db.Personeller.Add(personel);

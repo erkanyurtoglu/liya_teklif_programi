@@ -11,23 +11,32 @@ namespace teklif_programi.Models
     public class Teklif
     {
         [Key]
-        public int TeklifNoID { get; set; }
+        public int teklif_id { get; set; }  // teklif_id ile eşleşmeli
 
-        public int FirmaKoduID { get; set; }
-        public int PersonelKoduID { get; set; }
-        public DateTime TeklifTarihi { get; set; } = DateTime.Now;
-        public decimal IndirimOrani { get; set; }
-        public decimal KdvOrani { get; set; }
-        public decimal IndirimliAraToplam { get; set; }
-        public decimal KdvTutari { get; set; }
-        public decimal GenelToplam { get; set; }
+        public int musteri_id { get; set; }  // musteri_id ile eşleşmeli
 
-        [ForeignKey("FirmaKoduID")]
-        public virtual Firma Firma { get; set; }
+        public int personel_id { get; set; }  // personel_id ile eşleşmeli
 
-        [ForeignKey("PersonelKoduID")]
-        public virtual PersonelData Personel { get; set; }
+        public DateTime olusturma_tarihi { get; set; } = DateTime.Now; // olusturma_tarihi
 
-        public virtual ICollection<TeklifDetay> TeklifDetaylari { get; set; } = new List<TeklifDetay>();
+        public decimal genel_indirim_orani { get; set; }
+
+        public decimal kdv_orani { get; set; }
+
+        // Bu üç alan teklif_toplamlari tablosunda olduğundan kaldırabiliriz:
+        // public decimal IndirimliAraToplam { get; set; }
+        // public decimal KdvTutari { get; set; }
+        // public decimal GenelToplam { get; set; }
+
+        [ForeignKey("musteri_id")]
+        public virtual Musteri Musteri { get; set; }
+
+        [ForeignKey("personel_id")]
+        public virtual Personel Personel { get; set; }
+
+
+        public virtual ICollection<TeklifUrun> TeklifUrunleri { get; set; } = new List<TeklifUrun>();
+
+        public virtual TeklifToplam TeklifToplam { get; set; }
     }
 }

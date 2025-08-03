@@ -35,7 +35,7 @@ namespace teklif_programi.view
             var urunler = string.IsNullOrWhiteSpace(arama)
                 ? _db.Urunler.ToList()
                 : _db.Urunler
-                      .Where(f => f.Aciklama.Contains(arama) || f.UrunKoduID.Contains(arama))
+                      .Where(f => f.urun_aciklamasi.Contains(arama) || f.urun_kodu.Contains(arama))
                       .ToList();
 
             dataGridUrunler.ItemsSource = urunler;
@@ -49,7 +49,7 @@ namespace teklif_programi.view
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenUrun = button?.DataContext as UrunData;
+            var secilenUrun = button?.DataContext as Urun;
 
             if (secilenUrun != null)
             {
@@ -65,7 +65,7 @@ namespace teklif_programi.view
         private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenUrun = button?.DataContext as UrunData;
+            var secilenUrun = button?.DataContext as Urun;
 
             if (secilenUrun == null)
             {
@@ -89,7 +89,7 @@ namespace teklif_programi.view
                     {
                         using (var db = new TeklifDbContext())
                         {
-                            var urun = db.Urunler.FirstOrDefault(u => u.UrunKoduID == secilenUrun.UrunKoduID);
+                            var urun = db.Urunler.FirstOrDefault(u => u.urun_id == secilenUrun.urun_id);
 
                             if (urun != null)
                             {

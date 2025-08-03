@@ -19,18 +19,18 @@ namespace teklif_programi.view
     public partial class FirmaDetayWindow : Window
     {
         private readonly TeklifDbContext _db = new TeklifDbContext();
-        private Firma _firma;
+        private Musteri _firma;
 
-        public FirmaDetayWindow(Firma secilenFirma)
+        public FirmaDetayWindow(Musteri secilenFirma)
         {
             InitializeComponent();
             _firma = secilenFirma;
 
             // TextBox'lara firma bilgilerini aktar
-            txtFirmaAdi.Text = _firma.FirmaAdi;
-            txtAdres.Text = _firma.Adres;
-            txtTelefon.Text = _firma.Telefon;
-            txtEmail.Text = _firma.Email;
+            txtFirmaAdi.Text = _firma.firma_adi;
+            txtAdres.Text = _firma.firma_adresi;
+            txtTelefon.Text = _firma.firma_telefonu;
+            txtEmail.Text = _firma.firma_eposta;
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -46,12 +46,12 @@ namespace teklif_programi.view
 
                 if (pwdDialog.EnteredPassword == dogruSifre)
                 {
-                    _firma.FirmaAdi = txtFirmaAdi.Text;
-                    _firma.Adres = txtAdres.Text;
-                    _firma.Telefon = txtTelefon.Text;
-                    _firma.Email = txtEmail.Text;
+                    _firma.firma_adi = txtFirmaAdi.Text;
+                    _firma.firma_adresi = txtAdres.Text;
+                    _firma.firma_telefonu = txtTelefon.Text;
+                    _firma.firma_eposta = txtEmail.Text;
 
-                    _db.Firmalar.Update(_firma);
+                    _db.Musteriler.Update(_firma);
                     _db.SaveChanges();
 
                     MessageBox.Show("Firma bilgileri başarıyla güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);

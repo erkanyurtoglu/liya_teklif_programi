@@ -79,10 +79,10 @@
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Firma Kodu" Binding="{Binding FirmaKoduID}" Width="1*" />
-                <DataGridTextColumn Header="Firma Adı" Binding="{Binding FirmaAdi}" Width="2*" />
-                <DataGridTextColumn Header="Adres" Binding="{Binding Adres}" Width="3*" />
-                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="2*" />
+                <DataGridTextColumn Header="Firma Kodu" Binding="{Binding musteri_id}" Width="1*" />
+                <DataGridTextColumn Header="Firma Adı" Binding="{Binding firma_adi}" Width="2*" />
+                <DataGridTextColumn Header="Adres" Binding="{Binding firma_adresi}" Width="3*" />
+                <DataGridTextColumn Header="Telefon" Binding="{Binding firma_telefonu}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

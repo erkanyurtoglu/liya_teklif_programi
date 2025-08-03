@@ -36,7 +36,7 @@ namespace teklif_programi.view
                 var personeller = string.IsNullOrWhiteSpace(arama)
                     ? db.Personeller.ToList()
                     : db.Personeller
-                          .Where(f => f.AdSoyad.Contains(arama) || f.Telefon.Contains(arama))
+                          .Where(f => f.ad_soyad.Contains(arama) || f.telefon.Contains(arama))
                           .ToList();
 
                 dataGridPersonel.ItemsSource = personeller;
@@ -51,7 +51,7 @@ namespace teklif_programi.view
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenPersonel = button?.DataContext as PersonelData;
+            var secilenPersonel = button?.DataContext as Personel;
 
             if (secilenPersonel != null)
             {
@@ -68,7 +68,7 @@ namespace teklif_programi.view
         private void BtnPersonelSil_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenPersonel = button?.DataContext as PersonelData;
+            var secilenPersonel = button?.DataContext as Personel;
 
             if (secilenPersonel == null)
             {
@@ -91,7 +91,7 @@ namespace teklif_programi.view
                     {
                         using (var db = new TeklifDbContext())
                         {
-                            var silinecek = db.Personeller.FirstOrDefault(p => p.PersonelKoduID == secilenPersonel.PersonelKoduID);
+                            var silinecek = db.Personeller.FirstOrDefault(p => p.personel_id == secilenPersonel.personel_id);
 
                             if (silinecek != null)
                             {

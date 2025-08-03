@@ -21,21 +21,20 @@ namespace teklif_programi.view
     /// </summary>
     public partial class UrunDetayWindow : Window
     {
-        private UrunData _urun;
+        private Urun _urun;
         private readonly TeklifDbContext _db = new TeklifDbContext();
 
-        public UrunDetayWindow(UrunData urun)
+        public UrunDetayWindow(Urun urun)
         {
             InitializeComponent();
             _urun = urun;
 
             // TextBox'lara bilgileri doldur
-            txtUrunKodu.Text = _urun.UrunKoduID;
-            txtKategori.Text = _urun.Kategori;
-            txtAciklama.Text = _urun.Aciklama;
-            txtAdet.Text = _urun.Adet.ToString();
-            txt2025BirimSatisFiyati.Text = _urun.BirimSatisFiyati.ToString("F2");
-            txtYurticiMaliyetBirimFiyati.Text = _urun.YurticiMaliyet.ToString("F2");
+            txtUrunKodu.Text = _urun.urun_kodu;
+            txtKategori.Text = _urun.kategori;
+            txtAciklama.Text = _urun.urun_aciklamasi;
+            txt2025BirimSatisFiyati.Text = _urun.birim_fiyat.ToString("F2");
+            txtYurticiMaliyetBirimFiyati.Text = _urun.maliyet_fiyati.ToString("F2");
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -46,11 +45,10 @@ namespace teklif_programi.view
             if (pwdWindow.ShowDialog() == true && pwdWindow.EnteredPassword == "Liya2015")
             {
                 // Güncelleme işlemi
-                _urun.Kategori = txtKategori.Text;
-                _urun.Aciklama = txtAciklama.Text;
-                _urun.Adet = int.Parse(txtAdet.Text);
-                _urun.BirimSatisFiyati = decimal.Parse(txt2025BirimSatisFiyati.Text);
-                _urun.YurticiMaliyet = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
+                _urun.kategori = txtKategori.Text;
+                _urun.urun_aciklamasi = txtAciklama.Text;
+                _urun.birim_fiyat = decimal.Parse(txt2025BirimSatisFiyati.Text);
+                _urun.maliyet_fiyati = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
 
                 _db.Urunler.Update(_urun);
                 _db.SaveChanges();

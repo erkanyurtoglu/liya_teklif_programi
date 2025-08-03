@@ -10,17 +10,18 @@ namespace teklif_programi.Data
 {
     public class TeklifDbContext : DbContext // DbContext'ten türetildi
     {
-        public DbSet<Firma> Firmalar { get; set; }
-        public DbSet<UrunData> Urunler { get; set; }
-        public DbSet<PersonelData> Personeller { get; set; }
+        public DbSet<Musteri> Musteriler { get; set; }
+        public DbSet<Urun> Urunler { get; set; }
+        public DbSet<Personel> Personeller { get; set; }
         public DbSet<Teklif> Teklifler { get; set; }
-        public DbSet<TeklifDetay> TeklifDetaylari { get; set; }
+        public DbSet<TeklifUrun> TeklifUrunleri { get; set; }
+        public DbSet<TeklifToplam> TeklifToplamlari { get; set; }
 
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=EXCALIBUR\\SQLEXPRESS;Database=TeklifSistemiDB;Integrated Security=True;Encrypt=False;");
+            optionsBuilder.UseSqlServer("Server=EXCALIBUR\\SQLEXPRESS;Database=LiyaTeklifVeriTabani;Integrated Security=True;Encrypt=False;");
         }
     }
 }

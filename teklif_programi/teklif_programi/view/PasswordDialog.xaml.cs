@@ -41,7 +41,7 @@ namespace teklif_programi.view
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenUrun = button?.DataContext as UrunData;
+            var secilenUrun = button?.DataContext as Urun;
 
             if (secilenUrun != null)
             {

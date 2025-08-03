@@ -79,21 +79,15 @@
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <!-- Ürün Açıklaması -->
-                    <StackPanel Grid.Column="0" Margin="0,0,10,0">
-                        <TextBlock Text="Ürün Açıklaması" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtUrunAciklama" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
-                    </StackPanel>
-
-                    <!-- Ürün Adedi -->
-                    <StackPanel Grid.Column="1" Margin="10,0,0,0">
-                        <TextBlock Text="Ürün Adedi" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox x:Name="txtUrunAdedi" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
-                    </StackPanel>
-                </Grid>
+                <StackPanel Grid.Column="0" Margin="0,0,0,0">
+                    <TextBlock Text="Ürün Açıklaması" FontSize="14" Foreground="#13183E" Margin="0,0,0,5"/>
+                    <TextBox x:Name="txtUrunAciklama" Height="40" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Padding="10,0" VerticalContentAlignment="Center" Background="White"/>
+                </StackPanel>
+                    
+            </Grid>
 
                 <Grid Margin="0,0,0,20">
                     <Grid.ColumnDefinitions>
@@ -118,8 +112,9 @@
                 <!-- Butonlar aynı hizada ve hemen altında -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,30,0,0">
                     <Button x:Name = "Kaydet" Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="180" Margin="0,0,40,0" Click="Kaydet_Click"/>
-                    <Button x:Name= "iptal" Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180"/>
-                </StackPanel>
+                <Button x:Name="iptal" Content="İptal" Style="{StaticResource ModernButtonStyle}" Background="#C0392B" Width="180" Click="Iptal_Click"/>
+
+            </StackPanel>
             </StackPanel>
         </Grid>
     </UserControl>

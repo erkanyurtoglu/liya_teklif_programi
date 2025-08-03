@@ -33,14 +33,13 @@ namespace teklif_programi.view
         {
             try
             {
-                UrunData yeniUrun = new UrunData()
+                Urun yeniUrun = new Urun()
                 {
-                    UrunKoduID = txtUrunKodu.Text.Trim(),
-                    Kategori = txtUrunKategori.Text.Trim(),
-                    Aciklama = txtUrunAciklama.Text.Trim(),
-                    Adet = int.Parse(txtUrunAdedi.Text.Trim()),
-                    BirimSatisFiyati = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    YurticiMaliyet = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
+                    urun_kodu = txtUrunKodu.Text.Trim(),
+                    kategori = txtUrunKategori.Text.Trim(),
+                    urun_aciklamasi = txtUrunAciklama.Text.Trim(),
+                    birim_fiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
+                    maliyet_fiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
                 };
 
                 _db.Urunler.Add(yeniUrun);
@@ -53,5 +52,15 @@ namespace teklif_programi.view
                 MessageBox.Show("Hata oluştu: " + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void Iptal_Click(object sender, RoutedEventArgs e)
+        {
+            txtUrunKodu.Text = "";
+            txtUrunKategori.Text = "";
+            txtUrunAciklama.Text = "";
+            txtBirimSatisFiyati.Text = "";
+            txtYurticiMaliyet.Text = "";
+        }
+
     }
 }

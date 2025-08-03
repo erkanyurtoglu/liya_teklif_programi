@@ -44,10 +44,7 @@
             <TextBlock Text="Açıklama" />
             <TextBox x:Name="txtAciklama" Height="35" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Adet" />
-            <TextBox x:Name="txtAdet" Height="35" Margin="0,0,0,10"/>
-
-            <TextBlock Text="2025 Birim Satış Fiyatı" />
+            <TextBlock Text="Birim Satış Fiyatı" />
             <TextBox x:Name="txt2025BirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
 
             <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı" />

@@ -33,9 +33,9 @@ namespace teklif_programi.view
         private void FirmaListele(string arama = "")
         {
             var firmalar = string.IsNullOrWhiteSpace(arama)
-                ? _db.Firmalar.ToList()
-                : _db.Firmalar
-                      .Where(f => f.FirmaAdi.Contains(arama) || f.Telefon.Contains(arama))
+                ? _db.Musteriler.ToList()
+                : _db.Musteriler
+                      .Where(f => f.firma_adi.Contains(arama) || f.firma_telefonu.Contains(arama))
                       .ToList();
 
             dgFirmalar.ItemsSource = firmalar;
@@ -48,7 +48,7 @@ namespace teklif_programi.view
 
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
-            var firma = (sender as Button)?.DataContext as Firma;
+            var firma = (sender as Button)?.DataContext as Musteri;
             if (firma != null)
             {
                 var detayPencere = new FirmaDetayWindow(firma);
@@ -60,7 +60,7 @@ namespace teklif_programi.view
         private void BtnSil_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenFirma = button?.DataContext as Firma;
+            var secilenFirma = button?.DataContext as Musteri;
 
             if (secilenFirma == null)
             {
@@ -82,13 +82,13 @@ namespace teklif_programi.view
                 {
                     using (var db = new TeklifDbContext())
                     {
-                        var firma = db.Firmalar.FirstOrDefault(f => f.FirmaKoduID == secilenFirma.FirmaKoduID);
+                        var firma = db.Musteriler.FirstOrDefault(f => f.musteri_id == secilenFirma.musteri_id);
 
                         if (firma != null)
                         {
                             if (MessageBox.Show("Firma kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                             {
-                                db.Firmalar.Remove(firma);
+                                db.Musteriler.Remove(firma);
                                 db.SaveChanges();
                                 MessageBox.Show("Firma başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                             }

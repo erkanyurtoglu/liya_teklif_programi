@@ -48,16 +48,16 @@ namespace teklif_programi.view
             }
 
             // Yeni firma nesnesi oluşturdum.
-            var firma = new Firma
+            var firma = new Musteri
             {
-                FirmaAdi = firmaAdi,
-                Adres = adres,
-                Telefon = telefon,
-                Email = email,
-                VergiNumarasi = vergiNumarasi,
-                VergiDairesi = vergiDairesi,
-                ilgiliKisi = ilgiliKisi,
-                ilgiliKisiTelefon = ilgiliKisiTelefon
+                firma_adi = firmaAdi,
+                firma_adresi = adres,
+                firma_telefonu = telefon,
+                firma_eposta = email,
+                vergi_numarasi = vergiNumarasi,
+                vergi_dairesi = vergiDairesi,
+                ilgili_kisi = ilgiliKisi,
+                ilgili_kisi_telefonu = ilgiliKisiTelefon
             };
 
             // Veritabanına ekle
@@ -65,7 +65,7 @@ namespace teklif_programi.view
             {
                 try
                 {
-                    context.Firmalar.Add(firma);
+                    context.Musteriler.Add(firma);
                     context.SaveChanges();
                     MessageBox.Show("Firma başarıyla eklendi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
 
@@ -81,7 +81,8 @@ namespace teklif_programi.view
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Hata oluştu: {ex.Message}\n\n{ex.InnerException?.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+
                 }
             }
 

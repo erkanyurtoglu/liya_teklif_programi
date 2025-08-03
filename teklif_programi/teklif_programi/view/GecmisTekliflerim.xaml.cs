@@ -38,13 +38,13 @@ namespace teklif_programi.view
         private void TeklifListele(string arama = "")
         {
             var tekliflerQuery = _db.Teklifler
-                .Include(t => t.Firma)
+                .Include(t => t.Musteri)
                 .Include(t => t.Personel)
                 .Where(t => string.IsNullOrEmpty(arama)
-                    || t.TeklifNoID.ToString().Contains(arama)
-                    || (t.Firma != null && t.Firma.FirmaAdi.Contains(arama))
-                    || (t.Personel != null && t.Personel.AdSoyad.Contains(arama)))
-                .OrderByDescending(t => t.TeklifTarihi)
+                    || t.teklif_id.ToString().Contains(arama)
+                    || (t.Musteri != null && t.Musteri.firma_adi.Contains(arama))
+                    || (t.Personel != null && t.Personel.ad_soyad.Contains(arama)))
+                .OrderByDescending(t => t.olusturma_tarihi)
                 .ToList();
 
             TekliflerListesi.Clear();
@@ -68,7 +68,7 @@ namespace teklif_programi.view
             var secilenTeklif = button?.DataContext as Teklif;
             if (secilenTeklif != null)
             {
-                MessageBox.Show($"Teklif No: {secilenTeklif.TeklifNoID}\nFirma: {secilenTeklif.Firma.FirmaAdi}\nPersonel: {secilenTeklif.Personel.AdSoyad}");
+                MessageBox.Show($"Teklif No: {secilenTeklif.teklif_id}\nFirma: {secilenTeklif.Musteri.firma_adi}\nPersonel: {secilenTeklif.Personel.ad_soyad}");
             }
         }
 
