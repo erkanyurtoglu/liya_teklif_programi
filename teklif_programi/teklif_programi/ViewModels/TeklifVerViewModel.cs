@@ -1,4 +1,4 @@
-﻿#nullable enable
+﻿
 
 using CommunityToolkit.Mvvm.Input;
 using iTextSharp.text;
@@ -42,23 +42,34 @@ namespace teklif_programi.ViewModels
                     _firmaArama = value;
                     OnPropertyChanged();
 
-                    int.TryParse(_firmaArama, out int idArama);
+                    if (string.IsNullOrWhiteSpace(_firmaArama))
+                    {
+                        FirmaBilgisi = null;
+                        return;
+                    }
+
                     var musteriler = _context.Musteriler.ToList();
-                    FirmaBilgisi = musteriler.FirstOrDefault(f =>
-                        f.firma_adi.Contains(_firmaArama, StringComparison.OrdinalIgnoreCase) ||
-                        f.musteri_id == idArama ||
-                        (!string.IsNullOrEmpty(f.firma_telefonu) && f.firma_telefonu.Contains(_firmaArama)));
+                    Musteri? bulunanFirma = null;
 
-                    if (FirmaBilgisi == null)
-                        MessageBox.Show("Firma bulunamadı: " + _firmaArama);
-                    else
-                        MessageBox.Show("Firma bulundu: " + FirmaBilgisi.firma_adi);
+                    // Sayı ise ID araması yapılır
+                    if (int.TryParse(_firmaArama, out int idArama))
+                    {
+                        bulunanFirma = musteriler.FirstOrDefault(f => f.musteri_id == idArama);
+                    }
 
-                    OnPropertyChanged(nameof(FirmaBilgisi));
-                    OnPropertyChanged(nameof(CanSave));
+                    // Firma adı araması (en az 2 karakter girilmişse)
+                    if (bulunanFirma == null && _firmaArama.Length >= 2)
+                    {
+                        bulunanFirma = musteriler.FirstOrDefault(f =>
+                            !string.IsNullOrEmpty(f.firma_adi) &&
+                            f.firma_adi.Contains(_firmaArama, StringComparison.OrdinalIgnoreCase));
+                    }
+
+                    FirmaBilgisi = bulunanFirma;
                 }
             }
         }
+
 
         public Musteri? FirmaBilgisi
         {
@@ -324,4 +335,3 @@ namespace teklif_programi.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
 }
-#nullable restore
