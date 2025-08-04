@@ -5,18 +5,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\teklifver.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\view\\teklifver.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\models\\teklifurunmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\models\\teklifurunmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\models\\teklifurun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\models\\teklifurun.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\models\\tekliftoplam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\models\\tekliftoplam.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,47 +14,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "TeklifUrunModel.cs",
-              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifUrunModel.cs",
-              "RelativeDocumentMoniker": "teklif_programi\\Models\\TeklifUrunModel.cs",
-              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifUrunModel.cs",
-              "RelativeToolTip": "teklif_programi\\Models\\TeklifUrunModel.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAA7wC0AAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-04T16:26:11.906Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TeklifUrun.cs",
-              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifUrun.cs",
-              "RelativeDocumentMoniker": "teklif_programi\\Models\\TeklifUrun.cs",
-              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifUrun.cs",
-              "RelativeToolTip": "teklif_programi\\Models\\TeklifUrun.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-04T16:26:02.153Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "TeklifToplam.cs",
-              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifToplam.cs",
-              "RelativeDocumentMoniker": "teklif_programi\\Models\\TeklifToplam.cs",
-              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\Models\\TeklifToplam.cs",
-              "RelativeToolTip": "teklif_programi\\Models\\TeklifToplam.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-04T16:25:58.144Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -76,7 +25,7 @@
               "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\TeklifVer.xaml",
               "RelativeToolTip": "teklif_programi\\view\\TeklifVer.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-08-04T16:23:34.532Z",
+              "WhenOpened": "2025-08-04T22:47:42.84Z",
               "EditorCaption": ""
             }
           ]
