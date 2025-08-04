@@ -316,14 +316,14 @@ namespace teklif_programi.ViewModels
                     PdfPTable table = new PdfPTable(6);
                     table.TotalWidth = 500f;
                     table.LockedWidth = true;
-                    float[] widths = new float[] { 2f, 2f, 3f, 1f, 2f, 2f };
+                    float[] widths = new float[] { 2f, 5f, 1f, 2f, 2f, 2f };
                     table.SetWidths(widths);
 
                     AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
-                    AddCellToHeader(table, "Satış Birim Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{GenelIndirimOrani})", tableHeaderFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
 
                     int rowCount = 0;
@@ -342,11 +342,13 @@ namespace teklif_programi.ViewModels
                     table.WriteSelectedRows(0, -1, 50, 560, canvas);
 
                     Phrase toplamBilgileri = new Phrase();
-                    toplamBilgileri.Add(new Chunk($"Toplam Fiyat: {ToplamFiyat:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    toplamBilgileri.Add(new Chunk($"İndirimli Toplam(%{GenelIndirimOrani}): {ToplamFiyat:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
                     toplamBilgileri.Add(new Chunk($"KDV (%{KdvOrani}): {KdvUcreti:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
                     toplamBilgileri.Add(new Chunk($"Genel Toplam: {GenelToplam:C2}", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
 
-                    ct.SetSimpleColumn(toplamBilgileri, 50, 100, 550, 80, 15, Element.ALIGN_RIGHT);
+
+                    ct.SetSimpleColumn(toplamBilgileri, 50, 150, 550, 50, 15, Element.ALIGN_RIGHT);
+
                     ct.Go();
 
                     stamper.Close();
