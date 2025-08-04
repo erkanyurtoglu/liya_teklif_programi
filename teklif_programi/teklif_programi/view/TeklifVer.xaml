@@ -141,11 +141,10 @@
                 <ColumnDefinition/>
                 <!-- Firma Arama -->
                 <ColumnDefinition Width="Auto" MinWidth="328"/>
-                <!-- Boşluk -->
-                <ColumnDefinition Width="300"/>
                 <!-- İndirim ve KDV -->
+                <ColumnDefinition Width="Auto" MinWidth="180"/>
             </Grid.ColumnDefinitions>
-
+            
             <!-- Firma Arama -->
             <Border Grid.Column="0" Background="White" CornerRadius="4" Padding="15" Margin="0,0,20,20" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
@@ -154,7 +153,7 @@
                         <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding FirmaArama, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
                     <Border Background="#F3F4F6" CornerRadius="4" Padding="15" 
-                            Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Width="201">
+                Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Width="201">
                         <StackPanel>
                             <TextBlock Text="{Binding FirmaBilgisi.firma_adi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
                             <TextBlock Text="{Binding FirmaBilgisi.firma_adresi}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI" Margin="0,5,0,0"/>
@@ -189,6 +188,19 @@
                             </StackPanel>
                         </Border>
                     </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Para Birimi Seçimi -->
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="15" Margin="20,0,0,20" BorderBrush="#ededed" BorderThickness="1" Width="170">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
+                    <ComboBox ItemsSource="{Binding ParaBirimiListe}"
+                  SelectedItem="{Binding SelectedCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  DisplayMemberPath="DisplayName"
+                  SelectedValuePath="Code"
+                  Width="135" Height="40"
+                  Margin="0,30,0,0"/>
                 </StackPanel>
             </Border>
         </Grid>
