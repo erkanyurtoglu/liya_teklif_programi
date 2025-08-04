@@ -197,12 +197,12 @@
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="523*"/>
-                <ColumnDefinition Width="Auto" MinWidth="74"/>
-                <ColumnDefinition Width="713*"/>
+                <ColumnDefinition Width="Auto" MinWidth="10"/>
+                <ColumnDefinition Width="777*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Ürünler -->
-            <Border Grid.Column="0" Background="White" CornerRadius="4" Padding="15" Margin="0,0,0,0" BorderBrush="#ededed" BorderThickness="1">
+            <Border Grid.Column="0" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="Ürün Ara" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
                     <TextBox Style="{StaticResource ModernTextBox}" Margin="0,0,0,10" Text="{Binding UrunArama, UpdateSourceTrigger=PropertyChanged}"/>
@@ -229,17 +229,18 @@
             <!-- Sepete Ekle Butonu (Kaldırıldı) -->
 
             <!-- Sepet -->
-            <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1" Grid.ColumnSpan="2" Margin="10,0,0,0">
+            <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="Sepet" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
                     <DataGrid x:Name="dataGridSepet" Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding SecilenUrunler}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Kod" Binding="{Binding urun_kodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="Adet" Binding="{Binding adet}" Width="0.5*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding birim_fiyat, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding indirimli_fiyat, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding toplam, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTemplateColumn Header="Sil" Width="Auto" HeaderStyle="{StaticResource DataGridColumnHeader}">
+                            <DataGridTextColumn Header="Kod" Binding="{Binding urun_kodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Açıklama" Binding="{Binding urun_aciklamasi}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Adet" Binding="{Binding adet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="0.5*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding birim_fiyat, StringFormat=C2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding indirimli_fiyat, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding toplam, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTemplateColumn Header="Sil" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="Sil" Style="{StaticResource RedButton}" Width="60" Height="36" 

@@ -127,6 +127,17 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(FiltrelenmisUrunler));
         }
 
+        private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
+        {
+            if (sender is TeklifUrunModel model)
+            {
+                HesaplaIndirimliFiyat(model);
+                OnPropertyChanged(nameof(ToplamFiyat));
+                OnPropertyChanged(nameof(KdvUcreti));
+                OnPropertyChanged(nameof(GenelToplam));
+            }
+        }
+
         public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
         public RelayCommand KaydetVePdfIndirCommand { get; }
@@ -151,6 +162,10 @@ namespace teklif_programi.ViewModels
                     birim_fiyat = urun.birim_fiyat,
                     adet = 1
                 };
+
+                // Birim fiyat değişimi eventine abone ol
+                model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+
                 HesaplaIndirimliFiyat(model);
                 SecilenUrunler.Add(model);
             }
