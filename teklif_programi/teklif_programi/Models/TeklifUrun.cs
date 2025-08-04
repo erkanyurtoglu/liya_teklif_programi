@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace teklif_programi.Models
 {
+    [Table("teklif_urunleri")]
     public class TeklifUrun
     {
         [Key]
-        public int teklif_urun_id { get; set; }  // Primary key
+        public int teklif_urun_id { get; set; }
 
-        public int teklif_id { get; set; }  // Foreign key
+        public int teklif_id { get; set; }
 
-        public int urun_id { get; set; }  // Foreign key
+        public int urun_id { get; set; }
 
         public int adet { get; set; }
 

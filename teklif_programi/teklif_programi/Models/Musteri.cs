@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace teklif_programi.Models
 {
-    public class Musteri
+    [Table("musteriler")]  // Veritabanındaki tablo ismi
+    public class Musteri  // C# sınıfı tekil ve PascalCase
     {
         [Key]
         public int musteri_id { get; set; }
@@ -15,15 +13,11 @@ namespace teklif_programi.Models
         public string firma_adi { get; set; }
         public string firma_adresi { get; set; }
         public string firma_telefonu { get; set; }
-        public string firma_eposta { get; set; } 
+        public string firma_eposta { get; set; }
         public string vergi_dairesi { get; set; }
         public string vergi_numarasi { get; set; }
         public string ilgili_kisi { get; set; }
         public string ilgili_kisi_telefonu { get; set; }
         public DateTime eklenme_tarihi { get; set; } = DateTime.Now;
-
-
-
     }
 }
-    

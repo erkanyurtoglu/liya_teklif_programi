@@ -1,33 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace teklif_programi.Models
 {
+    [Table("teklif_toplamlari")]
     public class TeklifToplam
     {
         [Key]
-        [Column("toplam_id")]
-        public int toplam_id { get; set; }  // Primary key
+        public int toplam_id { get; set; }
 
-        [Column("teklif_id")]
-        public int teklif_id { get; set; }  // Foreign key
+        public int teklif_id { get; set; }
 
-        [Column("indirimli_toplam")]
         public decimal indirimli_toplam { get; set; }
 
-        [Column("kdv_tutari")]
         public decimal kdv_tutari { get; set; }
 
-        [Column("genel_toplam")]
         public decimal genel_toplam { get; set; }
 
-        // Navigation property: Teklif ile 1:1 ilişki
-        [ForeignKey("teklif_id")] // Düzeltildi: "TeklifId" yerine "teklif_id" kullanıldı
+        [ForeignKey("teklif_id")]
         public virtual Teklif Teklif { get; set; }
     }
 }

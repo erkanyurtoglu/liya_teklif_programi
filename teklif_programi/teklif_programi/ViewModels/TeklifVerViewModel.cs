@@ -1,6 +1,4 @@
-﻿
-
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
@@ -29,7 +27,7 @@ namespace teklif_programi.ViewModels
             UrunleriYukle();
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
-            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir, CanKaydetVePdfIndir);
+            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir); // CanKaydetVePdfIndir kaldırıldı
         }
 
         public string FirmaArama
@@ -51,13 +49,11 @@ namespace teklif_programi.ViewModels
                     var musteriler = _context.Musteriler.ToList();
                     Musteri? bulunanFirma = null;
 
-                    // Sayı ise ID araması yapılır
                     if (int.TryParse(_firmaArama, out int idArama))
                     {
                         bulunanFirma = musteriler.FirstOrDefault(f => f.musteri_id == idArama);
                     }
 
-                    // Firma adı araması (en az 2 karakter girilmişse)
                     if (bulunanFirma == null && _firmaArama.Length >= 2)
                     {
                         bulunanFirma = musteriler.FirstOrDefault(f =>
@@ -70,7 +66,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-
         public Musteri? FirmaBilgisi
         {
             get => _firmaBilgisi;
@@ -80,7 +75,6 @@ namespace teklif_programi.ViewModels
                 {
                     _firmaBilgisi = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -99,9 +93,9 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        public ObservableCollection<Urun> TumUrunler { get; set; } = new();
-        public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
-        public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = new();
+        public ObservableCollection<Urun> TumUrunler { get; set; } = [];
+        public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = [];
+        public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = [];
 
         private void UrunleriYukle()
         {
@@ -182,7 +176,6 @@ namespace teklif_programi.ViewModels
         {
             decimal indirim = GenelIndirimOrani / 100;
             model.indirimli_fiyat = model.birim_fiyat * (1 - indirim);
-            // Toplam otomatik hesaplanacak
             OnPropertyChanged(nameof(SecilenUrunler)); // Koleksiyonu güncelle
         }
 
@@ -225,14 +218,16 @@ namespace teklif_programi.ViewModels
         public decimal KdvUcreti => ToplamFiyat * (KdvOrani / 100);
         public decimal GenelToplam => ToplamFiyat + KdvUcreti;
 
-        public bool CanSave => FirmaBilgisi != null && SecilenUrunler.Any();
-        private bool CanKaydetVePdfIndir() => CanSave;
-
         private void KaydetVePdfIndir()
         {
-            if (FirmaBilgisi == null || !SecilenUrunler.Any())
+            if (FirmaBilgisi == null)
             {
-                MessageBox.Show("Lütfen bir firma seçin ve en az bir ürün ekleyin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Lütfen bir firma seçin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            if (!SecilenUrunler.Any())
+            {
+                MessageBox.Show("Lütfen en az bir ürün ekleyin.", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -242,6 +237,7 @@ namespace teklif_programi.ViewModels
                 var teklif = new Teklif
                 {
                     musteri_id = FirmaBilgisi.musteri_id,
+                    personel_id = 2,
                     olusturma_tarihi = DateTime.Now,
                     genel_indirim_orani = GenelIndirimOrani,
                     kdv_orani = KdvOrani
@@ -261,74 +257,131 @@ namespace teklif_programi.ViewModels
                         toplam_tutar = urun.toplam
                     });
                 }
-                _context.SaveChanges();
-
-                var toplam = new TeklifToplam
+                _context.TeklifToplamlari.Add(new TeklifToplam
                 {
                     teklif_id = teklif.teklif_id,
                     indirimli_toplam = ToplamFiyat,
                     kdv_tutari = KdvUcreti,
                     genel_toplam = GenelToplam
-                };
-                _context.TeklifToplamlari.Add(toplam);
+                });
                 _context.SaveChanges();
                 transaction.Commit();
 
+                string templatePath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\LiyaTeklifBelgesi.pdf";
                 SaveFileDialog saveFileDialog = new()
                 {
                     Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                    FileName = $"Teklif_{teklif.teklif_id}_{DateTime.Now:yyyyMMdd_HHmmss}.pdf"
+                    FileName = $"Teklif_{FirmaBilgisi.firma_adi}_{DateTime.Now:yyyyMMdd}.pdf"
                 };
+
                 if (saveFileDialog.ShowDialog() == true)
                 {
+                    PdfReader reader = new PdfReader(templatePath);
                     using FileStream fs = new(saveFileDialog.FileName, FileMode.Create);
-                    Document doc = new(PageSize.A4, 25, 25, 30, 30);
-                    PdfWriter.GetInstance(doc, fs);
-                    doc.Open();
+                    PdfStamper stamper = new PdfStamper(reader, fs);
 
-                    BaseFont baseFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
-                    Font titleFont = new(baseFont, 18, Font.BOLD);
-                    Font normalFont = new(baseFont, 12);
-                    Font boldFont = new(baseFont, 12, Font.BOLD);
-
-                    doc.Add(new Paragraph("Teklif Belgesi", titleFont) { Alignment = Element.ALIGN_CENTER, SpacingAfter = 20 });
-                    doc.Add(new Paragraph($"Firma: {FirmaBilgisi!.firma_adi}", normalFont));
-                    doc.Add(new Paragraph($"Adres: {FirmaBilgisi.firma_adresi}", normalFont));
-                    doc.Add(new Paragraph($"Telefon: {FirmaBilgisi.firma_telefonu}", normalFont));
-                    doc.Add(new Paragraph($"E-posta: {FirmaBilgisi.firma_eposta ?? "Belirtilmemiş"}", normalFont));
-                    doc.Add(new Paragraph($"Tarih: {DateTime.Now:dd.MM.yyyy HH:mm}", normalFont) { SpacingAfter = 20 });
-
-                    PdfPTable table = new(5);
-                    table.WidthPercentage = 100;
-                    table.SetWidths(new float[] { 1, 3, 1, 1, 1 });
-
-                    table.AddCell(new PdfPCell(new Phrase("Kod", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                    table.AddCell(new PdfPCell(new Phrase("Açıklama", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                    table.AddCell(new PdfPCell(new Phrase("Adet", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                    table.AddCell(new PdfPCell(new Phrase("İnd. Fiyat", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-                    table.AddCell(new PdfPCell(new Phrase("Toplam", boldFont)) { BackgroundColor = BaseColor.LIGHT_GRAY });
-
-                    foreach (var urun in SecilenUrunler)
+                    string fontPath = @"C:\Windows\Fonts\arial.ttf";
+                    if (!File.Exists(fontPath))
                     {
-                        table.AddCell(new PdfPCell(new Phrase(urun.urun_kodu, normalFont)));
-                        table.AddCell(new PdfPCell(new Phrase(urun.urun_aciklamasi, normalFont)));
-                        table.AddCell(new PdfPCell(new Phrase(urun.adet.ToString(), normalFont)));
-                        table.AddCell(new PdfPCell(new Phrase(urun.indirimli_fiyat.ToString("C2"), normalFont)));
-                        table.AddCell(new PdfPCell(new Phrase(urun.toplam.ToString("C2"), normalFont)));
+                        MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        stamper.Close();
+                        reader.Close();
+                        return;
                     }
 
-                    doc.Add(table);
-                    doc.Add(new Paragraph($"Toplam Fiyat: {ToplamFiyat:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT, SpacingBefore = 10 });
-                    doc.Add(new Paragraph($"KDV (%{KdvOrani}): {KdvUcreti:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT });
-                    doc.Add(new Paragraph($"Genel Toplam: {GenelToplam:C2}", boldFont) { Alignment = Element.ALIGN_RIGHT });
-                    doc.Close();
+                    BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                    Font firmaFont = new(baseFont, 10, Font.NORMAL, new BaseColor(128, 128, 128));
+                    Font tableHeaderFont = new(baseFont, 10, Font.BOLD, BaseColor.BLACK);
+                    Font tableBodyFont = new(baseFont, 10, Font.NORMAL, BaseColor.BLACK);
+
+                    int currentPage = 2;
+                    PdfContentByte canvas = stamper.GetOverContent(currentPage);
+
+                    Phrase firmaBilgileri = new Phrase();
+                    firmaBilgileri.Add(new Chunk("Firma Kodu: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.musteri_id.ToString() + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                    firmaBilgileri.Add(new Chunk("Firma Ad: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.firma_adi + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                    firmaBilgileri.Add(new Chunk("Tarih: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    firmaBilgileri.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy"), new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+
+                    ColumnText ct = new ColumnText(canvas);
+                    ct.SetSimpleColumn(firmaBilgileri, 50, 650, 550, 600, 15, Element.ALIGN_LEFT);
+                    ct.Go();
+
+                    Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
+                    ct.SetSimpleColumn(urunBaslik, 50, 580, 550, 560, 15, Element.ALIGN_LEFT);
+                    ct.Go();
+
+                    PdfPTable table = new PdfPTable(6);
+                    table.TotalWidth = 500f;
+                    table.LockedWidth = true;
+                    float[] widths = new float[] { 2f, 2f, 3f, 1f, 2f, 2f };
+                    table.SetWidths(widths);
+
+                    AddCellToHeader(table, "Ürün Kodu", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, "Açıklama", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, "Adet", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, "Birim Satış Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, "Satış Birim Fiyatı", tableHeaderFont, new BaseColor(240, 240, 240));
+                    AddCellToHeader(table, "Toplam Fiyat", tableHeaderFont, new BaseColor(240, 240, 240));
+
+                    int rowCount = 0;
+                    foreach (var urun in SecilenUrunler)
+                    {
+                        BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(245, 245, 245);
+                        AddCellToBody(table, urun.urun_kodu, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.urun_aciklamasi, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.adet.ToString(), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.birim_fiyat.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.indirimli_fiyat.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.toplam.ToString("C2"), tableBodyFont, rowColor);
+                        rowCount++;
+                    }
+
+                    table.WriteSelectedRows(0, -1, 50, 560, canvas);
+
+                    Phrase toplamBilgileri = new Phrase();
+                    toplamBilgileri.Add(new Chunk($"Toplam Fiyat: {ToplamFiyat:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    toplamBilgileri.Add(new Chunk($"KDV (%{KdvOrani}): {KdvUcreti:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+                    toplamBilgileri.Add(new Chunk($"Genel Toplam: {GenelToplam:C2}", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
+
+                    ct.SetSimpleColumn(toplamBilgileri, 50, 100, 550, 80, 15, Element.ALIGN_RIGHT);
+                    ct.Go();
+
+                    stamper.Close();
+                    reader.Close();
+                    MessageBox.Show("Teklif başarıyla kaydedildi ve PDF oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-                MessageBox.Show("Teklif başarıyla kaydedildi ve PDF oluşturuldu!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Hata oluştu: {ex.Message}\nİç Hata: {ex.InnerException?.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void AddCellToHeader(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_CENTER,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5
+            };
+            table.AddCell(cell);
+        }
+
+        private void AddCellToBody(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font))
+            {
+                BackgroundColor = backgroundColor,
+                HorizontalAlignment = Element.ALIGN_LEFT,
+                VerticalAlignment = Element.ALIGN_MIDDLE,
+                Padding = 5
+            };
+            table.AddCell(cell);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

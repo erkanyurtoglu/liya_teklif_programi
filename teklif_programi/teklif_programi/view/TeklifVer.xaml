@@ -268,8 +268,7 @@
 
         <!-- Teklifi Kaydet ve PDF İndir Butonu -->
         <Button Grid.Row="4" Content="Teklifi Kaydet ve PDF İndir" Style="{StaticResource ModernButtonStyle}" 
-                HorizontalAlignment="Right" Margin="0,0,20,20" Width="250" 
-                Command="{Binding KaydetVePdfIndirCommand}" 
-                IsEnabled="{Binding CanSave, Mode=OneWay}"/>
+        HorizontalAlignment="Right" Margin="0,0,20,20" Width="250" 
+        Command="{Binding KaydetVePdfIndirCommand}" />
     </Grid>
 </UserControl>
