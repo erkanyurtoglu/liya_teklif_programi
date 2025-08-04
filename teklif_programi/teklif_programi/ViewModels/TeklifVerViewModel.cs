@@ -22,12 +22,26 @@ namespace teklif_programi.ViewModels
         private Musteri? _firmaBilgisi;
         private string _urunArama = string.Empty;
 
+        public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
+
         public TeklifVerViewModel()
         {
             UrunleriYukle();
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
             KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir); // CanKaydetVePdfIndir kaldırıldı
+
+            DovizKurlari = new ObservableCollection<DovizKuru>();
+            DovizKurlariGuncelle();
+        }
+
+        private void DovizKurlariGuncelle()
+        {
+            var kurListesi = DovizServisi.KurListesiniGetir();
+
+            DovizKurlari.Clear();
+            foreach (var kur in kurListesi)
+                DovizKurlari.Add(kur);
         }
 
         public string FirmaArama
