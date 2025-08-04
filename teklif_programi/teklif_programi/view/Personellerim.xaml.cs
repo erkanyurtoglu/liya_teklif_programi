@@ -36,7 +36,7 @@ namespace teklif_programi.view
                 var personeller = string.IsNullOrWhiteSpace(arama)
                     ? db.Personeller.ToList()
                     : db.Personeller
-                          .Where(f => f.ad_soyad.Contains(arama) || f.telefon.Contains(arama))
+                          .Where(f => f.AdSoyad.Contains(arama) || f.Telefon.Contains(arama))
                           .ToList();
 
                 dataGridPersonel.ItemsSource = personeller;
@@ -91,7 +91,7 @@ namespace teklif_programi.view
                     {
                         using (var db = new TeklifDbContext())
                         {
-                            var silinecek = db.Personeller.FirstOrDefault(p => p.personel_id == secilenPersonel.personel_id);
+                            var silinecek = db.Personeller.FirstOrDefault(p => p.PersonelId == secilenPersonel.PersonelId);
 
                             if (silinecek != null)
                             {

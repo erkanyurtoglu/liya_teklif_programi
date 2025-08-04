@@ -157,15 +157,15 @@
                     <Border Background="#F3F4F6" CornerRadius="4" Padding="15" 
                 Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Width="214">
                         <StackPanel>
-                            <TextBlock Text="{Binding FirmaBilgisi.firma_adi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
-                            <TextBlock Text="{Binding FirmaBilgisi.firma_adresi}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI" Margin="0,5,0,0"/>
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaAdi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaAdresi}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI" Margin="0,5,0,0"/>
                             <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
                                 <TextBlock Text="Tel: " FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI"/>
-                                <TextBlock Text="{Binding FirmaBilgisi.firma_telefonu}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI"/>
+                                <TextBlock Text="{Binding FirmaBilgisi.FirmaTelefonu}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI"/>
                             </StackPanel>
                             <StackPanel>
                                 <TextBlock Text="E-posta: " FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI" Width="183" Margin="0,5,0,0"/>
-                                <TextBlock Text="{Binding FirmaBilgisi.firma_eposta}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI"/>
+                                <TextBlock Text="{Binding FirmaBilgisi.FirmaEposta}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -264,8 +264,8 @@
                               ItemsSource="{Binding FiltrelenmisUrunler}" 
                               SelectionMode="Single">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Kod" Binding="{Binding urun_kodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="Açıklama" Binding="{Binding urun_aciklamasi}" Width="2*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="2*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
                             <DataGridTemplateColumn Header="Seç" Width="Auto" HeaderStyle="{StaticResource DataGridColumnHeader}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
@@ -288,12 +288,12 @@
                     <TextBlock Text="Sepet" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
                     <DataGrid x:Name="dataGridSepet" Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding SecilenUrunler}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Kod" Binding="{Binding urun_kodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Açıklama" Binding="{Binding urun_aciklamasi}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Adet" Binding="{Binding adet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="0.5*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding birim_fiyat, StringFormat=C2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
-                            <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding indirimli_fiyat, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding toplam, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Adet" Binding="{Binding Adet, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="0.5*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, StringFormat=C2, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding IndirimliFiyat, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Toplam Fiyat" Binding="{Binding Toplam, StringFormat=C2}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
                             <DataGridTemplateColumn Header="Sil" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>

@@ -35,11 +35,11 @@ namespace teklif_programi.view
             {
                 Urun yeniUrun = new Urun()
                 {
-                    urun_kodu = txtUrunKodu.Text.Trim(),
-                    kategori = txtUrunKategori.Text.Trim(),
-                    urun_aciklamasi = txtUrunAciklama.Text.Trim(),
-                    birim_fiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    maliyet_fiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
+                    UrunKodu = txtUrunKodu.Text.Trim(),
+                    Kategori = txtUrunKategori.Text.Trim(),
+                    UrunAciklamasi = txtUrunAciklama.Text.Trim(),
+                    BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
+                    MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
                 };
 
                 _db.Urunler.Add(yeniUrun);

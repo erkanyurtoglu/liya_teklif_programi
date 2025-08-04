@@ -4,20 +4,36 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace teklif_programi.Models
 {
-    [Table("musteriler")]  // Veritabanındaki tablo ismi
-    public class Musteri  // C# sınıfı tekil ve PascalCase
+    [Table("musteriler")]
+    public class Musteri
     {
         [Key]
-        public int musteri_id { get; set; }
+        public int MusteriId { get; set; }
 
-        public string firma_adi { get; set; }
-        public string firma_adresi { get; set; }
-        public string firma_telefonu { get; set; }
-        public string firma_eposta { get; set; }
-        public string vergi_dairesi { get; set; }
-        public string vergi_numarasi { get; set; }
-        public string ilgili_kisi { get; set; }
-        public string ilgili_kisi_telefonu { get; set; }
-        public DateTime eklenme_tarihi { get; set; } = DateTime.Now;
+        [Required]
+        public string FirmaAdi { get; set; } = string.Empty;
+
+        [Required]
+        public string FirmaAdresi { get; set; } = string.Empty;
+
+        [Required]
+        public string FirmaTelefonu { get; set; } = string.Empty;
+
+        [Required]
+        public string FirmaEposta { get; set; } = string.Empty;
+
+        [Required]
+        public string VergiDairesi { get; set; } = string.Empty;
+
+        [Required]
+        public string VergiNumarasi { get; set; } = string.Empty;
+
+        [Required]
+        public string IlgiliKisi { get; set; } = string.Empty;
+
+        [Required]
+        public string IlgiliKisiTelefonu { get; set; } = string.Empty;
+
+        public DateTime EklenmeTarihi { get; set; } = DateTime.Now;
     }
 }

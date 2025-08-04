@@ -8,11 +8,20 @@ namespace teklif_programi.Models
     public class Personel
     {
         [Key]
-        public int personel_id { get; set; }
-        public string ad_soyad { get; set; }
-        public string telefon { get; set; }
-        public string pozisyon { get; set; }
-        public string sifre { get; set; }
-        public DateTime eklenme_tarihi { get; set; } = DateTime.Now;
+        public int PersonelId { get; set; }
+
+        [Required]
+        public string AdSoyad { get; set; } = string.Empty;
+
+        [Required]
+        public string Telefon { get; set; } = string.Empty;
+
+        [Required]
+        public string Pozisyon { get; set; } = string.Empty;
+
+        [Required]
+        public string Sifre { get; set; } = string.Empty;
+
+        public DateTime EklenmeTarihi { get; set; } = DateTime.Now;
     }
 }

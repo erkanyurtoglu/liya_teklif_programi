@@ -1,45 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using teklif_programi.Models;
 
-
-public static class DovizServisi
+namespace teklif_programi.Services
 {
-    public static List<DovizKuru> KurListesiniGetir()
+    public static class DovizServisi
     {
-        try
+        public static List<DovizKuru> KurListesiniGetir()
         {
-            var url = "https://www.tcmb.gov.tr/kurlar/today.xml";
-            XDocument doc = XDocument.Load(url);
-
-            var kurlar = new List<DovizKuru>();
-
-            foreach (var doviz in doc.Descendants("Currency"))
+            try
             {
-                var code = doviz.Attribute("CurrencyCode")?.Value;
+                var url = "https://www.tcmb.gov.tr/kurlar/today.xml";
+                XDocument doc = XDocument.Load(url);
 
-                if (code == "USD" || code == "EUR")
-                {
-                    kurlar.Add(new DovizKuru
-                    {
-                        DovizCinsi = code,
-                        Alis = decimal.Parse(doviz.Element("ForexBuying")?.Value ?? "0", CultureInfo.InvariantCulture),
-                        Satis = decimal.Parse(doviz.Element("ForexSelling")?.Value ?? "0", CultureInfo.InvariantCulture)
-                    });
-                }
+                return doc
+                    .Descendants("Currency")
+                    .Where(d => d.Attribute("CurrencyCode")?.Value is "USD" or "EUR")
+                    .Select(d => new DovizKuru(
+                        d.Attribute("CurrencyCode")!.Value,
+                        decimal.Parse(d.Element("ForexBuying")?.Value ?? "0", CultureInfo.InvariantCulture),
+                        decimal.Parse(d.Element("ForexSelling")?.Value ?? "0", CultureInfo.InvariantCulture)
+                    ))
+                    .ToList();
             }
-
-            return kurlar;
-        }
-        catch (Exception ex)
-        {
-            // Hata loglanabilir
-            return new List<DovizKuru>();
+            catch
+            {
+                // Loglama yapılabilir
+                return new List<DovizKuru>();
+            }
         }
     }
 }

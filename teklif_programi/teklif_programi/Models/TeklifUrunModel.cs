@@ -6,28 +6,29 @@ namespace teklif_programi.Models
 {
     public class TeklifUrunModel : INotifyPropertyChanged
     {
-        public int urun_id { get; set; }
-        public string urun_kodu { get; set; }
-        public string urun_aciklamasi { get; set; }
+        public int UrunId { get; set; }
 
-        private decimal _birim_fiyat;
-        public decimal birim_fiyat
+        public string UrunKodu { get; set; } = string.Empty;
+
+        public string UrunAciklamasi { get; set; } = string.Empty;
+
+        private decimal _birimFiyat;
+        public decimal BirimFiyat
         {
-            get => _birim_fiyat;
+            get => _birimFiyat;
             set
             {
-                if (_birim_fiyat != value)
+                if (_birimFiyat != value)
                 {
-                    _birim_fiyat = value;
+                    _birimFiyat = value;
                     OnPropertyChanged();
-                    // Birim fiyat değiştiğinde dışarıya bildirim
                     OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
 
         private int _adet = 1;
-        public int adet
+        public int Adet
         {
             get => _adet;
             set
@@ -36,32 +37,32 @@ namespace teklif_programi.Models
                 {
                     _adet = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(toplam));
+                    OnPropertyChanged(nameof(Toplam));
                 }
             }
         }
 
-        private decimal _indirimli_fiyat;
-        public decimal indirimli_fiyat
+        private decimal _indirimliFiyat;
+        public decimal IndirimliFiyat
         {
-            get => _indirimli_fiyat;
+            get => _indirimliFiyat;
             set
             {
-                if (_indirimli_fiyat != value)
+                if (_indirimliFiyat != value)
                 {
-                    _indirimli_fiyat = value;
+                    _indirimliFiyat = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(toplam));
+                    OnPropertyChanged(nameof(Toplam));
                 }
             }
         }
 
-        public decimal toplam => adet * indirimli_fiyat;
+        public decimal Toplam => Adet * IndirimliFiyat;
 
-        // Birim fiyat değiştiğinde ViewModel’de dinlemek için event
         public event EventHandler? OnBirimFiyatDegisti;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -43,10 +43,10 @@ namespace teklif_programi.view
 
             var personel = new Personel
             {
-                ad_soyad = txtAdSoyad.Text,
-                pozisyon = txtPozisyon.Text,
-                telefon = txtTelefon.Text,
-                sifre = txtSifre.Text,
+                AdSoyad = txtAdSoyad.Text,
+                Pozisyon = txtPozisyon.Text,
+                Telefon = txtTelefon.Text,
+                Sifre = txtSifre.Text,
             };
 
             _db.Personeller.Add(personel);

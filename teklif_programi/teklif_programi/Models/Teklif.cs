@@ -9,23 +9,23 @@ namespace teklif_programi.Models
     public class Teklif
     {
         [Key]
-        public int teklif_id { get; set; }
+        public int TeklifId { get; set; }
 
-        public int musteri_id { get; set; }
+        public int MusteriId { get; set; }
 
-        public int? personel_id { get; set; } // Nullable
+        public int? PersonelId { get; set; } // Nullable
 
-        public DateTime olusturma_tarihi { get; set; } = DateTime.Now;
+        public DateTime OlusturmaTarihi { get; set; } = DateTime.Now;
 
-        public decimal genel_indirim_orani { get; set; }
+        public decimal GenelIndirimOrani { get; set; }
 
-        public decimal kdv_orani { get; set; }
+        public decimal KdvOrani { get; set; }
 
-        [ForeignKey("musteri_id")]
-        public virtual Musteri Musteri { get; set; }
+        [ForeignKey(nameof(MusteriId))]
+        public virtual Musteri Musteri { get; set; } = null!;
 
-        [ForeignKey("personel_id")]
-        public virtual Personel Personel { get; set; }
+        [ForeignKey(nameof(PersonelId))]
+        public virtual Personel? Personel { get; set; }  // Nullable navigation property
 
         public virtual ICollection<TeklifUrun> TeklifUrunleri { get; set; } = new List<TeklifUrun>();
     }

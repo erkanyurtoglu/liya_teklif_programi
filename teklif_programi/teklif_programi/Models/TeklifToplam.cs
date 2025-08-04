@@ -7,17 +7,17 @@ namespace teklif_programi.Models
     public class TeklifToplam
     {
         [Key]
-        public int toplam_id { get; set; }
+        public int ToplamId { get; set; }
 
-        public int teklif_id { get; set; }
+        public int TeklifId { get; set; }
 
-        public decimal indirimli_toplam { get; set; }
+        public decimal IndirimliToplam { get; set; }
 
-        public decimal kdv_tutari { get; set; }
+        public decimal KdvTutari { get; set; }
 
-        public decimal genel_toplam { get; set; }
+        public decimal GenelToplam { get; set; }
 
-        [ForeignKey("teklif_id")]
-        public virtual Teklif Teklif { get; set; }
+        [ForeignKey(nameof(TeklifId))]
+        public virtual Teklif Teklif { get; set; } = null!;
     }
 }

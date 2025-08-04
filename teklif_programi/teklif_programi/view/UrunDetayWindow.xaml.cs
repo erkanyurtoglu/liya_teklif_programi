@@ -30,11 +30,11 @@ namespace teklif_programi.view
             _urun = urun;
 
             // TextBox'lara bilgileri doldur
-            txtUrunKodu.Text = _urun.urun_kodu;
-            txtKategori.Text = _urun.kategori;
-            txtAciklama.Text = _urun.urun_aciklamasi;
-            txt2025BirimSatisFiyati.Text = _urun.birim_fiyat.ToString("F2");
-            txtYurticiMaliyetBirimFiyati.Text = _urun.maliyet_fiyati.ToString("F2");
+            txtUrunKodu.Text = _urun.UrunKodu;
+            txtKategori.Text = _urun.Kategori;
+            txtAciklama.Text = _urun.UrunAciklamasi;
+            txt2025BirimSatisFiyati.Text = _urun.BirimFiyat.ToString("F2");
+            txtYurticiMaliyetBirimFiyati.Text = _urun.MaliyetFiyati.ToString("F2");
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -45,10 +45,10 @@ namespace teklif_programi.view
             if (pwdWindow.ShowDialog() == true && pwdWindow.EnteredPassword == "Liya2015")
             {
                 // Güncelleme işlemi
-                _urun.kategori = txtKategori.Text;
-                _urun.urun_aciklamasi = txtAciklama.Text;
-                _urun.birim_fiyat = decimal.Parse(txt2025BirimSatisFiyati.Text);
-                _urun.maliyet_fiyati = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
+                _urun.Kategori = txtKategori.Text;
+                _urun.UrunAciklamasi = txtAciklama.Text;
+                _urun.BirimFiyat = decimal.Parse(txt2025BirimSatisFiyati.Text);
+                _urun.MaliyetFiyati = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
 
                 _db.Urunler.Update(_urun);
                 _db.SaveChanges();

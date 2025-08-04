@@ -7,24 +7,24 @@ namespace teklif_programi.Models
     public class TeklifUrun
     {
         [Key]
-        public int teklif_urun_id { get; set; }
+        public int TeklifUrunId { get; set; }
 
-        public int teklif_id { get; set; }
+        public int TeklifId { get; set; }
 
-        public int urun_id { get; set; }
+        public int UrunId { get; set; }
 
-        public int adet { get; set; }
+        public int Adet { get; set; }
 
-        public decimal birim_fiyat { get; set; }
+        public decimal BirimFiyat { get; set; }
 
-        public decimal indirimli_birim_fiyat { get; set; }
+        public decimal IndirimliBirimFiyat { get; set; }
 
-        public decimal toplam_tutar { get; set; }
+        public decimal ToplamTutar { get; set; }
 
-        [ForeignKey("teklif_id")]
-        public virtual Teklif Teklif { get; set; }
+        [ForeignKey(nameof(TeklifId))]
+        public virtual Teklif Teklif { get; set; } = null!;
 
-        [ForeignKey("urun_id")]
-        public virtual Urun Urun { get; set; }
+        [ForeignKey(nameof(UrunId))]
+        public virtual Urun Urun { get; set; } = null!;
     }
 }

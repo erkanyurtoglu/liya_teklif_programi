@@ -35,7 +35,7 @@ namespace teklif_programi.view
             var urunler = string.IsNullOrWhiteSpace(arama)
                 ? _db.Urunler.ToList()
                 : _db.Urunler
-                      .Where(f => f.urun_aciklamasi.Contains(arama) || f.urun_kodu.Contains(arama))
+                      .Where(f => f.UrunAciklamasi.Contains(arama) || f.UrunKodu.Contains(arama))
                       .ToList();
 
             dataGridUrunler.ItemsSource = urunler;
@@ -89,7 +89,7 @@ namespace teklif_programi.view
                     {
                         using (var db = new TeklifDbContext())
                         {
-                            var urun = db.Urunler.FirstOrDefault(u => u.urun_id == secilenUrun.urun_id);
+                            var urun = db.Urunler.FirstOrDefault(u => u.UrunId == secilenUrun.UrunId);
 
                             if (urun != null)
                             {

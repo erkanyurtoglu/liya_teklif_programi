@@ -85,10 +85,10 @@
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding urun_kodu}" Width="1*" />
-                <DataGridTextColumn Header="Kategori" Binding="{Binding kategori}" Width="2*" />
-                <DataGridTextColumn Header="Açıklama" Binding="{Binding urun_aciklamasi}" Width="3*" />
-                <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding birim_fiyat}" Width="2*" />
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" Width="1*" />
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*" />
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="3*" />
+                <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimFiyat}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

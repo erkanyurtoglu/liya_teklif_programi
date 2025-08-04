@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Services;
 
 namespace teklif_programi.ViewModels
 {
@@ -65,14 +66,14 @@ namespace teklif_programi.ViewModels
 
                     if (int.TryParse(_firmaArama, out int idArama))
                     {
-                        bulunanFirma = musteriler.FirstOrDefault(f => f.musteri_id == idArama);
+                        bulunanFirma = musteriler.FirstOrDefault(f => f.MusteriId == idArama);
                     }
 
                     if (bulunanFirma == null && _firmaArama.Length >= 2)
                     {
                         bulunanFirma = musteriler.FirstOrDefault(f =>
-                            !string.IsNullOrEmpty(f.firma_adi) &&
-                            f.firma_adi.Contains(_firmaArama, StringComparison.OrdinalIgnoreCase));
+                            !string.IsNullOrEmpty(f.FirmaAdi) &&
+                            f.FirmaAdi.Contains(_firmaArama, StringComparison.OrdinalIgnoreCase));
                     }
 
                     FirmaBilgisi = bulunanFirma;
@@ -134,8 +135,8 @@ namespace teklif_programi.ViewModels
             else
             {
                 var filtreli = TumUrunler.Where(u =>
-                    u.urun_kodu.Contains(UrunArama, StringComparison.OrdinalIgnoreCase) ||
-                    u.urun_aciklamasi.Contains(UrunArama, StringComparison.OrdinalIgnoreCase)).ToList();
+                    u.UrunKodu.Contains(UrunArama, StringComparison.OrdinalIgnoreCase) ||
+                    u.UrunAciklamasi.Contains(UrunArama, StringComparison.OrdinalIgnoreCase)).ToList();
                 FiltrelenmisUrunler = new ObservableCollection<Urun>(filtreli);
             }
             OnPropertyChanged(nameof(FiltrelenmisUrunler));
@@ -160,21 +161,21 @@ namespace teklif_programi.ViewModels
         private void SepeteEkle(Urun? urun)
         {
             if (urun == null) return;
-            var mevcutUrun = SecilenUrunler.FirstOrDefault(u => u.urun_id == urun.urun_id);
+            var mevcutUrun = SecilenUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
             if (mevcutUrun != null)
             {
-                mevcutUrun.adet++;
+                mevcutUrun.Adet++;
                 HesaplaIndirimliFiyat(mevcutUrun);
             }
             else
             {
                 var model = new TeklifUrunModel
                 {
-                    urun_id = urun.urun_id,
-                    urun_kodu = urun.urun_kodu,
-                    urun_aciklamasi = urun.urun_aciklamasi,
-                    birim_fiyat = urun.birim_fiyat,
-                    adet = 1
+                    UrunId = urun.UrunId,
+                    UrunKodu = urun.UrunKodu,
+                    UrunAciklamasi = urun.UrunAciklamasi,
+                    BirimFiyat = urun.BirimFiyat,
+                    Adet = 1
                 };
 
                 // Birim fiyat değişimi eventine abone ol
@@ -204,7 +205,7 @@ namespace teklif_programi.ViewModels
         private void HesaplaIndirimliFiyat(TeklifUrunModel model)
         {
             decimal indirim = GenelIndirimOrani / 100;
-            model.indirimli_fiyat = model.birim_fiyat * (1 - indirim);
+            model.IndirimliFiyat = model.BirimFiyat * (1 - indirim);
             OnPropertyChanged(nameof(SecilenUrunler)); // Koleksiyonu güncelle
         }
 
@@ -243,7 +244,7 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(GenelToplam));
         }
 
-        public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.toplam);
+        public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);
         public decimal KdvUcreti => ToplamFiyat * (KdvOrani / 100);
         public decimal GenelToplam => ToplamFiyat + KdvUcreti;
 
@@ -265,11 +266,11 @@ namespace teklif_programi.ViewModels
                 using var transaction = _context.Database.BeginTransaction();
                 var teklif = new Teklif
                 {
-                    musteri_id = FirmaBilgisi.musteri_id,
-                    personel_id = 2,
-                    olusturma_tarihi = DateTime.Now,
-                    genel_indirim_orani = GenelIndirimOrani,
-                    kdv_orani = KdvOrani
+                    MusteriId = FirmaBilgisi.MusteriId,
+                    PersonelId = 2,
+                    OlusturmaTarihi = DateTime.Now,
+                    GenelIndirimOrani = GenelIndirimOrani,
+                    KdvOrani = KdvOrani
                 };
                 _context.Teklifler.Add(teklif);
                 _context.SaveChanges();
@@ -278,20 +279,20 @@ namespace teklif_programi.ViewModels
                 {
                     _context.TeklifUrunleri.Add(new TeklifUrun
                     {
-                        teklif_id = teklif.teklif_id,
-                        urun_id = urun.urun_id,
-                        adet = urun.adet,
-                        birim_fiyat = urun.birim_fiyat,
-                        indirimli_birim_fiyat = urun.indirimli_fiyat,
-                        toplam_tutar = urun.toplam
+                        TeklifId = teklif.TeklifId,
+                        UrunId = urun.UrunId,
+                        Adet = urun.Adet,
+                        BirimFiyat = urun.BirimFiyat,
+                        IndirimliBirimFiyat = urun.IndirimliFiyat,
+                        ToplamTutar = urun.Toplam
                     });
                 }
                 _context.TeklifToplamlari.Add(new TeklifToplam
                 {
-                    teklif_id = teklif.teklif_id,
-                    indirimli_toplam = ToplamFiyat,
-                    kdv_tutari = KdvUcreti,
-                    genel_toplam = GenelToplam
+                    TeklifId = teklif.TeklifId,
+                    IndirimliToplam = ToplamFiyat,
+                    KdvTutari = KdvUcreti,
+                    GenelToplam = GenelToplam
                 });
                 _context.SaveChanges();
                 transaction.Commit();
@@ -300,7 +301,7 @@ namespace teklif_programi.ViewModels
                 SaveFileDialog saveFileDialog = new()
                 {
                     Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                    FileName = $"Teklif_{FirmaBilgisi.firma_adi}_{DateTime.Now:yyyyMMdd}.pdf"
+                    FileName = $"Teklif_{FirmaBilgisi.FirmaAdi}_{DateTime.Now:yyyyMMdd}.pdf"
                 };
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -328,9 +329,9 @@ namespace teklif_programi.ViewModels
 
                     Phrase firmaBilgileri = new Phrase();
                     firmaBilgileri.Add(new Chunk("Firma Kodu: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.musteri_id.ToString() + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.MusteriId.ToString() + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
                     firmaBilgileri.Add(new Chunk("Firma Ad: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.firma_adi + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
+                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.FirmaAdi + "\n", new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
                     firmaBilgileri.Add(new Chunk("Tarih: ", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
                     firmaBilgileri.Add(new Chunk(DateTime.Now.ToString("dd.MM.yyyy"), new Font(baseFont, 10, Font.NORMAL, new BaseColor(80, 80, 80))));
 
@@ -359,12 +360,12 @@ namespace teklif_programi.ViewModels
                     foreach (var urun in SecilenUrunler)
                     {
                         BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(245, 245, 245);
-                        AddCellToBody(table, urun.urun_kodu, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.urun_aciklamasi, tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.adet.ToString(), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.birim_fiyat.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.indirimli_fiyat.ToString("C2"), tableBodyFont, rowColor);
-                        AddCellToBody(table, urun.toplam.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.UrunKodu, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.UrunAciklamasi, tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.Adet.ToString(), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.BirimFiyat.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.IndirimliFiyat.ToString("C2"), tableBodyFont, rowColor);
+                        AddCellToBody(table, urun.Toplam.ToString("C2"), tableBodyFont, rowColor);
                         rowCount++;
                     }
 

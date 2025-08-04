@@ -35,7 +35,7 @@ namespace teklif_programi.view
             var firmalar = string.IsNullOrWhiteSpace(arama)
                 ? _db.Musteriler.ToList()
                 : _db.Musteriler
-                      .Where(f => f.firma_adi.Contains(arama) || f.firma_telefonu.Contains(arama))
+                      .Where(f => f.FirmaAdi.Contains(arama) || f.FirmaTelefonu.Contains(arama))
                       .ToList();
 
             dgFirmalar.ItemsSource = firmalar;
@@ -82,7 +82,7 @@ namespace teklif_programi.view
                 {
                     using (var db = new TeklifDbContext())
                     {
-                        var firma = db.Musteriler.FirstOrDefault(f => f.musteri_id == secilenFirma.musteri_id);
+                        var firma = db.Musteriler.FirstOrDefault(f => f.MusteriId == secilenFirma.MusteriId);
 
                         if (firma != null)
                         {

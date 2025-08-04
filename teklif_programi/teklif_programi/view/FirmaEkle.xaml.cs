@@ -50,14 +50,14 @@ namespace teklif_programi.view
             // Yeni firma nesnesi oluşturdum.
             var firma = new Musteri
             {
-                firma_adi = firmaAdi,
-                firma_adresi = adres,
-                firma_telefonu = telefon,
-                firma_eposta = email,
-                vergi_numarasi = vergiNumarasi,
-                vergi_dairesi = vergiDairesi,
-                ilgili_kisi = ilgiliKisi,
-                ilgili_kisi_telefonu = ilgiliKisiTelefon
+                FirmaAdi = firmaAdi,
+                FirmaAdresi = adres,
+                FirmaTelefonu = telefon,
+                FirmaEposta = email,
+                VergiNumarasi = vergiNumarasi,
+                VergiDairesi = vergiDairesi,
+                IlgiliKisi = ilgiliKisi,
+                IlgiliKisiTelefonu = ilgiliKisiTelefon
             };
 
             // Veritabanına ekle

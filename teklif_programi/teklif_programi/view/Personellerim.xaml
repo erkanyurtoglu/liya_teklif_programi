@@ -75,10 +75,10 @@
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Personel No" Binding="{Binding personel_id}" Width="1*" />
-                <DataGridTextColumn Header="Adı Soyadı" Binding="{Binding ad_soyad}" Width="2*" />
-                <DataGridTextColumn Header="Pozisyon" Binding="{Binding pozisyon}" Width="2*" />
-                <DataGridTextColumn Header="Telefon" Binding="{Binding telefon}" Width="2*" />
+                <DataGridTextColumn Header="Personel No" Binding="{Binding PersonelId}" Width="1*" />
+                <DataGridTextColumn Header="Adı Soyadı" Binding="{Binding AdSoyad}" Width="2*" />
+                <DataGridTextColumn Header="Pozisyon" Binding="{Binding Pozisyon}" Width="2*" />
+                <DataGridTextColumn Header="Telefon" Binding="{Binding Telefon}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

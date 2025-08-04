@@ -1,16 +1,5 @@
-﻿    using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using teklif_programi.Data;
 using teklif_programi.Models;
 
@@ -21,76 +10,57 @@ namespace teklif_programi.view
     /// </summary>
     public partial class PersonelDetayWindow : Window
     {
-        private readonly TeklifDbContext _db = new TeklifDbContext();
-        private Personel _personel;
+        private readonly TeklifDbContext _db = new();
+        private readonly Personel _personel;
 
         public PersonelDetayWindow(Personel secilenPersonel)
         {
             InitializeComponent();
 
             // Veritabanından personel bilgilerini çekiyoruz (ID bazlı)
-            _personel = _db.Personeller.FirstOrDefault(p => p.personel_id == secilenPersonel.personel_id);
+            _personel = _db.Personeller.FirstOrDefault(p => p.PersonelId == secilenPersonel.PersonelId)
+                        ?? throw new InvalidOperationException("Personel verisi bulunamadı!");
 
-            if (_personel != null)
-            {
-                VeriDoldur();
-            }
-            else
-            {
-                MessageBox.Show("Personel verisi bulunamadı!", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                this.Close();
-            }
+            VeriDoldur();
         }
 
         private void VeriDoldur()
         {
-            txtPersonelKodu.Text = _personel.personel_id.ToString();
-            txtAdSoyad.Text = _personel.ad_soyad;
-            txtPozisyon.Text = _personel.pozisyon;
-            txtTelefon.Text = _personel.telefon;
-
-            // Şifre veritabanındaki gibi gözüksün
-            txtSifre.Text = _personel.sifre ?? string.Empty;
+            txtPersonelKodu.Text = _personel.PersonelId.ToString();
+            txtAdSoyad.Text = _personel.AdSoyad;
+            txtPozisyon.Text = _personel.Pozisyon;
+            txtTelefon.Text = _personel.Telefon;
+            txtSifre.Text = _personel.Sifre ?? string.Empty;
         }
-
 
         private void BtnIptal_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
-            this.Close();
+            DialogResult = false;
+            Close();
         }
 
         private void BtnPersonelKaydet_Click(object sender, RoutedEventArgs e)
         {
-            // Şifre değişikliği için kullanıcıdan onay alalım
-            var pwdDialog = new PasswordDialog();
-            pwdDialog.Owner = this;
-            bool? result = pwdDialog.ShowDialog();
-
-            if (result == true)
+            var pwdDialog = new PasswordDialog { Owner = this };
+            if (pwdDialog.ShowDialog() is true)
             {
                 const string dogruSifre = "Liya2015";
 
                 if (pwdDialog.EnteredPassword == dogruSifre)
                 {
-                    // Güncellemeleri al
-                    _personel.ad_soyad = txtAdSoyad.Text;
-                    _personel.pozisyon = txtPozisyon.Text;
-                    _personel.telefon = txtTelefon.Text;
+                    _personel.AdSoyad = txtAdSoyad.Text;
+                    _personel.Pozisyon = txtPozisyon.Text;
+                    _personel.Telefon = txtTelefon.Text;
 
-                    // Şifre boş değilse güncelle
                     if (!string.IsNullOrWhiteSpace(txtSifre.Text))
-                    {
-                        _personel.sifre = txtSifre.Text;
-                    }
+                        _personel.Sifre = txtSifre.Text;
 
                     _db.Personeller.Update(_personel);
                     _db.SaveChanges();
 
                     MessageBox.Show("Personel bilgileri başarıyla güncellendi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                    this.DialogResult = true; // Ana pencereye başarılı güncelleme bilgisini ver
-                    this.Close();
+                    DialogResult = true;
+                    Close();
                 }
                 else
                 {

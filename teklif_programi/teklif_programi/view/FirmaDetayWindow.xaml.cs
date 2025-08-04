@@ -27,10 +27,10 @@ namespace teklif_programi.view
             _firma = secilenFirma;
 
             // TextBox'lara firma bilgilerini aktar
-            txtFirmaAdi.Text = _firma.firma_adi;
-            txtAdres.Text = _firma.firma_adresi;
-            txtTelefon.Text = _firma.firma_telefonu;
-            txtEmail.Text = _firma.firma_eposta;
+            txtFirmaAdi.Text = _firma.FirmaAdi;
+            txtAdres.Text = _firma.FirmaAdresi;
+            txtTelefon.Text = _firma.FirmaTelefonu;
+            txtEmail.Text = _firma.FirmaEposta;
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -46,10 +46,10 @@ namespace teklif_programi.view
 
                 if (pwdDialog.EnteredPassword == dogruSifre)
                 {
-                    _firma.firma_adi = txtFirmaAdi.Text;
-                    _firma.firma_adresi = txtAdres.Text;
-                    _firma.firma_telefonu = txtTelefon.Text;
-                    _firma.firma_eposta = txtEmail.Text;
+                    _firma.FirmaAdi = txtFirmaAdi.Text;
+                    _firma.FirmaAdresi = txtAdres.Text;
+                    _firma.FirmaTelefonu = txtTelefon.Text;
+                    _firma.FirmaEposta = txtEmail.Text;
 
                     _db.Musteriler.Update(_firma);
                     _db.SaveChanges();
