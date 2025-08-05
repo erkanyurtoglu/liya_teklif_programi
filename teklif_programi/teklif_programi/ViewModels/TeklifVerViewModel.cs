@@ -22,15 +22,18 @@ namespace teklif_programi.ViewModels
         private string _firmaArama = string.Empty;
         private Musteri? _firmaBilgisi;
         private string _urunArama = string.Empty;
+        private string _selectedCurrency = "TL"; // Varsayılan para birimi
+        private ObservableCollection<string> _paraBirimiListe;
 
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
 
         public TeklifVerViewModel()
         {
+            ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
             UrunleriYukle();
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
-            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir); // CanKaydetVePdfIndir kaldırıldı
+            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir);
 
             DovizKurlari = new ObservableCollection<DovizKuru>();
             DovizKurlariGuncelle();
@@ -39,7 +42,6 @@ namespace teklif_programi.ViewModels
         private void DovizKurlariGuncelle()
         {
             var kurListesi = DovizServisi.KurListesiniGetir();
-
             DovizKurlari.Clear();
             foreach (var kur in kurListesi)
                 DovizKurlari.Add(kur);
@@ -112,6 +114,30 @@ namespace teklif_programi.ViewModels
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = [];
         public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = [];
 
+        public ObservableCollection<string> ParaBirimiListe
+        {
+            get => _paraBirimiListe;
+            set
+            {
+                _paraBirimiListe = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SelectedCurrency
+        {
+            get => _selectedCurrency;
+            set
+            {
+                if (_selectedCurrency != value)
+                {
+                    _selectedCurrency = value;
+                    OnPropertyChanged();
+                    RecalculateAll(); // Para birimi değiştiğinde tüm fiyatları güncelle
+                }
+            }
+        }
+
         private void UrunleriYukle()
         {
             try
@@ -174,13 +200,14 @@ namespace teklif_programi.ViewModels
                     UrunId = urun.UrunId,
                     UrunKodu = urun.UrunKodu,
                     UrunAciklamasi = urun.UrunAciklamasi,
-                    BirimFiyat = urun.BirimFiyat,
+                    FiyatTL = urun.FiyatTL,
+                    FiyatUSD = urun.FiyatUSD,
+                    FiyatEUR = urun.FiyatEUR,
+                    BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency),
                     Adet = 1
                 };
 
-                // Birim fiyat değişimi eventine abone ol
                 model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
-
                 HesaplaIndirimliFiyat(model);
                 SecilenUrunler.Add(model);
             }
@@ -207,6 +234,16 @@ namespace teklif_programi.ViewModels
             decimal indirim = GenelIndirimOrani / 100;
             model.IndirimliFiyat = model.BirimFiyat * (1 - indirim);
             OnPropertyChanged(nameof(SecilenUrunler)); // Koleksiyonu güncelle
+        }
+
+        private decimal GetFiyatByCurrency(Urun urun, string currency)
+        {
+            return currency switch
+            {
+                "USD" => urun.FiyatUSD,
+                "EUR" => urun.FiyatEUR,
+                _ => urun.FiyatTL
+            };
         }
 
         private decimal _genelIndirimOrani = 0;
@@ -237,6 +274,10 @@ namespace teklif_programi.ViewModels
         {
             foreach (var urun in SecilenUrunler)
             {
+                urun.BirimFiyat = GetFiyatByCurrency(
+                    TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId),
+                    SelectedCurrency
+                );
                 HesaplaIndirimliFiyat(urun);
             }
             OnPropertyChanged(nameof(ToplamFiyat));
@@ -376,9 +417,7 @@ namespace teklif_programi.ViewModels
                     toplamBilgileri.Add(new Chunk($"KDV (%{KdvOrani}): {KdvUcreti:C2}\n", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
                     toplamBilgileri.Add(new Chunk($"Genel Toplam: {GenelToplam:C2}", new Font(baseFont, 10, Font.BOLD, BaseColor.BLACK)));
 
-
                     ct.SetSimpleColumn(toplamBilgileri, 50, 150, 550, 50, 15, Element.ALIGN_RIGHT);
-
                     ct.Go();
 
                     stamper.Close();

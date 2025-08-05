@@ -59,6 +59,10 @@ namespace teklif_programi.Models
 
         public decimal Toplam => Adet * IndirimliFiyat;
 
+        public decimal FiyatTL { get; set; }
+        public decimal FiyatUSD { get; set; }
+        public decimal FiyatEUR { get; set; }
+
         public event EventHandler? OnBirimFiyatDegisti;
 
         public event PropertyChangedEventHandler? PropertyChanged;

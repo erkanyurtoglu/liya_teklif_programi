@@ -35,6 +35,9 @@ namespace teklif_programi.Models
         public decimal BirimFiyat { get; set; }
 
         public decimal MaliyetFiyati { get; set; }
+        public decimal FiyatTL { get; set; }
+        public decimal FiyatUSD { get; set; }
+        public decimal FiyatEUR { get; set; }
 
         public DateTime EklenmeTarihi { get; set; } = DateTime.Now;
 

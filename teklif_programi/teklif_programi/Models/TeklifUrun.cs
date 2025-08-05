@@ -20,6 +20,10 @@ namespace teklif_programi.Models
         public decimal IndirimliBirimFiyat { get; set; }
 
         public decimal ToplamTutar { get; set; }
+        public decimal ParaBirimi { get; set; }
+        public decimal FiyatTL { get; set; }
+        public decimal FiyatUSD { get; set; }
+        public decimal FiyatEUR { get; set; }
 
         [ForeignKey(nameof(TeklifId))]
         public virtual Teklif Teklif { get; set; } = null!;
