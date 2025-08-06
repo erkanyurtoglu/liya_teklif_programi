@@ -124,11 +124,12 @@
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" IsReadOnly="True"/>
                     <DataGridTextColumn Header="Adet" Binding="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                    <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=C2}"/>
-                    <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding IndirimliFiyat, Mode=OneWay, StringFormat=C2}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyat, Mode=OneWay}" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding IndirimliFiyat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=C2}"/>
                     <DataGridTextColumn Header="Toplam" Binding="{Binding Toplam, Mode=OneWay, StringFormat=C2}" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
+
         </Border>
 
         <!-- Toplamlar ve Butonlar -->

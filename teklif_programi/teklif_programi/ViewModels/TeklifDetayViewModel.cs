@@ -119,11 +119,6 @@ namespace teklif_programi.ViewModels
         {
             if (TeklifToplam == null) return;
 
-            // İndirimli fiyat güncelle (örnek: genel indirim oranı varsa uygula)
-            foreach (var urun in TeklifUrunler)
-            {
-                urun.IndirimliFiyat = urun.BirimFiyat * (1 - Teklif.GenelIndirimOrani / 100);
-            }
 
             TeklifToplam.IndirimliToplam = TeklifUrunler.Sum(u => u.Toplam);
             TeklifToplam.KdvTutari = TeklifToplam.IndirimliToplam * (Teklif.KdvOrani / 100);

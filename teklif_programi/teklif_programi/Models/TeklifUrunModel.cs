@@ -53,6 +53,7 @@ namespace teklif_programi.Models
                 {
                     _indirimliFiyat = value;
                     OnPropertyChanged();
+                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); 
                     OnPropertyChanged(nameof(Toplam));
                 }
             }
