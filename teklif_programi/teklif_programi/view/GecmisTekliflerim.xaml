@@ -88,8 +88,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Teklif No" Binding="{Binding TeklifId}" Width="1.1*" />
                 <DataGridTextColumn Header="Firma Kodu" Binding="{Binding MusteriId}" Width="1.1*" />
-                <DataGridTextColumn Header="Firma Adı" Binding="{Binding Firma.FirmaAdi}" Width="2*" />
+                <DataGridTextColumn Header="Firma Adı" Binding="{Binding Musteri.FirmaAdi}" Width="2*" />
                 <DataGridTextColumn Header="Teklifi Veren Personel" Binding="{Binding Personel.AdSoyad}" Width="2*" />
+                <DataGridTextColumn Header="Teklif Tutarı" Binding="{Binding TeklifToplam.GenelToplam}" Width="2*" />
                 <DataGridTemplateColumn Header="İşlemler" Width="120">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

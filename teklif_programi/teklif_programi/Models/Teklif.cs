@@ -28,5 +28,8 @@ namespace teklif_programi.Models
         public virtual Personel? Personel { get; set; }  // Nullable navigation property
 
         public virtual ICollection<TeklifUrun> TeklifUrunleri { get; set; } = new List<TeklifUrun>();
+        public virtual TeklifToplam? TeklifToplam { get; set; }
+
+
     }
 }

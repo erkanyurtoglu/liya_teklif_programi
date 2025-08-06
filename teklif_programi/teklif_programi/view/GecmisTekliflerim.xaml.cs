@@ -29,6 +29,7 @@ namespace teklif_programi.view
             var tekliflerQuery = _db.Teklifler
                 .Include(t => t.Musteri)
                 .Include(t => t.Personel)
+                .Include(t => t.TeklifToplam)
                 .Where(t =>
                     string.IsNullOrWhiteSpace(arama)
                     || t.TeklifId.ToString().Contains(arama)
