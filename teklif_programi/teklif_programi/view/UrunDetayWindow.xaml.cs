@@ -34,6 +34,8 @@ namespace teklif_programi.view
             txtKategori.Text = _urun.Kategori;
             txtAciklama.Text = _urun.UrunAciklamasi;
             txt2025BirimSatisFiyati.Text = _urun.BirimFiyat.ToString("F2");
+            txtDolarBirimSatisFiyati.Text = _urun.FiyatUSD.ToString("F2");
+            txtEuroBirimSatisFiyati.Text = _urun.FiyatEUR.ToString("F2");
             txtYurticiMaliyetBirimFiyati.Text = _urun.MaliyetFiyati.ToString("F2");
         }
 

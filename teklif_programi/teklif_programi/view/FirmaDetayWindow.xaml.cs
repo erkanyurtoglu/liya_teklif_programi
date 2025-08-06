@@ -55,6 +55,10 @@ namespace teklif_programi.view
                     _firma.FirmaAdresi = txtAdres.Text;
                     _firma.FirmaTelefonu = txtTelefon.Text;
                     _firma.FirmaEposta = txtEmail.Text;
+                    _firma.VergiDairesi = txtVergiDairesi.Text;
+                    _firma.VergiNumarasi = txtVergiNumarasi.Text;
+                    _firma.IlgiliKisi = txtilgiliKisi.Text;
+                    _firma.IlgiliKisiTelefonu = txtilgiliKisiTelefon.Text;
 
 
                     _db.Musteriler.Update(_firma);

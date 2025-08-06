@@ -35,19 +35,27 @@
         <StackPanel Width="600" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
             <TextBlock Text="📦 Ürün Detayı" FontSize="30" FontWeight="Bold" Foreground="#13183E" Margin="0,0,0,30" HorizontalAlignment="Center"/>
 
-            <TextBlock Text="Ürün Kodu" />
-            <TextBox x:Name="txtUrunKodu" Height="35" Margin="0,0,0,10"/>
+            <TextBlock Text="Ürün Kodu" Foreground="#13183E" />
+            <TextBox x:Name="txtUrunKodu" Height="35" Margin="0,0,0,10" Foreground="#13183E"/>
 
-            <TextBlock Text="Kategori" />
-            <TextBox x:Name="txtKategori" Height="35" Margin="0,0,0,10"/>
+            <TextBlock Text="Kategori" Foreground="#13183E" />
+            <TextBox x:Name="txtKategori" Height="35" Margin="0,0,0,10" Foreground="#13183E"/>
 
-            <TextBlock Text="Açıklama" />
-            <TextBox x:Name="txtAciklama" Height="35" Margin="0,0,0,10"/>
+            <StackPanel>
+                <TextBlock Text="Ürün Açıklaması" Foreground="#13183E" />
+                <TextBox x:Name="txtAciklama" Height="100" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Margin="0,0,0,10" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Background="White"/>
+            </StackPanel>
 
-            <TextBlock Text="Birim Satış Fiyatı" />
+            <TextBlock Text="Birim Satış Fiyatı" Foreground="#13183E" />
             <TextBox x:Name="txt2025BirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
 
-            <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı" />
+            <TextBlock Text="Dolar Birim Satış Fiyatı" Foreground="#13183E" />
+            <TextBox x:Name="txtDolarBirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Euro Birim Satış Fiyatı" Foreground="#13183E" />
+            <TextBox x:Name="txtEuroBirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı"  Foreground="#13183E"/>
             <TextBox x:Name="txtYurticiMaliyetBirimFiyati" Height="35" Margin="0,0,0,10"/>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">

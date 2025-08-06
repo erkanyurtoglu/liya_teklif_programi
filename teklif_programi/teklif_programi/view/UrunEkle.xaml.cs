@@ -40,6 +40,10 @@ namespace teklif_programi.view
                     UrunAciklamasi = txtUrunAciklama.Text.Trim(),
                     BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
                     MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
+                    FiyatTL = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
+                    FiyatUSD = decimal.Parse(txtDolarBirimFiyati.Text.Trim()),
+                    FiyatEUR = decimal.Parse(txtEuroBirimFiyati.Text.Trim()),
+
                 };
 
                 _db.Urunler.Add(yeniUrun);
@@ -60,6 +64,8 @@ namespace teklif_programi.view
             txtUrunAciklama.Text = "";
             txtBirimSatisFiyati.Text = "";
             txtYurticiMaliyet.Text = "";
+            txtDolarBirimFiyati.Text = "";
+            txtEuroBirimFiyati.Text = "";
         }
 
     }
