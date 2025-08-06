@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,13 @@ namespace teklif_programi.view
         public TeklifDetayWindow()
         {
             InitializeComponent();
+        }
+
+        private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
+        {
+            // Yalnızca sayı ve ondalık nokta (.) kabul eden regex
+            Regex regex = new Regex("[^0-9.]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }
