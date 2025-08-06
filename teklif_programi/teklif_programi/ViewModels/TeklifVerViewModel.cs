@@ -18,7 +18,7 @@ namespace teklif_programi.ViewModels
     public class TeklifVerViewModel : INotifyPropertyChanged
     {
         private readonly TeklifDbContext _context = new();
-
+         
         private string _firmaArama = string.Empty;
         private Musteri? _firmaBilgisi;
         private string _urunArama = string.Empty;

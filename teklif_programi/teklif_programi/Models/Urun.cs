@@ -18,7 +18,7 @@ namespace teklif_programi.Models
         public string UrunAciklamasi { get; set; } = string.Empty;
 
         private int _adet;
-        [NotMapped]  // Veritabanında yok
+        [NotMapped]  
         public int Adet
         {
             get => _adet;

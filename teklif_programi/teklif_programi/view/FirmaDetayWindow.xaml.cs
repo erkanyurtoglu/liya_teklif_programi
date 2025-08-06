@@ -31,6 +31,11 @@ namespace teklif_programi.view
             txtAdres.Text = _firma.FirmaAdresi;
             txtTelefon.Text = _firma.FirmaTelefonu;
             txtEmail.Text = _firma.FirmaEposta;
+            txtVergiDairesi.Text = _firma.VergiDairesi;
+            txtVergiNumarasi.Text = _firma.VergiNumarasi;
+            txtilgiliKisi.Text = _firma.IlgiliKisi;
+            txtilgiliKisiTelefon.Text = _firma.IlgiliKisiTelefonu;
+
         }
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
@@ -51,6 +56,7 @@ namespace teklif_programi.view
                     _firma.FirmaTelefonu = txtTelefon.Text;
                     _firma.FirmaEposta = txtEmail.Text;
 
+
                     _db.Musteriler.Update(_firma);
                     _db.SaveChanges();
 
@@ -68,5 +74,6 @@ namespace teklif_programi.view
         {
             this.Close();
         }
+
     }
 }
