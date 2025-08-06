@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.ViewModels;
 
 namespace teklif_programi.view
 {
@@ -22,6 +23,7 @@ namespace teklif_programi.view
         {
             InitializeComponent();
             TeklifListele();
+            DataContext = new GecmisTekliflerViewModel();   
         }
 
         private void TeklifListele(string arama = "")

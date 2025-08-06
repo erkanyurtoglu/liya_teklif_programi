@@ -21,6 +21,10 @@ namespace teklif_programi.Models
 
         public decimal KdvOrani { get; set; }
 
+        public string Durum { get; set; } = "Beklemede";
+
+        public string? MusteriNotu { get; set; }
+
         [ForeignKey(nameof(MusteriId))]
         public virtual Musteri Musteri { get; set; } = null!;
 

@@ -38,6 +38,7 @@ namespace teklif_programi.Models
                     _adet = value;
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(Toplam));
+                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty);
                 }
             }
         }

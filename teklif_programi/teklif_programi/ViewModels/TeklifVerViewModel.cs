@@ -452,7 +452,7 @@ namespace teklif_programi.ViewModels
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5
             };
-            table.AddCell(cell);
+            table.AddCell(cell);    
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
