@@ -392,16 +392,18 @@ namespace teklif_programi.ViewModels
                     }
 
                     BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                    Font firmaFont = new(baseFont, 10, Font.NORMAL, new BaseColor(128, 128, 128));
-                    Font headerFont = new(baseFont, 10, Font.BOLD, BaseColor.BLACK);
-                    Font bodyFont = new(baseFont, 10, Font.NORMAL, BaseColor.BLACK);
+                    Font firmaFont = new(baseFont, 12, Font.NORMAL, new BaseColor(128, 128, 128));
+                    Font headerFont = new(baseFont, 12, Font.BOLD, BaseColor.BLACK);
+                    Font bodyFont = new(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+                    // Yeni font tanımlaması
+                    Font urunBaslikFont = new(baseFont, 14, Font.BOLD, BaseColor.BLACK); // "Teklif Edilen Ürünler" başlığı için
 
                     int currentPage = 2;
                     PdfContentByte canvas = stamper.GetOverContent(currentPage);
 
                     // --- Sol kısım: Firma Bilgileri (PdfPTable ile) ---
                     PdfPTable firmaTable = new PdfPTable(2); // 2 sütunlu bir tablo oluştur
-                    firmaTable.TotalWidth = 230f; // Tablonun toplam genişliğini ayarla
+                    firmaTable.TotalWidth = 240f; // Tablonun toplam genişliğini ayarla
                     firmaTable.SetWidths(new float[] { 2f, 2f }); // Sütun genişliklerini ayarla (ilk sütun daha dar)
                     firmaTable.DefaultCell.Border = 0; // Hücre kenarlıklarını kaldır
 
@@ -422,20 +424,24 @@ namespace teklif_programi.ViewModels
                     firmaTable.AddCell(CreateLeftAlignedBodyCell(FirmaBilgisi.FirmaEposta ?? "Belirtilmemiş", bodyFont));
 
                     // İlgili Kişi
-                    firmaTable.AddCell(CreateRightAlignedHeaderCell("İlgili Kişi:", headerFont));
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Yetkili:", headerFont));
                     firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisi) ? "Belirtilmemiş" : IlgiliKisi, bodyFont));
 
                     // İlgili Kişi Numarası (Yeni Eklendi)
-                    firmaTable.AddCell(CreateRightAlignedHeaderCell("İlgili Kişi Numarası:", headerFont));
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Yetkili Numarası:", headerFont));
                     firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisiNumarasi) ? "Belirtilmemiş" : IlgiliKisiNumarasi, bodyFont));
 
+                    // İlgili Kişi Numarası (Yeni Eklendi)
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Yetkili E-Posta:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell("Belirtilmemiş", bodyFont));
+
                     // Tabloyu belirli bir konuma yerleştir
-                    firmaTable.WriteSelectedRows(0, -1, 50, 700, canvas);
+                    firmaTable.WriteSelectedRows(0, -1, 50, 740, canvas);
 
 
                     // --- Sağ kısım: Teklif Bilgileri (PdfPTable ile) ---
                     PdfPTable teklifTable = new PdfPTable(2);
-                    teklifTable.TotalWidth = 230f;
+                    teklifTable.TotalWidth = 240f;
                     teklifTable.SetWidths(new float[] { 2f, 2f });
                     teklifTable.DefaultCell.Border = 0;
 
@@ -445,10 +451,11 @@ namespace teklif_programi.ViewModels
 
                     // Teklif Kodu
                     teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklif Kodu:", headerFont));
+                    // Düzeltme: telifTable yerine teklifTable kullanıldı
                     teklifTable.AddCell(CreateLeftAlignedBodyCell(teklif.TeklifId.ToString(), bodyFont));
 
                     // Teklifi Yapan Personel
-                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklifi Yapan Personel:", headerFont));
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklif Veren:", headerFont));
                     teklifTable.AddCell(CreateLeftAlignedBodyCell("Erhan Öğüt", bodyFont));
 
                     // Personel Cep No
@@ -456,17 +463,35 @@ namespace teklif_programi.ViewModels
                     teklifTable.AddCell(CreateLeftAlignedBodyCell("05179841645", bodyFont));
 
                     // Tabloyu belirli bir konuma yerleştir
-                    teklifTable.WriteSelectedRows(0, -1, 350, 700, canvas);
+                    teklifTable.WriteSelectedRows(0, -1, 330, 730, canvas);
 
+                    // Üst çizgi (daha yukarı çekildi)
+                    canvas.SetColorFill(new BaseColor(200, 200, 200)); // Açık gri
+                    canvas.Rectangle(22.5f, 590, 550, 1); // X, Y, Genişlik, Yükseklik
+                    canvas.Fill();
 
-                    // Ürünler ve toplamlar kısmı (mevcut tasarım korunuyor)
-                    Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
+                    // "Teklif Edilen Ürünler" başlığı
+                    Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", urunBaslikFont);
                     ColumnText ctUrunBaslik = new ColumnText(canvas);
-                    ctUrunBaslik.SetSimpleColumn(urunBaslik, 50, 480, 550, 460, 15, Element.ALIGN_LEFT);
+                    ctUrunBaslik.SetSimpleColumn(
+                        urunBaslik,
+                        22.5f,     // left X
+                        560f,      // lower Y
+                        572.5f,    // right X
+                        580f,      // upper Y
+                        15,        // leading
+                        Element.ALIGN_CENTER
+                    );
                     ctUrunBaslik.Go();
 
+                    // Alt çizgi
+                    canvas.SetColorFill(new BaseColor(200, 200, 200));
+                    canvas.Rectangle(22.5f, 555, 550, 1);
+                    canvas.Fill();
+
+
                     PdfPTable table = new PdfPTable(6);
-                    table.TotalWidth = 500f;
+                    table.TotalWidth = 550f; // Kullanıcının mevcut kodundaki 550f değeri korundu.
                     table.LockedWidth = true;
                     float[] widths = new float[] { 2f, 5f, 1f, 2f, 2f, 2f };
                     table.SetWidths(widths);
@@ -491,12 +516,13 @@ namespace teklif_programi.ViewModels
                         rowCount++;
                     }
 
-                    table.WriteSelectedRows(0, -1, 50, 460, canvas);
+                    // Ürün tablosunun yeni konumu: X=22.5f (ortalı), Y=540 (çizginin 40 birim altı)
+                    table.WriteSelectedRows(0, -1, 22.5f, 520, canvas);
 
                     // Toplam bilgileri (PdfPTable ile)
                     PdfPTable toplamTable = new PdfPTable(2); // Toplamlar için 2 sütunlu tablo
-                    toplamTable.TotalWidth = 220f; // Genişliğini ayarlayın
-                    toplamTable.SetWidths(new float[] { 2f, 2f }); // Başlık ve değer sütunları için genişlikler
+                    toplamTable.TotalWidth = 240f; // Genişliğini ayarlayın
+                    toplamTable.SetWidths(new float[] { 3f, 2f }); // Başlık ve değer sütunları için genişlikler
                     toplamTable.DefaultCell.Border = 0; // Kenarlıkları kaldır
                     toplamTable.HorizontalAlignment = Element.ALIGN_RIGHT; // Tabloyu sağa hizala
 
@@ -509,11 +535,10 @@ namespace teklif_programi.ViewModels
                     toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", headerFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(GenelToplam.ToString("C2"), headerFont));
 
-                    // Toplam tablosunu ürün tablosunun altına, sağa hizalı olarak yerleştir
-                    // Y koordinatını ürün tablosunun bitiş noktasına göre ayarlayabilirsiniz.
-                    // Örneğin, ürün tablosunun altından biraz boşluk bırakarak.
-                    // Bu değerleri PDF'inizdeki diğer elemanların konumuna göre ayarlamanız gerekebilir.
-                    toplamTable.WriteSelectedRows(0, -1, 350, 150, canvas);
+                    // Toplam tablosunu ürün tablosunun altına, ana tablonun sağ kenarına hizalı olarak yerleştir
+                    // Ana tablonun sağ kenarı: 22.5 (başlangıç X) + 550 (genişlik) = 572.5
+                    // Toplam tablosunun X'i: 572.5 (sağ kenar) - 220 (toplam tablosu genişliği) = 352.5
+                    toplamTable.WriteSelectedRows(0, -1, 352.5f, 150, canvas);
 
                     stamper.Close();
                     reader.Close();
@@ -554,7 +579,7 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // Yeni eklenen yardımcı metotlar: Sağ hizalı başlıklar ve sol hizalı değerler için
+        // Sağ hizalı başlıklar için yardımcı metot
         private PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font));
@@ -564,6 +589,7 @@ namespace teklif_programi.ViewModels
             return cell;
         }
 
+        // Sol hizalı değerler için yardımcı metot
         private PdfPCell CreateLeftAlignedBodyCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font));
