@@ -152,7 +152,6 @@
             </Grid.ColumnDefinitions>
 
             <!-- Firma Arama -->
-            <!-- Firma Arama -->
             <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="0,0,10,20" Padding="10" BorderBrush="#ededed" BorderThickness="1">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -170,7 +169,7 @@
                         <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding FirmaArama, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
                     </StackPanel>
                     <Border Grid.Row="0" Grid.Column="1" Background="#F3F4F6" CornerRadius="4"
-                Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Padding="5" HorizontalAlignment="Left" Margin="0,0,0,68" Grid.RowSpan="2" Width="216">
+                            Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Padding="5" HorizontalAlignment="Left" Margin="0,0,0,68" Grid.RowSpan="2" Width="216">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="205">
                             <StackPanel>
                                 <TextBlock Text="{Binding FirmaBilgisi.FirmaAdi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
@@ -183,11 +182,11 @@
                     <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left" Width="460">
                         <StackPanel Width="230" HorizontalAlignment="Left">
                             <TextBlock Text="İlgili Kişi" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="ilgiliKisi" Style="{StaticResource ModernTextBox}" Width="205" Height="35" HorizontalAlignment="Left" Text="{Binding IlgiliKisi, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel Width="220" HorizontalAlignment="Left" Margin="10,0,0,0">
                             <TextBlock Text="İlgili Kişi Numarası" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                            <TextBox Style="{StaticResource ModernTextBox}" Width="179" Height="35" HorizontalAlignment="Left"/>
+                            <TextBox x:Name="ilgiliKisiNumarasi" Style="{StaticResource ModernTextBox}" Width="179" Height="35" HorizontalAlignment="Left" Text="{Binding IlgiliKisiNumarasi, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -227,29 +226,14 @@
             </Border>
 
             <!-- Döviz Kurları Kutusu -->
-            <Border Grid.Column="3"
-        Background="White"
-        CornerRadius="4"
-        Padding="15"
-        Margin="20,0,0,20"
-        BorderBrush="#ededed"
-        BorderThickness="1">
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="15" Margin="20,0,0,20" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
-                    <TextBlock Text="Döviz Kurları"
-                   FontWeight="SemiBold"
-                   FontSize="14"
-                   Margin="0,0,0,10"
-                   Foreground="#13183E"
-                   FontFamily="Segoe UI"/>
-
-                    <!-- Başlıklar -->
+                    <TextBlock Text="Döviz Kurları" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
                     <UniformGrid Columns="3" Margin="0,0,0,5">
                         <TextBlock Text="Kur" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
                         <TextBlock Text="Alış" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
                         <TextBlock Text="Satış" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
                     </UniformGrid>
-
-                    <!-- Veriler -->
                     <ItemsControl ItemsSource="{Binding DovizKurlari}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
@@ -263,8 +247,6 @@
                     </ItemsControl>
                 </StackPanel>
             </Border>
-
-
         </Grid>
 
         <!-- Ürün Listesi ve Sepet -->
@@ -299,8 +281,6 @@
                     </DataGrid>
                 </StackPanel>
             </Border>
-
-            <!-- Sepete Ekle Butonu (Kaldırıldı) -->
 
             <!-- Sepet -->
             <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1">
@@ -343,7 +323,7 @@
 
         <!-- Teklifi Kaydet ve PDF İndir Butonu -->
         <Button Grid.Row="3" Content="Teklifi Kaydet ve PDF İndir" Style="{StaticResource ModernButtonStyle}" 
-        HorizontalAlignment="Left" Margin="116,27,0,26" Width="219" 
-        Command="{Binding KaydetVePdfIndirCommand}" Grid.Column="1" />
+                HorizontalAlignment="Left" Margin="116,27,0,26" Width="219" 
+                Command="{Binding KaydetVePdfIndirCommand}" Grid.Column="1" />
     </Grid>
 </UserControl>
