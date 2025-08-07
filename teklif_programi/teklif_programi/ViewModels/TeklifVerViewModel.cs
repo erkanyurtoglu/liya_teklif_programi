@@ -334,6 +334,7 @@ namespace teklif_programi.ViewModels
 
             try
             {
+                // Veritabanı işlemleri (mevcut kodunuz korunmuştur)
                 using var transaction = _context.Database.BeginTransaction();
                 var teklif = new Teklif
                 {
@@ -355,7 +356,7 @@ namespace teklif_programi.ViewModels
                         Adet = urun.Adet,
                         BirimFiyat = urun.BirimFiyat,
                         IndirimliBirimFiyat = urun.IndirimliFiyat,
-                        ToplamTutar = urun.Toplam
+                        ToplamTutar = urun.Toplam // Toplam zaten hesaplandığı için burada doğrudan kullanılıyor
                     });
                 }
                 _context.TeklifToplamlari.Add(new TeklifToplam
@@ -398,44 +399,71 @@ namespace teklif_programi.ViewModels
                     int currentPage = 2;
                     PdfContentByte canvas = stamper.GetOverContent(currentPage);
 
-                    // Sol kısım: Firma Bilgileri
-                    Phrase firmaBilgileri = new Phrase();
-                    firmaBilgileri.Add(new Chunk("Firma Adı: ", headerFont));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.FirmaAdi + "\n", bodyFont));
-                    firmaBilgileri.Add(new Chunk("Firma Adresi: ", headerFont));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.FirmaAdresi + "\n", bodyFont));
-                    firmaBilgileri.Add(new Chunk("Firma Telefonu: ", headerFont));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.FirmaTelefonu + "\n" ?? "Belirtilmemiş" + "\n", bodyFont));
-                    firmaBilgileri.Add(new Chunk("Firma E-Posta: ", headerFont));
-                    firmaBilgileri.Add(new Chunk(FirmaBilgisi.FirmaEposta + "\n" ?? "Belirtilmemiş" + "\n", bodyFont));
-                    firmaBilgileri.Add(new Chunk("İlgili Kişi: ", headerFont));
-                    firmaBilgileri.Add(new Chunk(string.IsNullOrWhiteSpace(IlgiliKisi) ? "Belirtilmemiş" : IlgiliKisi + "\n", bodyFont));
-                    firmaBilgileri.Add(new Chunk("İlgili Kişi E-postası: ", headerFont));
-                    firmaBilgileri.Add(new Chunk("Belirtilmemiş\n", bodyFont)); 
+                    // --- Sol kısım: Firma Bilgileri (PdfPTable ile) ---
+                    PdfPTable firmaTable = new PdfPTable(2); // 2 sütunlu bir tablo oluştur
+                    firmaTable.TotalWidth = 230f; // Tablonun toplam genişliğini ayarla
+                    firmaTable.SetWidths(new float[] { 2f, 2f }); // Sütun genişliklerini ayarla (ilk sütun daha dar)
+                    firmaTable.DefaultCell.Border = 0; // Hücre kenarlıklarını kaldır
 
-                    ColumnText ctLeft = new ColumnText(canvas);
-                    ctLeft.SetSimpleColumn(firmaBilgileri, 50, 700, 300, 500, 15, Element.ALIGN_LEFT);
-                    ctLeft.Go();
+                    // Firma Adı
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adı:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(FirmaBilgisi.FirmaAdi, bodyFont));
 
-                    // Sağ kısım: Teklif Bilgileri
-                    Phrase teklifBilgileri = new Phrase();
-                    teklifBilgileri.Add(new Chunk("Teklif Tarihi: ", headerFont));
-                    teklifBilgileri.Add(new Chunk(teklif.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm") + "\n", bodyFont));
-                    teklifBilgileri.Add(new Chunk("Teklif Kodu: ", headerFont));
-                    teklifBilgileri.Add(new Chunk(teklif.TeklifId.ToString() + "\n", bodyFont));
-                    teklifBilgileri.Add(new Chunk("Teklifi Yapan Personel: ", headerFont));
-                    teklifBilgileri.Add(new Chunk("Erhan Öğüt" + "\n", bodyFont));
-                    teklifBilgileri.Add(new Chunk("Personel Cep No: ", headerFont));
-                    teklifBilgileri.Add(new Chunk("05179841645\n", bodyFont)); 
+                    // Firma Adresi
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adresi:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(FirmaBilgisi.FirmaAdresi, bodyFont));
 
-                    ColumnText ctRight = new ColumnText(canvas);
-                    ctRight.SetSimpleColumn(teklifBilgileri, 350, 700, 550, 500, 15, Element.ALIGN_LEFT);
-                    ctRight.Go();
+                    // Firma Telefonu
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Telefonu:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(FirmaBilgisi.FirmaTelefonu ?? "Belirtilmemiş", bodyFont));
+
+                    // Firma E-Posta
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma E-Posta:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(FirmaBilgisi.FirmaEposta ?? "Belirtilmemiş", bodyFont));
+
+                    // İlgili Kişi
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("İlgili Kişi:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisi) ? "Belirtilmemiş" : IlgiliKisi, bodyFont));
+
+                    // İlgili Kişi Numarası (Yeni Eklendi)
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("İlgili Kişi Numarası:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisiNumarasi) ? "Belirtilmemiş" : IlgiliKisiNumarasi, bodyFont));
+
+                    // Tabloyu belirli bir konuma yerleştir
+                    firmaTable.WriteSelectedRows(0, -1, 50, 700, canvas);
+
+
+                    // --- Sağ kısım: Teklif Bilgileri (PdfPTable ile) ---
+                    PdfPTable teklifTable = new PdfPTable(2);
+                    teklifTable.TotalWidth = 230f;
+                    teklifTable.SetWidths(new float[] { 2f, 2f });
+                    teklifTable.DefaultCell.Border = 0;
+
+                    // Teklif Tarihi
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklif Tarihi:", headerFont));
+                    teklifTable.AddCell(CreateLeftAlignedBodyCell(teklif.OlusturmaTarihi.ToString("dd.MM.yyyy HH:mm"), bodyFont));
+
+                    // Teklif Kodu
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklif Kodu:", headerFont));
+                    teklifTable.AddCell(CreateLeftAlignedBodyCell(teklif.TeklifId.ToString(), bodyFont));
+
+                    // Teklifi Yapan Personel
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklifi Yapan Personel:", headerFont));
+                    teklifTable.AddCell(CreateLeftAlignedBodyCell("Erhan Öğüt", bodyFont));
+
+                    // Personel Cep No
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Personel Cep No:", headerFont));
+                    teklifTable.AddCell(CreateLeftAlignedBodyCell("05179841645", bodyFont));
+
+                    // Tabloyu belirli bir konuma yerleştir
+                    teklifTable.WriteSelectedRows(0, -1, 350, 700, canvas);
+
 
                     // Ürünler ve toplamlar kısmı (mevcut tasarım korunuyor)
                     Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", new Font(baseFont, 12, Font.BOLD, BaseColor.BLACK));
-                    ctLeft.SetSimpleColumn(urunBaslik, 50, 480, 550, 460, 15, Element.ALIGN_LEFT);
-                    ctLeft.Go();
+                    ColumnText ctUrunBaslik = new ColumnText(canvas);
+                    ctUrunBaslik.SetSimpleColumn(urunBaslik, 50, 480, 550, 460, 15, Element.ALIGN_LEFT);
+                    ctUrunBaslik.Go();
 
                     PdfPTable table = new PdfPTable(6);
                     table.TotalWidth = 500f;
@@ -465,13 +493,27 @@ namespace teklif_programi.ViewModels
 
                     table.WriteSelectedRows(0, -1, 50, 460, canvas);
 
-                    Phrase toplamBilgileri = new Phrase();
-                    toplamBilgileri.Add(new Chunk($"İndirimli Toplam(%{GenelIndirimOrani}): {ToplamFiyat:C2}\n", headerFont));
-                    toplamBilgileri.Add(new Chunk($"KDV (%{KdvOrani}): {KdvUcreti:C2}\n", headerFont));
-                    toplamBilgileri.Add(new Chunk($"Genel Toplam: {GenelToplam:C2}", headerFont));
+                    // Toplam bilgileri (PdfPTable ile)
+                    PdfPTable toplamTable = new PdfPTable(2); // Toplamlar için 2 sütunlu tablo
+                    toplamTable.TotalWidth = 220f; // Genişliğini ayarlayın
+                    toplamTable.SetWidths(new float[] { 2f, 2f }); // Başlık ve değer sütunları için genişlikler
+                    toplamTable.DefaultCell.Border = 0; // Kenarlıkları kaldır
+                    toplamTable.HorizontalAlignment = Element.ALIGN_RIGHT; // Tabloyu sağa hizala
 
-                    ctLeft.SetSimpleColumn(toplamBilgileri, 50, 150, 550, 50, 15, Element.ALIGN_RIGHT);
-                    ctLeft.Go();
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{GenelIndirimOrani}):", headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(ToplamFiyat.ToString("C2"), headerFont)); // Toplamlar için headerFont kullanıldı
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{KdvOrani}):", headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(KdvUcreti.ToString("C2"), headerFont));
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(GenelToplam.ToString("C2"), headerFont));
+
+                    // Toplam tablosunu ürün tablosunun altına, sağa hizalı olarak yerleştir
+                    // Y koordinatını ürün tablosunun bitiş noktasına göre ayarlayabilirsiniz.
+                    // Örneğin, ürün tablosunun altından biraz boşluk bırakarak.
+                    // Bu değerleri PDF'inizdeki diğer elemanların konumuna göre ayarlamanız gerekebilir.
+                    toplamTable.WriteSelectedRows(0, -1, 350, 150, canvas);
 
                     stamper.Close();
                     reader.Close();
@@ -484,6 +526,9 @@ namespace teklif_programi.ViewModels
             }
         }
 
+        // --- Yardımcı Metotlar ---
+
+        // Ürün tablosunun başlık hücreleri için
         private void AddCellToHeader(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -492,10 +537,11 @@ namespace teklif_programi.ViewModels
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
                 Padding = 5
-            };  
+            };
             table.AddCell(cell);
         }
 
+        // Ürün tablosunun gövde hücreleri için
         private void AddCellToBody(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -506,6 +552,24 @@ namespace teklif_programi.ViewModels
                 Padding = 5
             };
             table.AddCell(cell);
+        }
+
+        // Yeni eklenen yardımcı metotlar: Sağ hizalı başlıklar ve sol hizalı değerler için
+        private PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font));
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = 0; // Kenarlık yok
+            cell.PaddingRight = 5; // Değer ile arasında boşluk bırakmak için
+            return cell;
+        }
+
+        private PdfPCell CreateLeftAlignedBodyCell(string text, Font font)
+        {
+            PdfPCell cell = new PdfPCell(new Phrase(text, font));
+            cell.HorizontalAlignment = Element.ALIGN_LEFT;
+            cell.Border = 0; // Kenarlık yok
+            return cell;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
