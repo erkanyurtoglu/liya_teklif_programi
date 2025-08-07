@@ -9,6 +9,7 @@ namespace teklif_programi.view
     {
         private readonly SatisSozlesmesiViewModel _viewModel;
         private readonly TeklifVerViewModel _teklifVerViewModel;
+        private readonly string _varsayilanSozlesmeMetni;
 
         public SatisSozlesmesiWindow(TeklifVerViewModel teklifVerViewModel)
         {
@@ -17,15 +18,47 @@ namespace teklif_programi.view
             _teklifVerViewModel = teklifVerViewModel;
             DataContext = _viewModel;
 
+            // Varsayılan metni sakla
+            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
+
             // Önce TeklifVerViewModel.SatisSozlesmesiMetni’ni kontrol et
             if (!string.IsNullOrWhiteSpace(_teklifVerViewModel.SatisSozlesmesiMetni))
             {
                 _viewModel.SozlesmeMetni = _teklifVerViewModel.SatisSozlesmesiMetni;
             }
 
-            // RichTextBox’a ViewModel’deki metni yükle
+            // RichTextBox’a metni satır satır yükle
+            LoadSozlesmeMetniToRichTextBox();
+        }
+
+        private void LoadSozlesmeMetniToRichTextBox()
+        {
             SatisSozlesmesiBox.Document.Blocks.Clear();
-            SatisSozlesmesiBox.Document.Blocks.Add(new Paragraph(new Run(_viewModel.SozlesmeMetni)));
+
+            // Metni satır satır ayır
+            string[] lines = _viewModel.SozlesmeMetni.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string line in lines)
+            {
+                Paragraph paragraph = new Paragraph(new Run(line.Trim()))
+                {
+                    Margin = new Thickness(0, 5, 0, 5), // Tutarlı satır aralığı
+                    TextAlignment = TextAlignment.Left // Sol hizalama
+                };
+
+                // Numaralı maddeler için girinti ayarı (isteğe bağlı)
+                if (line.Trim().StartsWith("1.") || line.Trim().StartsWith("2.") || line.Trim().StartsWith("3.") ||
+                    line.Trim().StartsWith("4.") || line.Trim().StartsWith("5.") || line.Trim().StartsWith("6.") ||
+                    line.Trim().StartsWith("7.") || line.Trim().StartsWith("8."))
+                {
+                    paragraph.TextIndent = 20; // Numaralandırılmış maddeler için girinti
+                }
+                else if (line.Trim().StartsWith("-"))
+                {
+                    paragraph.TextIndent = 40; // Alt maddeler için daha fazla girinti
+                }
+
+                SatisSozlesmesiBox.Document.Blocks.Add(paragraph);
+            }
         }
 
         private void Kapat_Click(object sender, RoutedEventArgs e)
@@ -39,5 +72,14 @@ namespace teklif_programi.view
 
             Close();
         }
+
+        private void Sifirla_Click(object sender, RoutedEventArgs e)
+        {
+            // Varsayılan metne geri dön
+            _viewModel.SozlesmeMetni = _varsayilanSozlesmeMetni;
+            LoadSozlesmeMetniToRichTextBox(); // Metni yeniden yükle
+        }
+
+
     }
 }
