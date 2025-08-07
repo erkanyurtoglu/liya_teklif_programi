@@ -142,60 +142,77 @@
         <!-- Firma Arama ve İndirim/KDV -->
         <Grid Grid.Row="1" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="491*"/>
+                <ColumnDefinition Width="225*"/>
                 <!-- Firma Arama -->
                 <ColumnDefinition Width="Auto" MinWidth="327" />
                 <!-- İndirim ve KDV -->
-                <ColumnDefinition Width="Auto" MinWidth="198"/>
-                <!-- Döviz kuru -->
+
                 <ColumnDefinition Width="Auto" MinWidth="258"/>
             </Grid.ColumnDefinitions>
 
             <!-- Firma Arama -->
-            <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="0,0,10,20" Padding="10" BorderBrush="#ededed" BorderThickness="1">
+            <!-- Firma Arama -->
+            <Border Grid.Column="0" Background="White" CornerRadius="4" Margin="0,0,10,20" Padding="10" BorderBrush="#ededed" BorderThickness="1" Grid.ColumnSpan="2">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="241"/>
-                        <ColumnDefinition/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Üst Satır: Firma Kodu veya Adı ve Firma Bilgileri -->
-                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,0,68" HorizontalAlignment="Left" Grid.RowSpan="2" Width="205">
-                        <TextBlock Text="Firma Kodu veya Adı" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                        <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding FirmaArama, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                    <!-- Firma Adı ve İlgili Kişi E-Posta -->
+                    <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
+                        <!-- Firma Adı -->
+                        <StackPanel Width="230" Margin="0,0,10,0" >
+                            <TextBlock Text="Firma Adı" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" />
+                            <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding FirmaArama, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                        </StackPanel>
+
+                        <!-- İlgili Kişi E-Posta -->
+                        <StackPanel Width="230">
+                            <TextBlock Text="İlgili Kişi E-Posta" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" />
+                            <TextBox x:Name="ilgiliKisiEposta" Style="{StaticResource ModernTextBox}" Text="{Binding IlgiliKisiEposta, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                        </StackPanel>
                     </StackPanel>
-                    <Border Grid.Row="0" Grid.Column="1" Background="#F3F4F6" CornerRadius="4"
-                            Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}" Padding="5" HorizontalAlignment="Left" Margin="0,0,0,68" Grid.RowSpan="2" Width="216">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Width="205">
-                            <StackPanel>
-                                <TextBlock Text="{Binding FirmaBilgisi.FirmaAdi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
-                                <TextBlock Text="{Binding FirmaBilgisi.FirmaAdresi}" FontSize="12" Foreground="#6B7280" FontFamily="Segoe UI" Margin="0,5,0,0"/>
-                            </StackPanel>
+
+                    <!-- İlgili Kişi ve Numarası -->
+                    <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left">
+                        <!-- İlgili Kişi -->
+                        <StackPanel Width="230" Margin="0,0,10,0">
+                            <TextBlock Text="İlgili Kişi" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" />
+                            <TextBox x:Name="ilgiliKisi" Style="{StaticResource ModernTextBox}" Text="{Binding IlgiliKisi, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                        </StackPanel>
+
+                        <!-- İlgili Kişi Numarası -->
+                        <StackPanel Width="230">
+                            <TextBlock Text="İlgili Kişi Numarası" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" />
+                            <TextBox x:Name="ilgiliKisiNumarasi" Style="{StaticResource ModernTextBox}" Text="{Binding IlgiliKisiNumarasi, UpdateSourceTrigger=PropertyChanged}" Width="205" Height="35" HorizontalAlignment="Left"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Firma Bilgisi Kutusu -->
+                    <Border Grid.Row="0" Grid.RowSpan="2" Background="#F3F4F6" CornerRadius="4"
+                Visibility="{Binding FirmaBilgisi, Converter={StaticResource NullToVisibilityConverter}}"
+                Padding="10" Margin="475,0,0,0">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaAdi}" FontWeight="Bold" FontSize="14" Foreground="#13183E" HorizontalAlignment="Center" TextDecorations="Underline"/>
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaAdresi}" FontSize="12" Foreground="Black" Margin="0,15,0,0"/>
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaTelefonu}" FontSize="12" Foreground="Black" Margin="0,5,0,0"/>
+                            <TextBlock Text="{Binding FirmaBilgisi.FirmaEposta}" FontSize="12" Foreground="Black" Margin="0,5,0,0"/>
                         </StackPanel>
                     </Border>
-
-                    <!-- Alt Satır: İlgili Kişi ve İlgili Kişi Numarası -->
-                    <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0,10,0,0" HorizontalAlignment="Left" Width="460">
-                        <StackPanel Width="230" HorizontalAlignment="Left">
-                            <TextBlock Text="İlgili Kişi" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                            <TextBox x:Name="ilgiliKisi" Style="{StaticResource ModernTextBox}" Width="205" Height="35" HorizontalAlignment="Left" Text="{Binding IlgiliKisi, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                        <StackPanel Width="220" HorizontalAlignment="Left" Margin="10,0,0,0">
-                            <TextBlock Text="İlgili Kişi Numarası" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                            <TextBox x:Name="ilgiliKisiNumarasi" Style="{StaticResource ModernTextBox}" Width="179" Height="35" HorizontalAlignment="Left" Text="{Binding IlgiliKisiNumarasi, UpdateSourceTrigger=PropertyChanged}"/>
-                        </StackPanel>
-                    </StackPanel>
                 </Grid>
             </Border>
 
+
             <!-- İndirim ve KDV -->
-            <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15" Margin="10,0,0,20" BorderBrush="#ededed" BorderThickness="1">
+            <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="15" Margin="10,0,0,20" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel Orientation="Vertical">
-                    <TextBlock Text="İndirim ve KDV" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
+                    <TextBlock Text="İndirim ve KDV" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI" HorizontalAlignment="Center"/>
                     <StackPanel Orientation="Horizontal">
                         <Border Background="White" CornerRadius="4" Padding="10" Margin="0,0,10,0" BorderBrush="#ededed" BorderThickness="1">
                             <StackPanel Width="120">
@@ -214,27 +231,27 @@
             </Border>
 
             <!-- Para Birimi Seçimi -->
-            <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="15" Margin="20,0,0,20" BorderBrush="#ededed" BorderThickness="1">
-                <StackPanel Orientation="Vertical">
-                    <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="5" Margin="20,110,0,20" BorderBrush="#ededed" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="13" Margin="0,0,10,0" Foreground="#13183E" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                     <ComboBox ItemsSource="{Binding ParaBirimiListe}"
-                              SelectedItem="{Binding SelectedCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                              Width="135" Height="40" FontSize="14"
-                              VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-                              Margin="0,30,0,0"/>
+                  SelectedItem="{Binding SelectedCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Width="135" Height="27" FontSize="14"
+                  VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                  Margin="0,0,0,0"/>
                 </StackPanel>
             </Border>
 
             <!-- Döviz Kurları Kutusu -->
-            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="15" Margin="20,0,0,20" BorderBrush="#ededed" BorderThickness="1">
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Margin="20,0,0,90" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
-                    <TextBlock Text="Döviz Kurları" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
-                    <UniformGrid Columns="3" Margin="0,0,0,5">
-                        <TextBlock Text="Kur" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
-                        <TextBlock Text="Alış" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
-                        <TextBlock Text="Satış" FontWeight="Bold" FontSize="12" Foreground="#13183E"/>
+                    <TextBlock Text="Döviz Kurları" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI" HorizontalAlignment="Center"/>
+                    <UniformGrid Columns="3" Margin="0,0,0,5 ">
+                        <TextBlock Text="Kur" FontWeight="Bold" FontSize="12" Foreground="#13183E" Padding="25,0,0,0"/>
+                        <TextBlock Text="Alış" FontWeight="Bold" FontSize="12" Foreground="#13183E" Padding="25,0,0,0"/>
+                        <TextBlock Text="Satış" FontWeight="Bold" FontSize="12" Foreground="#13183E" Padding="15,0,0,0"/>
                     </UniformGrid>
-                    <ItemsControl ItemsSource="{Binding DovizKurlari}">
+                    <ItemsControl ItemsSource="{Binding DovizKurlari}" Padding="25,0,0,0" >
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <UniformGrid Columns="3" Margin="0,2">

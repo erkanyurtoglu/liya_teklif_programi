@@ -26,6 +26,7 @@ namespace teklif_programi.ViewModels
         private ObservableCollection<string> _paraBirimiListe;
         private string _ilgiliKisi = string.Empty; // Yeni özellik: İlgili Kişi
         private string _ilgiliKisiNumarasi = string.Empty; // Yeni özellik: İlgili Kişi Numarası
+        private string _ilgiliKisiEposta = string.Empty;
 
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
 
@@ -135,6 +136,20 @@ namespace teklif_programi.ViewModels
                 if (_ilgiliKisiNumarasi != value)
                 {
                     _ilgiliKisiNumarasi = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        // Yeni özellik: İlgili Kişi Numarası
+        public string IlgiliKisiEposta
+        {
+            get => _ilgiliKisiEposta;
+            set
+            {
+                if (_ilgiliKisiEposta != value)
+                {
+                    _ilgiliKisiEposta = value;
                     OnPropertyChanged();
                 }
             }
@@ -432,8 +447,8 @@ namespace teklif_programi.ViewModels
                     firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisiNumarasi) ? "Belirtilmemiş" : IlgiliKisiNumarasi, bodyFont));
 
                     // İlgili Kişi Numarası (Yeni Eklendi)
-                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Yetkili E-Posta:", headerFont));
-                    firmaTable.AddCell(CreateLeftAlignedBodyCell("Belirtilmemiş", bodyFont));
+                    firmaTable.AddCell(CreateRightAlignedHeaderCell("Yetkili Email:", headerFont));
+                    firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisiEposta) ? "Belirtilmemiş" : IlgiliKisiEposta, bodyFont));
 
                     // Tabloyu belirli bir konuma yerleştir
                     firmaTable.WriteSelectedRows(0, -1, 50, 740, canvas);
