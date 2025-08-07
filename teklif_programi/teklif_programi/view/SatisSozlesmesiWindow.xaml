@@ -10,17 +10,8 @@
         </Grid.RowDefinitions>
 
         <!-- RichTextBox ile düzenlenebilir sözleşme alanı -->
-        <RichTextBox x:Name="SatisSozlesmesiBox" Grid.Row="0" Margin="0,0,0,10" FontSize="14" FontFamily="Segoe UI" AcceptsReturn="True">
-            <FlowDocument>
-                <Paragraph FontWeight="Bold" FontSize="16" TextAlignment="Center">SATIŞ SÖZLEŞMESİ</Paragraph>
-                <Paragraph>1. Taraflar, bu sözleşme kapsamında belirlenen ürünlerin satışı konusunda anlaşmıştır.</Paragraph>
-                <Paragraph>2. Alıcı, ürünleri eksiksiz ve zamanında teslim almayı kabul eder.</Paragraph>
-                <Paragraph>3. Satıcı, ürünlerin fatura tarihinden itibaren 7 gün içerisinde teslimini taahhüt eder.</Paragraph>
-                <Paragraph>4. Ödeme, fatura tarihinden itibaren 15 gün içerisinde gerçekleştirilecektir.</Paragraph>
-                <Paragraph>5. Taraflar, doğacak anlaşmazlıklarda İstanbul Mahkemeleri’ni yetkili kabul eder.</Paragraph>
-            </FlowDocument>
-        </RichTextBox>
+        <RichTextBox x:Name="SatisSozlesmesiBox" Grid.Row="0" Margin="0,0,0,10" FontSize="14" FontFamily="Segoe UI" AcceptsReturn="True"/>
 
-        <Button Content="Kapat" Width="100" Height="35" HorizontalAlignment="Right" Grid.Row="1" Click="Kapat_Click" />
+        <Button Content="Kapat" Width="100" Height="35" HorizontalAlignment="Right" Grid.Row="1" Click="Kapat_Click"/>
     </Grid>
 </Window>

@@ -42,12 +42,17 @@ namespace teklif_programi.ViewModels
             DovizKurlari = new ObservableCollection<DovizKuru>();
             DovizKurlariGuncelle();
 
-            // Varsayılan satış sözleşmesi metni
-            SatisSozlesmesiMetni = @"1. Taraflar, bu sözleşme kapsamında belirlenen ürünlerin satışı konusunda anlaşmıştır.
-            2. Alıcı, ürünleri eksiksiz ve zamanında teslim almayı kabul eder.
-            3. Satıcı, ürünlerin fatura tarihinden itibaren 7 gün içerisinde teslimini taahhüt eder.
-            4. Ödeme, fatura tarihinden itibaren 15 gün içerisinde gerçekleştirilecektir.
-            5. Taraflar, doğacak anlaşmazlıklarda İstanbul Mahkemeleri’ni yetkili kabul eder.";
+            SatisSozlesmesiMetni = @"
+            1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
+            2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
+            3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
+            4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
+            5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
+            6. Nakliye: Satıcı firmaya aittir.
+            7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
+            8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+               İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
+               HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
         }
 
         // Satış sözleşmesi metni özelliği
@@ -371,7 +376,7 @@ namespace teklif_programi.ViewModels
 
             try
             {
-                // Veritabanı işlemleri (mevcut kod korunuyor)
+                // Veritabanı işlemleri (teklif bilgileri için)
                 using var transaction = _context.Database.BeginTransaction();
                 var teklif = new Teklif
                 {
@@ -433,8 +438,8 @@ namespace teklif_programi.ViewModels
                     Font headerFont = new(baseFont, 12, Font.BOLD, BaseColor.BLACK);
                     Font bodyFont = new(baseFont, 11, Font.NORMAL, BaseColor.BLACK);
                     Font urunBaslikFont = new(baseFont, 14, Font.BOLD, BaseColor.BLACK);
-                    Font sozlesmeBaslikFont = new(baseFont, 16, Font.BOLD, BaseColor.BLACK); // Satış sözleşmesi başlığı için
-                    Font sozlesmeFont = new(baseFont, 12, Font.NORMAL, BaseColor.BLACK); // Satış sözleşmesi metni için
+                    Font sozlesmeBaslikFont = new(baseFont, 16, Font.BOLD, BaseColor.BLACK);
+                    Font sozlesmeFont = new(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
 
                     int currentPage = 2;
                     PdfContentByte canvas = stamper.GetOverContent(currentPage);
@@ -545,12 +550,7 @@ namespace teklif_programi.ViewModels
                     ColumnText ctSozlesme = new ColumnText(canvas);
                     ctSozlesme.SetSimpleColumn(
                         new Phrase(SatisSozlesmesiMetni, sozlesmeFont),
-                        40f, // Sol kenar
-                        50f, // Alt kenar
-                        550f, // Sağ kenar
-                        760f, // Üst kenar
-                        18, // Satır aralığı
-                        Element.ALIGN_LEFT
+                        40f, 50f, 550f, 760f, 18, Element.ALIGN_LEFT
                     );
                     ctSozlesme.Go();
 
@@ -568,6 +568,7 @@ namespace teklif_programi.ViewModels
         // --- Yardımcı Metotlar ---
 
         // Ürün tablosunun başlık hücreleri için
+        // Mevcut yardımcı metotlar (AddCellToHeader, AddCellToBody, vb.) değişmeden kalıyor...
         private void AddCellToHeader(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -580,7 +581,6 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // Ürün tablosunun gövde hücreleri için
         private void AddCellToBody(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -593,22 +593,20 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // Sağ hizalı başlıklar için yardımcı metot
         private PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font));
             cell.HorizontalAlignment = Element.ALIGN_LEFT;
-            cell.Border = 0; // Kenarlık yok
-            cell.PaddingRight = 5; // Değer ile arasında boşluk bırakmak için
+            cell.Border = 0;
+            cell.PaddingRight = 5;
             return cell;
         }
 
-        // Sol hizalı değerler için yardımcı metot
         private PdfPCell CreateLeftAlignedBodyCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font));
             cell.HorizontalAlignment = Element.ALIGN_LEFT;
-            cell.Border = 0; // Kenarlık yok
+            cell.Border = 0;
             return cell;
         }
 

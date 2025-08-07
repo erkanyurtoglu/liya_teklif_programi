@@ -17,7 +17,13 @@ namespace teklif_programi.view
             _teklifVerViewModel = teklifVerViewModel;
             DataContext = _viewModel;
 
-            // RichTextBox’a varsayılan metni yükle
+            // Önce TeklifVerViewModel.SatisSozlesmesiMetni’ni kontrol et
+            if (!string.IsNullOrWhiteSpace(_teklifVerViewModel.SatisSozlesmesiMetni))
+            {
+                _viewModel.SozlesmeMetni = _teklifVerViewModel.SatisSozlesmesiMetni;
+            }
+
+            // RichTextBox’a ViewModel’deki metni yükle
             SatisSozlesmesiBox.Document.Blocks.Clear();
             SatisSozlesmesiBox.Document.Blocks.Add(new Paragraph(new Run(_viewModel.SozlesmeMetni)));
         }

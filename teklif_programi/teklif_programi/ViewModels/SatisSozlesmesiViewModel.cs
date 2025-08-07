@@ -29,8 +29,8 @@ namespace teklif_programi.ViewModels
             @"
             1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
             2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
-            3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik  servis ve eğitim hizmeti verilecektir.
-            4. Cihaz Teslimatı: Siparişe istinaden 1 hafta  içinde teslim
+            3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
+            4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
             5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
             6. Nakliye: Satıcı firmaya aittir.
             7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
