@@ -400,7 +400,7 @@ namespace teklif_programi.ViewModels
                     string fontPath = @"C:\Windows\Fonts\arial.ttf";
                     if (!File.Exists(fontPath))
                     {
-                        MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath, "Hata" , MessageBoxButton.OK, MessageBoxImage.Error);
                         stamper.Close();
                         reader.Close();
                         return;
@@ -409,7 +409,7 @@ namespace teklif_programi.ViewModels
                     BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
                     Font firmaFont = new(baseFont, 12, Font.NORMAL, new BaseColor(128, 128, 128));
                     Font headerFont = new(baseFont, 12, Font.BOLD, BaseColor.BLACK);
-                    Font bodyFont = new(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+                    Font bodyFont = new(baseFont, 11, Font.NORMAL, BaseColor.BLACK);
                     // Yeni font tanımlaması
                     Font urunBaslikFont = new(baseFont, 14, Font.BOLD, BaseColor.BLACK); // "Teklif Edilen Ürünler" başlığı için
 
@@ -505,12 +505,12 @@ namespace teklif_programi.ViewModels
                     canvas.Fill();
 
 
-                    PdfPTable table = new PdfPTable(6);
+                    PdfPTable table = new PdfPTable(7);
                     table.TotalWidth = 550f; // Kullanıcının mevcut kodundaki 550f değeri korundu.
                     table.LockedWidth = true;
-                    float[] widths = new float[] { 2f, 5f, 1f, 2f, 2f, 2f };
+                    float[] widths = new float[] {1f, 2f, 5f, 1f, 2f, 2f, 2f };
                     table.SetWidths(widths);
-
+                    AddCellToHeader(table, "No", headerFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Ürün Kodu", headerFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Açıklama", headerFont, new BaseColor(240, 240, 240));
                     AddCellToHeader(table, "Adet", headerFont, new BaseColor(240, 240, 240));
@@ -519,17 +519,23 @@ namespace teklif_programi.ViewModels
                     AddCellToHeader(table, "Toplam Fiyat", headerFont, new BaseColor(240, 240, 240));
 
                     int rowCount = 0;
+                    int urunNo = 1;
                     foreach (var urun in SecilenUrunler)
                     {
                         BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(245, 245, 245);
+
+                        AddCellToBody(table, urunNo.ToString(), bodyFont, rowColor); // Sıra numarası eklendi
                         AddCellToBody(table, urun.UrunKodu, bodyFont, rowColor);
                         AddCellToBody(table, urun.UrunAciklamasi, bodyFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), bodyFont, rowColor);
                         AddCellToBody(table, urun.BirimFiyat.ToString("C2"), bodyFont, rowColor);
                         AddCellToBody(table, urun.IndirimliFiyat.ToString("C2"), bodyFont, rowColor);
                         AddCellToBody(table, urun.Toplam.ToString("C2"), bodyFont, rowColor);
+
                         rowCount++;
+                        urunNo++;
                     }
+
 
                     // Ürün tablosunun yeni konumu: X=22.5f (ortalı), Y=540 (çizginin 40 birim altı)
                     table.WriteSelectedRows(0, -1, 22.5f, 520, canvas);
