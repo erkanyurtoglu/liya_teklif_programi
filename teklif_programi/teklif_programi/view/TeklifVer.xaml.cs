@@ -26,5 +26,13 @@ namespace teklif_programi.view
                 e.Handled = !decimal.TryParse(newText, out _);
             }
         }
+
+        private void SatisSozlesmesi_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var viewModel = (TeklifVerViewModel)DataContext;
+            var satisSozlesmesiWindow = new SatisSozlesmesiWindow(viewModel);
+            satisSozlesmesiWindow.ShowDialog();
+        }
+
     }
 }

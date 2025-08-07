@@ -343,7 +343,8 @@
                 HorizontalAlignment="Left" Margin="160,27,0,26" Width="187" 
                 Command="{Binding KaydetVePdfIndirCommand}" Grid.Column="1" />
         <Button Grid.Row="3" Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" 
-            HorizontalAlignment="Left" Margin="0,27,0,26" Width="147" 
-            Grid.Column="1" />
+                HorizontalAlignment="Left" Margin="0,27,0,26" Width="147" 
+                Grid.Column="1" Click="SatisSozlesmesi_Click" />
+
     </Grid>
 </UserControl>
