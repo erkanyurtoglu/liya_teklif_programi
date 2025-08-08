@@ -519,8 +519,8 @@ namespace teklif_programi.ViewModels
                         AddCellToBody(table, urun.UrunAciklamasi, bodyFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), bodyFont, rowColor);
                         AddCellToBody(table, FormatPrice(urun.BirimFiyat), bodyFont, rowColor);
-                        AddCellToBody(table, urun.IndirimliFiyat.ToString("C2"), bodyFont, rowColor);
-                        AddCellToBody(table, urun.Toplam.ToString("C2"), bodyFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.IndirimliFiyat), bodyFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.Toplam), bodyFont, rowColor);
                         rowCount++;
                         urunNo++;
                     }
@@ -530,11 +530,11 @@ namespace teklif_programi.ViewModels
                     PdfPTable toplamTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 }, HorizontalAlignment = Element.ALIGN_RIGHT };
                     toplamTable.SetWidths(new float[] { 3f, 2f });
                     toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{GenelIndirimOrani}):", headerFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(ToplamFiyat.ToString("C2"), headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(ToplamFiyat), headerFont));
                     toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{KdvOrani}):", headerFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(KdvUcreti.ToString("C2"), headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(KdvUcreti), headerFont));
                     toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", headerFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(GenelToplam.ToString("C2"), headerFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(GenelToplam), headerFont));
                     toplamTable.WriteSelectedRows(0, -1, 352.5f, 150, canvas);
 
                     // Yeni sayfa ekleyip satış sözleşmesini yazar
