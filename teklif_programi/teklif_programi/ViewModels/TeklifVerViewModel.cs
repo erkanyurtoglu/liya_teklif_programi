@@ -13,6 +13,8 @@ using System.Windows;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Services;
+using System.Globalization;
+
 
 // ViewModel sınıflarının isim alanı
 namespace teklif_programi.ViewModels
@@ -193,10 +195,17 @@ namespace teklif_programi.ViewModels
         {
             if (sender is TeklifUrunModel model)
             {
-                HesaplaIndirimliFiyat(model);
+                // ilgili modelin gösterim metinlerini güncelle
+                model.BirimFiyatText = FormatPrice(model.BirimFiyat);
+                model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
+                model.ToplamText = FormatPrice(model.Toplam);
+
+                // ve toplamları yenile
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
                 OnPropertyChanged(nameof(GenelToplam));
+                UpdateTotalsText();
+
             }
         }
 
@@ -236,6 +245,10 @@ namespace teklif_programi.ViewModels
                 model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
                 HesaplaIndirimliFiyat(model);
                 SecilenUrunler.Add(model);
+                model.BirimFiyatText = FormatPrice(model.BirimFiyat);
+                model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
+                model.ToplamText = FormatPrice(model.Toplam);
+
             }
             OnPropertyChanged(nameof(SecilenUrunler));
             OnPropertyChanged(nameof(ToplamFiyat));
@@ -249,6 +262,7 @@ namespace teklif_programi.ViewModels
             if (urun != null)
             {
                 SecilenUrunler.Remove(urun);
+                UpdateTotalsText();
                 OnPropertyChanged(nameof(SecilenUrunler));
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
@@ -274,6 +288,39 @@ namespace teklif_programi.ViewModels
                 _ => urun.FiyatTL
             };
         }
+
+        private CultureInfo GetCultureByCurrency(string currency)
+        {
+            return currency switch
+            {
+                "USD" => new CultureInfo("en-US"),   // $ 
+                "EUR" => new CultureInfo("de-DE"),   // € (almanya formatı, istersen "fr-FR" veya "en-IE" ile değiştir)
+                _ => new CultureInfo("tr-TR"),       // ₺
+            };
+        }
+
+        private string FormatPrice(decimal price)
+        {
+            return price.ToString("C2", GetCultureByCurrency(SelectedCurrency));
+        }
+
+        private string _toplamFiyatText = string.Empty;
+        public string ToplamFiyatText { get => _toplamFiyatText; set { _toplamFiyatText = value; OnPropertyChanged(); } }
+
+        private string _kdvUcretiText = string.Empty;
+        public string KdvUcretiText { get => _kdvUcretiText; set { _kdvUcretiText = value; OnPropertyChanged(); } }
+
+        private string _genelToplamText = string.Empty;
+        public string GenelToplamText { get => _genelToplamText; set { _genelToplamText = value; OnPropertyChanged(); } }
+
+        private void UpdateTotalsText()
+        {
+            ToplamFiyatText = FormatPrice(ToplamFiyat);
+            KdvUcretiText = FormatPrice(KdvUcreti);
+            GenelToplamText = FormatPrice(GenelToplam);
+        }
+
+
 
         // GenelIndirimOrani: Teklifin genel indirim oranı
         private decimal _genelIndirimOrani = 0;
@@ -301,17 +348,30 @@ namespace teklif_programi.ViewModels
                 {
                     urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
                     HesaplaIndirimliFiyat(urun);
+
+                    // UI'ya gösterilecek formatlı metinleri de setle
+                    urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
+                    urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
+                    urun.ToplamText = FormatPrice(urun.Toplam);
                 }
                 else
                 {
                     urun.BirimFiyat = 0;
                     HesaplaIndirimliFiyat(urun);
+                    urun.BirimFiyatText = FormatPrice(0);
+                    urun.IndirimliFiyatText = FormatPrice(0);
+                    urun.ToplamText = FormatPrice(0);
                 }
             }
+
             OnPropertyChanged(nameof(ToplamFiyat));
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
+
+            // string toplamları da güncelle
+            UpdateTotalsText();
         }
+
 
         // ToplamFiyat: Sepetteki ürünlerin toplam fiyatı
         public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);
@@ -458,7 +518,7 @@ namespace teklif_programi.ViewModels
                         AddCellToBody(table, urun.UrunKodu, bodyFont, rowColor);
                         AddCellToBody(table, urun.UrunAciklamasi, bodyFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), bodyFont, rowColor);
-                        AddCellToBody(table, urun.BirimFiyat.ToString("C2"), bodyFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.BirimFiyat), bodyFont, rowColor);
                         AddCellToBody(table, urun.IndirimliFiyat.ToString("C2"), bodyFont, rowColor);
                         AddCellToBody(table, urun.Toplam.ToString("C2"), bodyFont, rowColor);
                         rowCount++;
