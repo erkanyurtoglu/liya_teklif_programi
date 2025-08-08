@@ -123,7 +123,8 @@
                                         Height="30" 
                                         Margin="4,0" 
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DetayGosterCommand}" 
-                                        CommandParameter="{Binding}"/>
+                                        CommandParameter="{Binding}"
+                                        Background="#1874CD"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

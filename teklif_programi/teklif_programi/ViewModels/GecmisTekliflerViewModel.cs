@@ -32,7 +32,7 @@ namespace teklif_programi.ViewModels
             _context = new TeklifDbContext();
             TumTeklifler = new();
             FiltrelenmisTeklifler = new();
-            TeklifleriYukle(); // Teklifleri yükler
+            TeklifleriYukle(); 
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster); // Detay komutu bağlanır
         }
 
