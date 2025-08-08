@@ -1,16 +1,21 @@
-﻿using System;
+﻿// Gerekli isim alanları: Temel sistem, koleksiyonlar ve veri bağlama için
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// ViewModel sınıflarının isim alanı
 namespace teklif_programi.ViewModels
 {
+    // SatisSozlesmesiViewModel: Satış sözleşmesi metnini yöneten ViewModel
     public class SatisSozlesmesiViewModel : INotifyPropertyChanged
     {
+        // _sozlesmeMetni: Sözleşme metnini saklayan özel alan
         private string _sozlesmeMetni = string.Empty;
 
+        // SozlesmeMetni: UI ile bağlı sözleşme metni, değiştiğinde PropertyChanged tetiklenir
         public string SozlesmeMetni
         {
             get => _sozlesmeMetni;
@@ -19,13 +24,15 @@ namespace teklif_programi.ViewModels
                 if (_sozlesmeMetni != value)
                 {
                     _sozlesmeMetni = value;
-                    OnPropertyChanged(nameof(SozlesmeMetni));
+                    OnPropertyChanged(nameof(SozlesmeMetni)); // UI’yi günceller
                 }
             }
         }
 
+        // Kurucu: Varsayılan sözleşme metnini başlatır
         public SatisSozlesmesiViewModel()
         {
+            // SozlesmeMetni: Örnek bir satış sözleşmesi metni atanır
             SozlesmeMetni =
             @"
             1. Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
@@ -40,8 +47,10 @@ namespace teklif_programi.ViewModels
                - HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
         }
 
+        // PropertyChanged: UI veri bağlama için özellik değişim olayı
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        // OnPropertyChanged: Özellik değiştiğinde UI’yi günceller
         protected void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

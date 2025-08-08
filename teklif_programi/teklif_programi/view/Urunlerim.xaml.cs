@@ -12,60 +12,76 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using teklif_programi.Data;
-using teklif_programi.Models;
+using teklif_programi.Data;    // Veritabanı bağlantı sınıfı
+using teklif_programi.Models; // Urun model sınıfı
 
 namespace teklif_programi.view
 {
     /// <summary>
-    /// Interaction logic for Urunlerim.xaml
+    /// Urunlerim.xaml kullanıcı kontrolü.
+    /// Ürün listeleme, arama, detay görüntüleme ve silme işlemlerini yapar.
     /// </summary>
     public partial class Urunlerim : UserControl
     {
+        // Veritabanı bağlantısı için DbContext
         public TeklifDbContext _db = new TeklifDbContext();
 
+        // Constructor
         public Urunlerim()
         {
-            InitializeComponent();
-            UrunListele();
+            InitializeComponent(); // XAML bileşenlerini yükler
+            UrunListele(); // İlk açılışta tüm ürünleri listele
         }
 
+        /// <summary>
+        /// Ürün listesini veritabanından çeker.
+        /// Arama parametresi verilirse filtre uygular.
+        /// </summary>
         private void UrunListele(string arama = "")
         {
             var urunler = string.IsNullOrWhiteSpace(arama)
-                ? _db.Urunler.ToList()
+                ? _db.Urunler.ToList() // Arama yoksa tüm ürünler
                 : _db.Urunler
-                      .Where(f => f.UrunAciklamasi.Contains(arama) || f.UrunKodu.Contains(arama))
+                      .Where(f => f.UrunAciklamasi.Contains(arama) || f.UrunKodu.Contains(arama)) // Açıklama veya kodda arama kelimesi geçenler
                       .ToList();
 
-            dataGridUrunler.ItemsSource = urunler;
+            dataGridUrunler.ItemsSource = urunler; // DataGrid'e verileri bağla
         }
 
+        /// <summary>
+        /// Arama kutusuna yazıldığında listeyi filtreler.
+        /// </summary>
         private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
         {
             UrunListele(txtArama.Text.Trim());
         }
 
+        /// <summary>
+        /// "Detay" butonuna basıldığında seçilen ürünün detay penceresini açar.
+        /// </summary>
         private void BtnDetay_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenUrun = button?.DataContext as Urun;
+            var secilenUrun = button?.DataContext as Urun; // Tıklanan satırdaki ürün
 
             if (secilenUrun != null)
             {
-                var detayPencere = new UrunDetayWindow(secilenUrun);
+                var detayPencere = new UrunDetayWindow(secilenUrun); // Detay penceresini aç
                 detayPencere.ShowDialog();
             }
 
-            // Değişiklikleri listeye yansıt
+            // Olası değişiklikleri listeye yansıt
             UrunListele(txtArama.Text.Trim());
-
         }
 
+        /// <summary>
+        /// "Sil" butonuna basıldığında ürünü siler.
+        /// Önce şifre doğrulaması yapılır.
+        /// </summary>
         private void BtnUrunSil_Click(object sender, RoutedEventArgs e)
         {
             var button = sender as Button;
-            var secilenUrun = button?.DataContext as Urun;
+            var secilenUrun = button?.DataContext as Urun; // Seçilen ürün
 
             if (secilenUrun == null)
             {
@@ -73,41 +89,44 @@ namespace teklif_programi.view
                 return;
             }
 
-            // Şifre doğrulama penceresi açılır
+            // Şifre doğrulama penceresini aç
             var pwdDialog = new PasswordDialog();
             pwdDialog.Owner = Window.GetWindow(this);
 
-            bool? result = pwdDialog.ShowDialog();
+            bool? result = pwdDialog.ShowDialog(); // Pencere sonucu
 
             if (result == true)
             {
-                const string dogruSifre = "Liya2015";
+                const string dogruSifre = "Liya2015"; // Sabit şifre (daha güvenli olması için veritabanı veya config'de saklanmalı)
 
                 if (pwdDialog.EnteredPassword == dogruSifre)
                 {
+                    // Silme işlemini onaylat
                     if (MessageBox.Show("Bu ürün kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         using (var db = new TeklifDbContext())
                         {
+                            // Ürünü veritabanında bul
                             var urun = db.Urunler.FirstOrDefault(u => u.UrunId == secilenUrun.UrunId);
 
                             if (urun != null)
                             {
-                                db.Urunler.Remove(urun);
-                                db.SaveChanges();
+                                db.Urunler.Remove(urun); // Sil
+                                db.SaveChanges(); // Kaydet
                                 MessageBox.Show("Ürün başarıyla silindi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                             }
                         }
 
+                        // Listeyi güncelle
                         UrunListele(txtArama.Text.Trim());
                     }
                 }
                 else
                 {
+                    // Şifre yanlışsa iptal et
                     MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
-
     }
 }

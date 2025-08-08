@@ -12,51 +12,66 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using teklif_programi.Data;
-using teklif_programi.Models;
+using teklif_programi.Data;    // Veritabanı bağlantısı için
+using teklif_programi.Models; // Urun model sınıfı
 
 namespace teklif_programi.view
 {
     /// <summary>
-    /// Interaction logic for UrunEkle.xaml
+    /// UrunEkle.xaml kullanıcı kontrolü.
+    /// Yeni ürün ekleme işlemlerini yapar.
     /// </summary>
     public partial class UrunEkle : UserControl
     {
+        // Veritabanı erişimi için DbContext
         public TeklifDbContext _db = new TeklifDbContext();
 
+        // Constructor
         public UrunEkle()
         {
-            InitializeComponent();
+            InitializeComponent(); // XAML bileşenlerini yükler
         }
 
+        /// <summary>
+        /// "Kaydet" butonuna basıldığında çalışır.
+        /// Formdaki bilgilerle yeni bir ürün nesnesi oluşturur
+        /// ve veritabanına ekler.
+        /// </summary>
         private void Kaydet_Click(object sender, RoutedEventArgs e)
         {
             try
             {
+                // Yeni ürün nesnesi oluştur
                 Urun yeniUrun = new Urun()
                 {
-                    UrunKodu = txtUrunKodu.Text.Trim(),
-                    Kategori = txtUrunKategori.Text.Trim(),
-                    UrunAciklamasi = txtUrunAciklama.Text.Trim(),
-                    BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()),
-                    FiyatTL = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),
-                    FiyatUSD = decimal.Parse(txtDolarBirimFiyati.Text.Trim()),
-                    FiyatEUR = decimal.Parse(txtEuroBirimFiyati.Text.Trim()),
-
+                    UrunKodu = txtUrunKodu.Text.Trim(),               // Ürün kodu
+                    Kategori = txtUrunKategori.Text.Trim(),           // Kategori
+                    UrunAciklamasi = txtUrunAciklama.Text.Trim(),     // Açıklama
+                    BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()), // TL satış fiyatı
+                    MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()), // Maliyet
+                    FiyatTL = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),     // TL fiyat
+                    FiyatUSD = decimal.Parse(txtDolarBirimFiyati.Text.Trim()),    // USD fiyat
+                    FiyatEUR = decimal.Parse(txtEuroBirimFiyati.Text.Trim()),     // EUR fiyat
                 };
 
+                // Veritabanına ekle
                 _db.Urunler.Add(yeniUrun);
                 _db.SaveChanges();
 
+                // Başarılı mesaj
                 MessageBox.Show("Ürün başarıyla kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
+                // Hata olursa kullanıcıya göster
                 MessageBox.Show("Hata oluştu: " + ex.Message, "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
+        /// <summary>
+        /// "İptal" butonuna basıldığında çalışır.
+        /// Tüm TextBox alanlarını temizler.
+        /// </summary>
         private void Iptal_Click(object sender, RoutedEventArgs e)
         {
             txtUrunKodu.Text = "";
@@ -67,6 +82,5 @@ namespace teklif_programi.view
             txtDolarBirimFiyati.Text = "";
             txtEuroBirimFiyati.Text = "";
         }
-
     }
 }

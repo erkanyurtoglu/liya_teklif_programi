@@ -1,4 +1,5 @@
-﻿using System;
+﻿// Gerekli isim alanları: WPF, veritabanı ve temel sistem fonksiyonları için
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,22 +17,27 @@ using teklif_programi.Data;
 using teklif_programi.Models;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 
+// WPF kullanıcı kontrollerinin isim alanı
 namespace teklif_programi.view
 {
     /// <summary>
-    /// Interaction logic for PersonelEkle.xaml
+    /// PersonelEkle.xaml: Yeni personel eklemek için kullanılan WPF kullanıcı kontrolü
     /// </summary>
     public partial class PersonelEkle : UserControl
     {
+        // _db: Veritabanı bağlantısı için DbContext
         public TeklifDbContext _db = new TeklifDbContext();
 
+        // Kurucu: Kontrolü başlatır
         public PersonelEkle()
         {
-            InitializeComponent();
+            InitializeComponent(); // WPF kontrolünü başlatır
         }
 
+        // Kaydet_Click: Kaydet butonuna tıklandığında yeni personeli veritabanına ekler
         private void Kaydet_Click(object sender, RoutedEventArgs e)
         {
+            // Tüm alanların dolu olup olmadığını kontrol eder
             if (string.IsNullOrWhiteSpace(txtAdSoyad.Text) ||
                 string.IsNullOrWhiteSpace(txtPozisyon.Text) ||
                 string.IsNullOrWhiteSpace(txtTelefon.Text) ||
@@ -41,6 +47,7 @@ namespace teklif_programi.view
                 return;
             }
 
+            // Yeni personel nesnesi oluşturur
             var personel = new Personel
             {
                 AdSoyad = txtAdSoyad.Text,
@@ -49,11 +56,12 @@ namespace teklif_programi.view
                 Sifre = txtSifre.Text,
             };
 
-            _db.Personeller.Add(personel);
-            _db.SaveChanges();
+            _db.Personeller.Add(personel); // Personeli veritabanına ekler
+            _db.SaveChanges(); // Değişiklikleri kaydeder
 
             MessageBox.Show("Personel başarıyla eklendi.", "Kayıt Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
 
+            // TextBox'ları temizler
             txtAdSoyad.Clear();
             txtPozisyon.Clear();
             txtTelefon.Clear();
