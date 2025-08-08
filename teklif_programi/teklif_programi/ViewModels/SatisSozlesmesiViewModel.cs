@@ -9,7 +9,8 @@ namespace teklif_programi.ViewModels
 {
     public class SatisSozlesmesiViewModel : INotifyPropertyChanged
     {
-        private string _sozlesmeMetni;
+        private string _sozlesmeMetni = string.Empty;
+
         public string SozlesmeMetni
         {
             get => _sozlesmeMetni;
@@ -39,7 +40,8 @@ namespace teklif_programi.ViewModels
                - HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         protected void OnPropertyChanged(string name)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));

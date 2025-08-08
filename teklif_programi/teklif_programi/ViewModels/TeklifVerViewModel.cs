@@ -23,11 +23,11 @@ namespace teklif_programi.ViewModels
         private Musteri? _firmaBilgisi;
         private string _urunArama = string.Empty;
         private string _selectedCurrency = "TL"; // Varsayılan para birimi
-        private ObservableCollection<string> _paraBirimiListe;
+        private ObservableCollection<string> _paraBirimiListe = new ObservableCollection<string>();
         private string _ilgiliKisi = string.Empty; // Yeni özellik: İlgili Kişi
         private string _ilgiliKisiNumarasi = string.Empty; // Yeni özellik: İlgili Kişi Numarası
         private string _ilgiliKisiEposta = string.Empty;
-        private string _satisSozlesmesiMetni; // Yeni özellik: Satış sözleşmesi metni
+        private string _satisSozlesmesiMetni = string.Empty; // Yeni özellik: Satış sözleşmesi metni
 
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
 
@@ -344,17 +344,24 @@ namespace teklif_programi.ViewModels
 
         private void RecalculateAll()
         {
-            foreach (var urun in SecilenUrunler)
-            {
-                urun.BirimFiyat = GetFiyatByCurrency(
-                    TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId),
-                    SelectedCurrency
-                );
-                HesaplaIndirimliFiyat(urun);
-            }
-            OnPropertyChanged(nameof(ToplamFiyat));
-            OnPropertyChanged(nameof(KdvUcreti));
-            OnPropertyChanged(nameof(GenelToplam));
+    foreach (var urun in SecilenUrunler)
+    {
+        var matchedUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
+        if (matchedUrun != null)
+        {
+            urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
+            HesaplaIndirimliFiyat(urun);
+        }
+        else
+        {
+            // Eğer uygun, burada log atabilir veya default fiyat atayabilirsin:
+            urun.BirimFiyat = 0;
+            HesaplaIndirimliFiyat(urun);
+        }
+    }
+    OnPropertyChanged(nameof(ToplamFiyat));
+    OnPropertyChanged(nameof(KdvUcreti));
+    OnPropertyChanged(nameof(GenelToplam));
         }
 
         public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);
@@ -521,7 +528,7 @@ namespace teklif_programi.ViewModels
                         urunNo++;
                     }
                     table.WriteSelectedRows(0, -1, 22.5f, 520, canvas);
-
+                        
                     PdfPTable toplamTable = new PdfPTable(2);
                     toplamTable.TotalWidth = 240f;
                     toplamTable.SetWidths(new float[] { 3f, 2f });

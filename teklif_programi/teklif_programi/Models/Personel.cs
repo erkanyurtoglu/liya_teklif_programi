@@ -4,24 +4,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace teklif_programi.Models
 {
-    [Table("personeller")]
     public class Personel
     {
-        [Key]
         public int PersonelId { get; set; }
-
-        [Required]
         public string AdSoyad { get; set; } = string.Empty;
-
-        [Required]
         public string Telefon { get; set; } = string.Empty;
-
-        [Required]
         public string Pozisyon { get; set; } = string.Empty;
-
-        [Required]
         public string Sifre { get; set; } = string.Empty;
+        public DateTime EklenmeTarihi { get; set; }
 
-        public DateTime EklenmeTarihi { get; set; } = DateTime.Now;
+        //TeklifConfiguration.cs için eklendi:
+        public virtual ICollection<Teklif> Teklifler { get; set; } = new List<Teklif>();
     }
 }

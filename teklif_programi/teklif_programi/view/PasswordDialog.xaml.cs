@@ -20,7 +20,8 @@ namespace teklif_programi.view
     /// </summary>
     public partial class PasswordDialog : Window
     {
-        public string EnteredPassword { get; private set; }
+        public string? EnteredPassword { get; private set; }
+
 
         public PasswordDialog()
         {

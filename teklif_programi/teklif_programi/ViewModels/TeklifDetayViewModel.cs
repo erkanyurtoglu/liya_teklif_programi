@@ -19,9 +19,9 @@ namespace teklif_programi.ViewModels
     {
         private readonly TeklifDbContext _context;
         private Teklif _teklif;
-        private ObservableCollection<TeklifUrunModel> _teklifUrunler;
+        private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
         private TeklifToplam? _teklifToplam;
-        private ObservableCollection<string> _durumlar;
+        private ObservableCollection<string> _durumlar = new();
 
         public TeklifDetayViewModel(Teklif teklif)
         {
@@ -162,21 +162,24 @@ namespace teklif_programi.ViewModels
 
                 if (dbToplam != null)
                 {
-                    dbToplam.IndirimliToplam = TeklifToplam.IndirimliToplam;
-                    dbToplam.KdvTutari = TeklifToplam.KdvTutari;
-                    dbToplam.GenelToplam = TeklifToplam.GenelToplam;
+                    if (TeklifToplam != null)
+                    {
+                        dbToplam.IndirimliToplam = TeklifToplam.IndirimliToplam;
+                        dbToplam.KdvTutari = TeklifToplam.KdvTutari;
+                        dbToplam.GenelToplam = TeklifToplam.GenelToplam;
+                    }
                 }
                 else
                 {
-                    // Yoksa yeni oluştur
                     _context.TeklifToplamlari.Add(new TeklifToplam
                     {
                         TeklifId = Teklif.TeklifId,
-                        IndirimliToplam = TeklifToplam.IndirimliToplam,
-                        KdvTutari = TeklifToplam.KdvTutari,
-                        GenelToplam = TeklifToplam.GenelToplam
+                        IndirimliToplam = TeklifToplam?.IndirimliToplam ?? 0,
+                        KdvTutari = TeklifToplam?.KdvTutari ?? 0,
+                        GenelToplam = TeklifToplam?.GenelToplam ?? 0
                     });
                 }
+
 
                 _context.SaveChanges();
                 transaction.Commit();
@@ -252,9 +255,13 @@ namespace teklif_programi.ViewModels
                 pdfDoc.Add(new Paragraph("\n"));
 
                 // Toplamlar
-                pdfDoc.Add(new Paragraph($"İndirimli Toplam: {TeklifToplam.IndirimliToplam:C2}"));
-                pdfDoc.Add(new Paragraph($"KDV Tutarı: {TeklifToplam.KdvTutari:C2}"));
-                pdfDoc.Add(new Paragraph($"Genel Toplam: {TeklifToplam.GenelToplam:C2}"));
+                if (TeklifToplam != null)
+                {
+                    pdfDoc.Add(new Paragraph($"İndirimli Toplam: {TeklifToplam.IndirimliToplam:C2}"));
+                    pdfDoc.Add(new Paragraph($"KDV Tutarı: {TeklifToplam.KdvTutari:C2}"));
+                    pdfDoc.Add(new Paragraph($"Genel Toplam: {TeklifToplam.GenelToplam:C2}"));
+                }
+
 
                 pdfDoc.Close();
 
@@ -266,7 +273,7 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        private void AddCellToHeader(PdfPTable table, string text)
+        private static void AddCellToHeader(PdfPTable table, string text)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text))
             {

@@ -16,18 +16,19 @@ namespace teklif_programi.ViewModels
     {
         private readonly TeklifDbContext _context;
         private string _teklifArama = string.Empty;
-        private ObservableCollection<Teklif> _tumTeklifler;
-        private ObservableCollection<Teklif> _filtrelenmisTeklifler;
+        private ObservableCollection<Teklif> _tumTeklifler = new();
+        private ObservableCollection<Teklif> _filtrelenmisTeklifler = new();
+
 
         public GecmisTekliflerViewModel()
         {
             _context = new TeklifDbContext();
-            TumTeklifler = new ObservableCollection<Teklif>();
-            FiltrelenmisTeklifler = new ObservableCollection<Teklif>();
+            TumTeklifler = new();
+            FiltrelenmisTeklifler = new();
             TeklifleriYukle();
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
         }
-
+                
         public ObservableCollection<Teklif> TumTeklifler
         {
             get => _tumTeklifler;
@@ -91,7 +92,7 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(FiltrelenmisTeklifler));
         }
 
-        private void DetayGoster(Teklif teklif)
+        private void DetayGoster(Teklif? teklif)
         {
             if (teklif == null)
             {

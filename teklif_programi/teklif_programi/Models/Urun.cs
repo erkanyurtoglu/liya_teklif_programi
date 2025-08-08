@@ -5,44 +5,23 @@ using System.Runtime.CompilerServices;
 
 namespace teklif_programi.Models
 {
-    [Table("urunler")]
-    public class Urun : INotifyPropertyChanged
+    public class Urun
     {
-        [Key]
-        public int UrunId { get; set; }  // Birincil anahtar
-
+        public int UrunId { get; set; }
         public string UrunKodu { get; set; } = string.Empty;
-
         public string Kategori { get; set; } = string.Empty;
-
         public string UrunAciklamasi { get; set; } = string.Empty;
 
-        private int _adet;
-        [NotMapped]  
-        public int Adet
-        {
-            get => _adet;
-            set
-            {
-                if (_adet != value)
-                {
-                    _adet = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        [System.ComponentModel.DataAnnotations.Schema.NotMapped]
+        public int Adet { get; set; }  // EF tarafında maplenmez
 
         public decimal BirimFiyat { get; set; }
-
         public decimal MaliyetFiyati { get; set; }
         public decimal FiyatTL { get; set; }
         public decimal FiyatUSD { get; set; }
         public decimal FiyatEUR { get; set; }
+        public DateTime EklenmeTarihi { get; set; }
 
-        public DateTime EklenmeTarihi { get; set; } = DateTime.Now;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public virtual ICollection<TeklifUrun> TeklifUrunleri { get; set; } = new List<TeklifUrun>();
     }
 }

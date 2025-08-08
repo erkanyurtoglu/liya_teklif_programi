@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using teklif_programi.Models;
+using System.Configuration;
 
 namespace teklif_programi.Data
 {
-    public class TeklifDbContext : DbContext // DbContext'ten türetildi
+    public class TeklifDbContext : DbContext 
     {
         public DbSet<Musteri> Musteriler { get; set; }
         public DbSet<Urun> Urunler { get; set; }
@@ -21,7 +22,19 @@ namespace teklif_programi.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=EXCALIBUR\\SQLEXPRESS;Database=LiyaTeklifVeriTabani;Integrated Security=True;Encrypt=False;");
+            if (!optionsBuilder.IsConfigured)
+            {
+                var connectionString = ConfigurationManager
+                    .ConnectionStrings["TeklifDb"].ConnectionString;
+
+                optionsBuilder.UseSqlServer(connectionString);
+            }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(TeklifDbContext).Assembly);
+        }
+
     }
 }
