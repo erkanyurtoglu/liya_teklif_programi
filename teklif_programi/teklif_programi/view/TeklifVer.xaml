@@ -288,7 +288,7 @@
                             <DataGridTemplateColumn Header="Seç" Width="Auto" HeaderStyle="{StaticResource DataGridColumnHeader}">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
-                                        <Button Content="Seç" Style="{StaticResource ModernButtonStyle}" Width="80" Height="36" 
+                                        <Button Content="Seç" Style="{StaticResource ModernButtonStyle}" Width="80" Height="36" Background="#1874CD"
                                                 Command="{Binding DataContext.SepeteEkleCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
                                                 CommandParameter="{Binding}"/>
                                     </DataTemplate>
