@@ -1,12 +1,37 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\viewmodels\\teklifverviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\viewmodels\\teklifverviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TeklifVerViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\ViewModels\\TeklifVerViewModel.cs",
+              "RelativeDocumentMoniker": "teklif_programi\\ViewModels\\TeklifVerViewModel.cs",
+              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\ViewModels\\TeklifVerViewModel.cs",
+              "RelativeToolTip": "teklif_programi\\ViewModels\\TeklifVerViewModel.cs",
+              "ViewState": "AgIAABgBAAAAAAAAAADwvysBAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-08-08T20:21:59.16Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

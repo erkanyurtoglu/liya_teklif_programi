@@ -293,9 +293,9 @@ namespace teklif_programi.ViewModels
         {
             return currency switch
             {
-                "USD" => new CultureInfo("en-US"),   // $ 
-                "EUR" => new CultureInfo("de-DE"),   // € (almanya formatı, istersen "fr-FR" veya "en-IE" ile değiştir)
-                _ => new CultureInfo("tr-TR"),       // ₺
+                "USD" => new CultureInfo("en-US"),   
+                "EUR" => new CultureInfo("en-IE"),   
+                _ => new CultureInfo("tr-TR"),       
             };
         }
 
