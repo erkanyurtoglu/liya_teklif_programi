@@ -36,6 +36,31 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#ccc"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Modern DatePicker Style -->
+        <Style x:Key="ModernDatePicker" TargetType="DatePicker">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#ccc"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Background="#ededed" Margin="20">
@@ -43,11 +68,11 @@
             <RowDefinition Height="Auto"/>
             <!-- Başlık -->
             <RowDefinition Height="Auto"/>
-            <!-- Arama -->
+            <!-- Arama ve Filtre -->
             <RowDefinition Height="*"/>
             <!-- Liste -->
             <RowDefinition Height="Auto"/>
-            <!-- Alt Butonlar (opsiyonel, şu an kullanılmıyor) -->
+            <!-- Alt Butonlar (opsiyonel) -->
         </Grid.RowDefinitions>
 
         <!-- Başlık ve Alt Çizgi -->
@@ -66,19 +91,30 @@
                     CornerRadius="1"/>
         </StackPanel>
 
-        <!-- Arama Kutusu -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,20">
+        <!-- Arama ve Filtreleme -->
+        <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,0,0,20">
             <TextBox x:Name="txtArama" 
                      Width="400" 
-                     Height="38" 
-                     FontSize="14" 
-                     Padding="10,0"
-                     VerticalContentAlignment="Center" 
-                     BorderBrush="#ccc" 
-                     BorderThickness="1"
-                     Background="White" 
-                     Foreground="Black" 
+                     Style="{StaticResource ModernTextBox}"
                      Text="{Binding TeklifArama, UpdateSourceTrigger=PropertyChanged}"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <ComboBox Width="150" 
+                          Height="38" 
+                          FontSize="14" 
+                          VerticalContentAlignment="Center" 
+                          ItemsSource="{Binding TarihFiltreSecenekleri}" 
+                          SelectedItem="{Binding SecilenTarihFiltresi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          Margin="0,0,10,0"/>
+                <DatePicker Width="150" 
+                            Style="{StaticResource ModernDatePicker}" 
+                            SelectedDate="{Binding BaslangicTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Visibility="{Binding BaslangicTarihiVisibility}"/>
+                <DatePicker Width="150" 
+                            Style="{StaticResource ModernDatePicker}" 
+                            SelectedDate="{Binding BitisTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                            Visibility="{Binding BitisTarihiVisibility}" 
+                            Margin="10,0,0,0"/>
+            </StackPanel>
         </StackPanel>
 
         <!-- Teklif Listesi -->

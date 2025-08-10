@@ -1,5 +1,4 @@
-﻿// Gerekli isim alanları: MVVM, veritabanı, koleksiyonlar ve UI için
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
@@ -7,50 +6,35 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.view;
 
-// ViewModel sınıflarının isim alanı
 namespace teklif_programi.ViewModels
 {
-    // GecmisTekliflerViewModel: Geçmiş teklifleri yöneten ve UI ile bağlayan ViewModel
     public class GecmisTekliflerViewModel : INotifyPropertyChanged
     {
-        // _context: Veritabanı bağlantısı için DbContext
         private readonly TeklifDbContext _context;
-        // _teklifArama: Arama metni için özel alan
         private string _teklifArama = string.Empty;
-        // _tumTeklifler: Tüm tekliflerin listesi
         private ObservableCollection<Teklif> _tumTeklifler = new();
-        // _filtrelenmisTeklifler: Filtrelenmiş tekliflerin listesi
         private ObservableCollection<Teklif> _filtrelenmisTeklifler = new();
+        private string _secilenTarihFiltresi;
+        private DateTime? _baslangicTarihi;
+        private DateTime? _bitisTarihi;
 
-        // Kurucu: DbContext başlatılır, koleksiyonlar oluşturulur ve teklifler yüklenir
-        public GecmisTekliflerViewModel()
-        {
-            _context = new TeklifDbContext();
-            TumTeklifler = new();
-            FiltrelenmisTeklifler = new();
-            TeklifleriYukle(); 
-            DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster); // Detay komutu bağlanır
-        }
-
-        // TumTeklifler: Tüm tekliflerin ObservableCollection’ı, UI ile bağlı
         public ObservableCollection<Teklif> TumTeklifler
         {
             get => _tumTeklifler;
             set { _tumTeklifler = value; OnPropertyChanged(); }
         }
 
-        // FiltrelenmisTeklifler: Filtrelenmiş tekliflerin ObservableCollection’ı, UI ile bağlı
         public ObservableCollection<Teklif> FiltrelenmisTeklifler
         {
             get => _filtrelenmisTeklifler;
             set { _filtrelenmisTeklifler = value; OnPropertyChanged(); }
         }
 
-        // TeklifArama: Arama metni, değiştiğinde filtreleme yapar
         public string TeklifArama
         {
             get => _teklifArama;
@@ -60,20 +44,70 @@ namespace teklif_programi.ViewModels
                 {
                     _teklifArama = value;
                     OnPropertyChanged();
-                    TeklifleriFiltrele(); // Arama metni değiştiğinde filtreleme tetiklenir
+                    TeklifleriFiltrele();
                 }
             }
         }
 
-        // DetayGosterCommand: Teklif detayını gösteren komut
+        public ObservableCollection<string> TarihFiltreSecenekleri { get; } = new() { "1 Gün", "1 Hafta", "15 Gün", "30 Gün", "Özel Tarih" };
+
+        public string SecilenTarihFiltresi
+        {
+            get => _secilenTarihFiltresi;
+            set
+            {
+                _secilenTarihFiltresi = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(BaslangicTarihiVisibility));
+                OnPropertyChanged(nameof(BitisTarihiVisibility));
+                TeklifleriFiltrele();
+            }
+        }
+
+        public DateTime? BaslangicTarihi
+        {
+            get => _baslangicTarihi;
+            set
+            {
+                _baslangicTarihi = value;
+                OnPropertyChanged();
+                TeklifleriFiltrele();
+            }
+        }
+
+        public DateTime? BitisTarihi
+        {
+            get => _bitisTarihi;
+            set
+            {
+                _bitisTarihi = value;
+                OnPropertyChanged();
+                TeklifleriFiltrele();
+            }
+        }
+
+        public Visibility BaslangicTarihiVisibility => SecilenTarihFiltresi == "Özel Tarih" ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility BitisTarihiVisibility => SecilenTarihFiltresi == "Özel Tarih" ? Visibility.Visible : Visibility.Collapsed;
+
         public RelayCommand<Teklif> DetayGosterCommand { get; }
 
-        // TeklifleriYukle: Veritabanından teklifleri yükler ve koleksiyonlara ekler
+        public GecmisTekliflerViewModel()
+        {
+            _context = new TeklifDbContext();
+            _secilenTarihFiltresi = "1 Hafta";
+            DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
+            TeklifleriYukle();
+        }
+
         private void TeklifleriYukle()
         {
             try
             {
-                var teklifler = _context.Teklifler.Include(t => t.Musteri).ToList(); // Müşteri ile birlikte teklifleri çeker
+                var teklifler = _context.Teklifler
+                    .Include(t => t.Musteri)
+                    .Include(t => t.Personel)
+                    .Include(t => t.TeklifToplam)
+                    .ToList();
                 TumTeklifler.Clear();
                 FiltrelenmisTeklifler.Clear();
                 foreach (var teklif in teklifler)
@@ -81,37 +115,62 @@ namespace teklif_programi.ViewModels
                     TumTeklifler.Add(teklif);
                     FiltrelenmisTeklifler.Add(teklif);
                 }
+                TeklifleriFiltrele();
             }
             catch (Exception ex)
             {
-                // Hata durumunda kullanıcıya mesaj gösterir
                 MessageBox.Show($"Teklifler yüklenirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // TeklifleriFiltrele: Arama metnine göre teklifleri filtreler
         private void TeklifleriFiltrele()
         {
-            if (string.IsNullOrWhiteSpace(TeklifArama))
+            var bugun = DateTime.Today;
+            var filtreliTeklifler = TumTeklifler.ToList();
+
+            // Tarih filtresi
+            switch (SecilenTarihFiltresi)
             {
-                FiltrelenmisTeklifler = new ObservableCollection<Teklif>(TumTeklifler); // Arama yoksa tüm teklifler gösterilir
+                case "1 Gün":
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-1) && t.OlusturmaTarihi < bugun).ToList();
+                    break;
+                case "1 Hafta":
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-7) && t.OlusturmaTarihi < bugun).ToList();
+                    break;
+                case "15 Gün":
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-15) && t.OlusturmaTarihi < bugun).ToList();
+                    break;
+                case "30 Gün":
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-30) && t.OlusturmaTarihi < bugun).ToList();
+                    break;
+                case "Özel Tarih":
+                    if (BaslangicTarihi.HasValue && BitisTarihi.HasValue)
+                    {
+                        var baslangic = BaslangicTarihi.Value.Date;
+                        var bitis = BitisTarihi.Value.Date.AddDays(1).AddTicks(-1); // Bitiş gününü dahil etmek için bir gün ekleyip son saniyeye ayarlar
+                        filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= baslangic && t.OlusturmaTarihi <= bitis).ToList();
+                    }
+                    break;
             }
-            else
+
+            // Arama metni filtresi
+            if (!string.IsNullOrWhiteSpace(TeklifArama))
             {
-                var filtreli = TumTeklifler.Where(t =>
-                    t.TeklifId.ToString().Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) || // Teklif ID ile eşleşir
-                    (t.Musteri?.FirmaAdi?.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ?? false)).ToList(); // Firma adına göre eşleşir
-                FiltrelenmisTeklifler = new ObservableCollection<Teklif>(filtreli);
+                filtreliTeklifler = filtreliTeklifler.Where(t =>
+                    t.TeklifId.ToString().Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ||
+                    (t.Musteri != null && t.Musteri.FirmaAdi != null && t.Musteri.FirmaAdi.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.Personel != null && t.Personel.AdSoyad != null && t.Personel.AdSoyad.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
             }
-            OnPropertyChanged(nameof(FiltrelenmisTeklifler)); // UI’yi günceller
+
+            FiltrelenmisTeklifler = new ObservableCollection<Teklif>(filtreliTeklifler.OrderByDescending(t => t.OlusturmaTarihi));
         }
 
-        // DetayGoster: Seçilen teklifin detay penceresini açar
         private void DetayGoster(Teklif? teklif)
         {
             if (teklif == null)
             {
-                MessageBox.Show("Lütfen bir teklif seçin!", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning); // Teklif seçilmemişse uyarı
+                MessageBox.Show("Lütfen bir teklif seçin!", "Hata", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -119,20 +178,17 @@ namespace teklif_programi.ViewModels
             {
                 var detayWindow = new TeklifDetayWindow
                 {
-                    DataContext = new TeklifDetayViewModel(teklif) // Detay penceresine ViewModel bağlanır
+                    DataContext = new TeklifDetayViewModel(teklif)
                 };
-                detayWindow.ShowDialog(); // Detay penceresini modal olarak açar
+                detayWindow.ShowDialog();
             }
             catch (Exception ex)
             {
-                // Hata durumunda kullanıcıya mesaj gösterir
                 MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        // PropertyChanged: UI veri bağlama için özellik değişim olayı
         public event PropertyChangedEventHandler? PropertyChanged;
-        // OnPropertyChanged: Özellik değiştiğinde UI’yi günceller
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
 }
