@@ -107,7 +107,11 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.Musteri)
                     .Include(t => t.Personel)
                     .Include(t => t.TeklifToplam)
+                    .Include(t => t.TeklifUrunleri)       // Bu satır eklendi
+                    .ThenInclude(tu => tu.Urun)      // Bu satır eklendi
                     .ToList();
+
+
                 TumTeklifler.Clear();
                 FiltrelenmisTeklifler.Clear();
                 foreach (var teklif in teklifler)
@@ -132,23 +136,23 @@ namespace teklif_programi.ViewModels
             switch (SecilenTarihFiltresi)
             {
                 case "1 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-1) && t.OlusturmaTarihi < bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-1) && t.OlusturmaTarihi.Date <= bugun).ToList();
                     break;
                 case "1 Hafta":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-7) && t.OlusturmaTarihi < bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-7) && t.OlusturmaTarihi.Date <= bugun).ToList();
                     break;
                 case "15 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-15) && t.OlusturmaTarihi < bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-15) && t.OlusturmaTarihi.Date <= bugun).ToList();
                     break;
                 case "30 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= bugun.AddDays(-30) && t.OlusturmaTarihi < bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-30) && t.OlusturmaTarihi.Date <= bugun).ToList();
                     break;
                 case "Özel Tarih":
                     if (BaslangicTarihi.HasValue && BitisTarihi.HasValue)
                     {
                         var baslangic = BaslangicTarihi.Value.Date;
-                        var bitis = BitisTarihi.Value.Date.AddDays(1).AddTicks(-1); // Bitiş gününü dahil etmek için bir gün ekleyip son saniyeye ayarlar
-                        filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi >= baslangic && t.OlusturmaTarihi <= bitis).ToList();
+                        var bitis = BitisTarihi.Value.Date;
+                        filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= baslangic && t.OlusturmaTarihi.Date <= bitis).ToList();
                     }
                     break;
             }
@@ -159,9 +163,18 @@ namespace teklif_programi.ViewModels
                 filtreliTeklifler = filtreliTeklifler.Where(t =>
                     t.TeklifId.ToString().Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ||
                     (t.Musteri != null && t.Musteri.FirmaAdi != null && t.Musteri.FirmaAdi.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
-                    (t.Personel != null && t.Personel.AdSoyad != null && t.Personel.AdSoyad.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase))
+                    (t.Personel != null && t.Personel.AdSoyad != null && t.Personel.AdSoyad.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.TeklifUrunleri != null && t.TeklifUrunleri.Any(tu =>
+                        tu.Urun != null &&
+                        (
+                            (tu.Urun.UrunAciklamasi != null && tu.Urun.UrunAciklamasi.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
+                            (tu.Urun.UrunKodu != null && tu.Urun.UrunKodu.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase))
+                        )
+                    ))
                 ).ToList();
             }
+
+
 
             FiltrelenmisTeklifler = new ObservableCollection<Teklif>(filtreliTeklifler.OrderByDescending(t => t.OlusturmaTarihi));
         }
