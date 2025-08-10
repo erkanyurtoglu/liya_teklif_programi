@@ -215,18 +215,46 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Teklif ID" 
-                                   Binding="{Binding TeklifId}" 
-                                   Width="0.7*"/>
-                <DataGridTextColumn Header="Firma Adı" 
-                                   Binding="{Binding Musteri.FirmaAdi}" 
-                                   Width="2*"/>
-                <DataGridTextColumn Header="Tarih" 
-                                   Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" 
-                                   Width="1*"/>
-                <DataGridTextColumn Header="Durum" 
-                                   Binding="{Binding Durum}" 
-                                   Width="1*"/>
+                <DataGridTextColumn Header="Teklif No" Binding="{Binding TeklifId}" Width="0.7*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Firma Adı" Binding="{Binding Musteri.FirmaAdi}" Width="2*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Tarih" Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" Width="1*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="1*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
                 <DataGridTemplateColumn Header="İşlemler" 
                                        Width="170">
                     <DataGridTemplateColumn.CellTemplate>
