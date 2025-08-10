@@ -47,7 +47,12 @@ namespace teklif_programi.ViewModels
         public Teklif Teklif
         {
             get => _teklif;
-            set { _teklif = value; OnPropertyChanged(); }
+            set
+            {
+                _teklif = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PersonelAdiSoyadi));
+            }
         }
 
         // TeklifUrunler: Teklifteki ürünlerin ObservableCollection’ı, UI ile bağlı
@@ -76,15 +81,22 @@ namespace teklif_programi.ViewModels
         // PdfIndirCommand: Teklif detaylarını PDF olarak indirmek için komut
         public RelayCommand PdfIndirCommand { get; }
 
+        public string PersonelAdiSoyadi => Teklif?.Personel != null
+        ? $"{Teklif.Personel.AdSoyad}"
+        : "Personel bilgisi yok";
+
+
         // YukleTeklifDetaylari: Teklif ürünlerini ve toplamlarını veritabanından yükler
         private void YukleTeklifDetaylari()
         {
             try
             {
+                // Teklif ürünlerini yükle (mevcut)
                 var urunler = _context.TeklifUrunleri
                     .Include(tu => tu.Urun)
                     .Where(tu => tu.TeklifId == Teklif.TeklifId)
-                    .ToList(); // Teklife ait ürünleri çeker
+                    .ToList();
+
                 TeklifUrunler.Clear();
                 foreach (var urun in urunler)
                 {
@@ -97,19 +109,33 @@ namespace teklif_programi.ViewModels
                         BirimFiyat = urun.BirimFiyat,
                         IndirimliFiyat = urun.IndirimliBirimFiyat
                     };
-                    model.OnBirimFiyatDegisti += TeklifUrunDegisti; // Ürün değişim olayını bağlar
+                    model.OnBirimFiyatDegisti += TeklifUrunDegisti;
                     TeklifUrunler.Add(model);
                 }
-                // Teklif toplamını çeker veya varsayılan değer oluşturur
+
+                // Teklif toplamını yükle
                 TeklifToplam = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId)
                     ?? new TeklifToplam { TeklifId = Teklif.TeklifId, IndirimliToplam = 0, KdvTutari = 0, GenelToplam = 0 };
-                HesaplaToplamlar(); // Toplamları hesaplar
+
+                // Teklif detayını (Personel ve Musteri ile birlikte) tekrar yükle
+                var teklifWithRelations = _context.Teklifler
+                    .Include(t => t.Personel)
+                    .Include(t => t.Musteri)
+                    .FirstOrDefault(t => t.TeklifId == Teklif.TeklifId);
+
+                if (teklifWithRelations != null)
+                {
+                    Teklif = teklifWithRelations;
+                }
+
+                HesaplaToplamlar();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Teklif detayları yüklenirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         // TeklifUrunDegisti: Ürün fiyat/adet değiştiğinde toplamları günceller
         private void TeklifUrunDegisti(object? sender, EventArgs e)
