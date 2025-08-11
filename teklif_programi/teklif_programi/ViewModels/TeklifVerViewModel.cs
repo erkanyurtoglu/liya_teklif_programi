@@ -516,7 +516,8 @@ namespace teklif_programi.ViewModels
                 BackgroundColor = backgroundColor,
                 HorizontalAlignment = Element.ALIGN_CENTER,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
-                Padding = 5
+                Padding = 5,
+                Border = PdfPCell.NO_BORDER  // <-- Border yok
             };
             table.AddCell(cell);
         }
@@ -528,10 +529,12 @@ namespace teklif_programi.ViewModels
                 BackgroundColor = backgroundColor,
                 HorizontalAlignment = Element.ALIGN_LEFT,
                 VerticalAlignment = Element.ALIGN_MIDDLE,
-                Padding = 5
+                Padding = 5,
+                Border = PdfPCell.NO_BORDER  // <-- Border yok
             };
             table.AddCell(cell);
         }
+
 
         private PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
         {
