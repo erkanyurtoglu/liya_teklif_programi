@@ -50,5 +50,8 @@
     <Compile Update="view\Urunlerim.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\UrunSecimWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

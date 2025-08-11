@@ -1,32 +1,43 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Globalization;
 
 namespace teklif_programi.Models
 {
     public class TeklifUrunModel : INotifyPropertyChanged
     {
-        public int UrunId { get; set; }
-        public string UrunKodu { get; set; } = string.Empty;
-        public string UrunAciklamasi { get; set; } = string.Empty;
-
+        private int _urunId;
+        private string _urunKodu = string.Empty;
+        private string _urunAciklamasi = string.Empty;
+        private int _adet;
         private decimal _birimFiyat;
-        public decimal BirimFiyat
+        private decimal _indirimliFiyat;
+        private decimal _fiyatTL;
+        private decimal _fiyatUSD;
+        private decimal _fiyatEUR;
+        private string _birimFiyatText = string.Empty;
+        private string _indirimliFiyatText = string.Empty;
+        private string _toplamText = string.Empty;
+
+        public int UrunId
         {
-            get => _birimFiyat;
-            set
-            {
-                if (_birimFiyat != value)
-                {
-                    _birimFiyat = value;
-                    OnPropertyChanged();
-                    OnPropertyChanged(nameof(Toplam)); // Toplam da güncellensin
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty);
-                }
-            }
+            get => _urunId;
+            set { _urunId = value; OnPropertyChanged(); }
         }
 
-        private int _adet = 1;
+        public string UrunKodu
+        {
+            get => _urunKodu;
+            set { _urunKodu = value; OnPropertyChanged(); }
+        }
+
+        public string UrunAciklamasi
+        {
+            get => _urunAciklamasi;
+            set { _urunAciklamasi = value; OnPropertyChanged(); }
+        }
+
         public int Adet
         {
             get => _adet;
@@ -36,13 +47,25 @@ namespace teklif_programi.Models
                 {
                     _adet = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(Toplam));
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty);
+                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // Adet değiştiğinde tetikle
                 }
             }
         }
 
-        private decimal _indirimliFiyat;
+        public decimal BirimFiyat
+        {
+            get => _birimFiyat;
+            set
+            {
+                if (_birimFiyat != value)
+                {
+                    _birimFiyat = value;
+                    OnPropertyChanged();
+                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // BirimFiyat değiştiğinde tetikle
+                }
+            }
+        }
+
         public decimal IndirimliFiyat
         {
             get => _indirimliFiyat;
@@ -52,44 +75,67 @@ namespace teklif_programi.Models
                 {
                     _indirimliFiyat = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(Toplam));
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty);
+                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // IndirimliFiyat değiştiğinde tetikle
                 }
             }
         }
 
-        public decimal Toplam => Adet * IndirimliFiyat;
-
-        public decimal FiyatTL { get; set; }
-        public decimal FiyatUSD { get; set; }
-        public decimal FiyatEUR { get; set; }
-
-        public event EventHandler? OnBirimFiyatDegisti;
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        // --- Yeni: UI için formatlanmış string alanlar ---
-        private string _birimFiyatText = string.Empty;
         public string BirimFiyatText
         {
             get => _birimFiyatText;
             set { _birimFiyatText = value; OnPropertyChanged(); }
         }
 
-        private string _indirimliFiyatText = string.Empty;
         public string IndirimliFiyatText
         {
             get => _indirimliFiyatText;
-            set { _indirimliFiyatText = value; OnPropertyChanged(); }
+            set
+            {
+                if (_indirimliFiyatText != value)
+                {
+                    _indirimliFiyatText = value;
+                    OnPropertyChanged();
+                    // Metni decimal'e çevir ve IndirimliFiyat'ı güncelle
+                    if (decimal.TryParse(value.Replace("₺", "").Replace("$", "").Replace("€", "").Trim(), NumberStyles.Currency, CultureInfo.CurrentCulture, out decimal parsedValue))
+                    {
+                        IndirimliFiyat = parsedValue; // Bu, OnBirimFiyatDegisti'yi tetikler
+                    }
+                }
+            }
         }
 
-        private string _toplamText = string.Empty;
         public string ToplamText
         {
             get => _toplamText;
             set { _toplamText = value; OnPropertyChanged(); }
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        public decimal FiyatTL
+        {
+            get => _fiyatTL;
+            set { _fiyatTL = value; OnPropertyChanged(); }
+        }
+
+        public decimal FiyatUSD
+        {
+            get => _fiyatUSD;
+            set { _fiyatUSD = value; OnPropertyChanged(); }
+        }
+
+        public decimal FiyatEUR
+        {
+            get => _fiyatEUR;
+            set { _fiyatEUR = value; OnPropertyChanged(); }
+        }
+
+        public decimal Toplam => Adet * IndirimliFiyat;
+
+        public event EventHandler OnBirimFiyatDegisti;
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }

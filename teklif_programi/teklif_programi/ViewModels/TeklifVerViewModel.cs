@@ -1,5 +1,4 @@
-﻿// Gerekli isim alanları: MVVM, PDF oluşturma, veritabanı ve UI için
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
@@ -15,49 +14,33 @@ using teklif_programi.Models;
 using teklif_programi.Services;
 using System.Globalization;
 
-
-// ViewModel sınıflarının isim alanı
 namespace teklif_programi.ViewModels
 {
-    // TeklifVerViewModel: Yeni teklif oluşturmayı ve PDF üretimini yöneten ViewModel
     public class TeklifVerViewModel : INotifyPropertyChanged
     {
-        // _context: Veritabanı bağlantısı için DbContext
         private readonly TeklifDbContext _context = new();
-        // _firmaArama: Firma arama metni
         private string _firmaArama = string.Empty;
-        // _firmaBilgisi: Seçilen müşteri bilgileri
         private Musteri? _firmaBilgisi;
-        // _urunArama: Ürün arama metni
         private string _urunArama = string.Empty;
-        // _selectedCurrency: Seçilen para birimi (varsayılan TL)
         private string _selectedCurrency = "TL";
-        // _paraBirimiListe: Para birimi seçenekleri
         private ObservableCollection<string> _paraBirimiListe = new();
-        // _ilgiliKisi: İlgili kişi adı
         private string _ilgiliKisi = string.Empty;
-        // _ilgiliKisiNumarasi: İlgili kişi telefon numarası
         private string _ilgiliKisiNumarasi = string.Empty;
-        // _ilgiliKisiEposta: İlgili kişi e-posta adresi
         private string _ilgiliKisiEposta = string.Empty;
-        // _satisSozlesmesiMetni: Satış sözleşmesi metni
         private string _satisSozlesmesiMetni = string.Empty;
 
-        // DovizKurlari: TCMB'den alınan döviz kurları
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
 
-        // Kurucu: Para birimleri, ürünler ve kurlar yüklenir, komutlar bağlanır
         public TeklifVerViewModel()
         {
             ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
-            UrunleriYukle(); // Ürünleri yükler
-            SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle); // Ürün ekleme komutu
-            SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar); // Ürün çıkarma komutu
-            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir); // Kaydet ve PDF oluştur komutu
+            UrunleriYukle();
+            SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
+            SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
+            KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir);
             DovizKurlari = new ObservableCollection<DovizKuru>();
-            DovizKurlariGuncelle(); // Döviz kurlarını günceller
+            DovizKurlariGuncelle();
             SatisSozlesmesiMetni = @"
-
             1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
             2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
             3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
@@ -67,17 +50,15 @@ namespace teklif_programi.ViewModels
             7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
             8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
                İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
-               HALK BANKASI TR51 0001 2009 4140 0010 2645 69"";"; // Varsayılan satış sözleşmesi metni (kısaltıldı)
+               HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
         }
 
-        // SatisSozlesmesiMetni: Satış sözleşmesi metni, UI ile bağlı
         public string SatisSozlesmesiMetni
         {
             get => _satisSozlesmesiMetni;
             set { _satisSozlesmesiMetni = value; OnPropertyChanged(); }
         }
 
-        // DovizKurlariGuncelle: TCMB'den kurları çeker ve günceller
         private void DovizKurlariGuncelle()
         {
             var kurListesi = DovizServisi.KurListesiniGetir();
@@ -85,7 +66,6 @@ namespace teklif_programi.ViewModels
             foreach (var kur in kurListesi) DovizKurlari.Add(kur);
         }
 
-        // FirmaArama: Firma arama metni, değiştiğinde firmayı bulur
         public string FirmaArama
         {
             get => _firmaArama;
@@ -107,63 +87,52 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // FirmaBilgisi: Seçilen müşteri bilgileri, UI ile bağlı
         public Musteri? FirmaBilgisi
         {
             get => _firmaBilgisi;
             set { _firmaBilgisi = value; OnPropertyChanged(); }
         }
 
-        // UrunArama: Ürün arama metni, değiştiğinde ürünleri filtreler
         public string UrunArama
         {
             get => _urunArama;
             set { _urunArama = value; OnPropertyChanged(); UrunleriFiltrele(); }
         }
 
-        // IlgiliKisi: İlgili kişi adı, UI ile bağlı
         public string IlgiliKisi
         {
             get => _ilgiliKisi;
             set { _ilgiliKisi = value; OnPropertyChanged(); }
         }
 
-        // IlgiliKisiNumarasi: İlgili kişi telefon numarası, UI ile bağlı
         public string IlgiliKisiNumarasi
         {
             get => _ilgiliKisiNumarasi;
             set { _ilgiliKisiNumarasi = value; OnPropertyChanged(); }
         }
 
-        // IlgiliKisiEposta: İlgili kişi e-posta adresi, UI ile bağlı
         public string IlgiliKisiEposta
         {
             get => _ilgiliKisiEposta;
             set { _ilgiliKisiEposta = value; OnPropertyChanged(); }
         }
 
-        // TumUrunler: Tüm ürünlerin listesi
         public ObservableCollection<Urun> TumUrunler { get; set; } = [];
-        // FiltrelenmisUrunler: Filtrelenmiş ürünlerin listesi
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = [];
-        // SecilenUrunler: Sepete eklenen ürünlerin listesi
         public ObservableCollection<TeklifUrunModel> SecilenUrunler { get; set; } = [];
 
-        // ParaBirimiListe: Para birimi seçenekleri, UI ile bağlı
         public ObservableCollection<string> ParaBirimiListe
         {
             get => _paraBirimiListe;
             set { _paraBirimiListe = value; OnPropertyChanged(); }
         }
 
-        // SelectedCurrency: Seçilen para birimi, değiştiğinde fiyatları günceller
         public string SelectedCurrency
         {
             get => _selectedCurrency;
             set { _selectedCurrency = value; OnPropertyChanged(); RecalculateAll(); }
         }
 
-        // UrunleriYukle: Veritabanından ürünleri yükler
         private void UrunleriYukle()
         {
             try
@@ -178,7 +147,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // UrunleriFiltrele: Arama metnine göre ürünleri filtreler
         private void UrunleriFiltrele()
         {
             if (string.IsNullOrWhiteSpace(UrunArama))
@@ -190,36 +158,27 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(FiltrelenmisUrunler));
         }
 
-        // Model_OnBirimFiyatDegisti: Ürün fiyat/adet değiştiğinde toplamları günceller
         private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
         {
             if (sender is TeklifUrunModel model)
             {
-                // ilgili modelin gösterim metinlerini güncelle
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
 
-                // ve toplamları yenile
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
                 OnPropertyChanged(nameof(GenelToplam));
                 UpdateTotalsText();
-
             }
         }
 
-        // SepeteEkleCommand: Ürünü sepete ekler
         public RelayCommand<Urun> SepeteEkleCommand { get; }
-        // SepettenCikarCommand: Ürünü sepetten çıkarır
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
-        // KaydetVePdfIndirCommand: Teklifi kaydeder ve PDF oluşturur
         public RelayCommand KaydetVePdfIndirCommand { get; }
 
-        // CanSepeteEkle: Ürün ekleme komutunun çalışabilirliğini kontrol eder
         private bool CanSepeteEkle(Urun? urun) => urun != null;
 
-        // SepeteEkle: Ürünü sepete ekler veya mevcutsa adedini artırır
         private void SepeteEkle(Urun? urun)
         {
             if (urun == null) return;
@@ -248,7 +207,6 @@ namespace teklif_programi.ViewModels
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
-
             }
             OnPropertyChanged(nameof(SecilenUrunler));
             OnPropertyChanged(nameof(ToplamFiyat));
@@ -256,7 +214,6 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(GenelToplam));
         }
 
-        // SepettenCikar: Ürünü sepetten çıkarır
         private void SepettenCikar(TeklifUrunModel? urun)
         {
             if (urun != null)
@@ -270,7 +227,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // HesaplaIndirimliFiyat: Ürün için indirimli fiyatı hesaplar
         private void HesaplaIndirimliFiyat(TeklifUrunModel model)
         {
             decimal indirim = GenelIndirimOrani / 100;
@@ -278,7 +234,6 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(SecilenUrunler));
         }
 
-        // GetFiyatByCurrency: Ürün fiyatını seçilen para birimine göre döndürür
         private decimal GetFiyatByCurrency(Urun urun, string currency)
         {
             return currency switch
@@ -293,9 +248,9 @@ namespace teklif_programi.ViewModels
         {
             return currency switch
             {
-                "USD" => new CultureInfo("en-US"),   
-                "EUR" => new CultureInfo("en-IE"),   
-                _ => new CultureInfo("tr-TR"),       
+                "USD" => new CultureInfo("en-US"),
+                "EUR" => new CultureInfo("en-IE"),
+                _ => new CultureInfo("tr-TR"),
             };
         }
 
@@ -320,9 +275,6 @@ namespace teklif_programi.ViewModels
             GenelToplamText = FormatPrice(GenelToplam);
         }
 
-
-
-        // GenelIndirimOrani: Teklifin genel indirim oranı
         private decimal _genelIndirimOrani = 0;
         public decimal GenelIndirimOrani
         {
@@ -330,7 +282,6 @@ namespace teklif_programi.ViewModels
             set { _genelIndirimOrani = value < 0 ? 0 : value; OnPropertyChanged(); RecalculateAll(); }
         }
 
-        // KdvOrani: Teklifin KDV oranı
         private decimal _kdvOrani = 20;
         public decimal KdvOrani
         {
@@ -338,7 +289,6 @@ namespace teklif_programi.ViewModels
             set { _kdvOrani = value < 0 ? 0 : value; OnPropertyChanged(); RecalculateAll(); }
         }
 
-        // RecalculateAll: Para birimi veya indirim değiştiğinde tüm fiyatları günceller
         private void RecalculateAll()
         {
             foreach (var urun in SecilenUrunler)
@@ -348,8 +298,6 @@ namespace teklif_programi.ViewModels
                 {
                     urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
                     HesaplaIndirimliFiyat(urun);
-
-                    // UI'ya gösterilecek formatlı metinleri de setle
                     urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
                     urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
                     urun.ToplamText = FormatPrice(urun.Toplam);
@@ -367,20 +315,13 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(ToplamFiyat));
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
-
-            // string toplamları da güncelle
             UpdateTotalsText();
         }
 
-
-        // ToplamFiyat: Sepetteki ürünlerin toplam fiyatı
         public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);
-        // KdvUcreti: Toplam fiyat üzerinden KDV ücreti
         public decimal KdvUcreti => ToplamFiyat * (KdvOrani / 100);
-        // GenelToplam: Toplam fiyat + KDV
         public decimal GenelToplam => ToplamFiyat + KdvUcreti;
 
-        // KaydetVePdfIndir: Teklifi kaydeder ve PDF oluşturur
         private void KaydetVePdfIndir()
         {
             if (FirmaBilgisi == null || !SecilenUrunler.Any())
@@ -397,7 +338,8 @@ namespace teklif_programi.ViewModels
                     PersonelId = 2,
                     OlusturmaTarihi = DateTime.Now,
                     GenelIndirimOrani = GenelIndirimOrani,
-                    KdvOrani = KdvOrani
+                    KdvOrani = KdvOrani,
+                    ParaBirimi = SelectedCurrency // Para birimini ekle
                 };
                 _context.Teklifler.Add(teklif);
                 _context.SaveChanges();
@@ -453,7 +395,6 @@ namespace teklif_programi.ViewModels
                     int currentPage = 2;
                     PdfContentByte canvas = stamper.GetOverContent(currentPage);
 
-                    // Firma bilgileri tablosu
                     PdfPTable firmaTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 } };
                     firmaTable.SetWidths(new float[] { 2f, 2f });
                     firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adı:", headerFont));
@@ -472,7 +413,6 @@ namespace teklif_programi.ViewModels
                     firmaTable.AddCell(CreateLeftAlignedBodyCell(string.IsNullOrWhiteSpace(IlgiliKisiEposta) ? "Belirtilmemiş" : IlgiliKisiEposta, bodyFont));
                     firmaTable.WriteSelectedRows(0, -1, 50, 740, canvas);
 
-                    // Teklif bilgileri tablosu
                     PdfPTable teklifTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 } };
                     teklifTable.SetWidths(new float[] { 2f, 2f });
                     teklifTable.AddCell(CreateRightAlignedHeaderCell("Teklif Tarihi:", headerFont));
@@ -483,9 +423,10 @@ namespace teklif_programi.ViewModels
                     teklifTable.AddCell(CreateLeftAlignedBodyCell("Erhan Öğüt", bodyFont));
                     teklifTable.AddCell(CreateRightAlignedHeaderCell("Personel Cep No:", headerFont));
                     teklifTable.AddCell(CreateLeftAlignedBodyCell("05179841645", bodyFont));
+                    teklifTable.AddCell(CreateRightAlignedHeaderCell("Para Birimi:", headerFont));
+                    teklifTable.AddCell(CreateLeftAlignedBodyCell(teklif.ParaBirimi, bodyFont)); // Para birimi ekle
                     teklifTable.WriteSelectedRows(0, -1, 330, 730, canvas);
 
-                    // Çizgiler
                     canvas.SetColorFill(new BaseColor(200, 200, 200));
                     canvas.Rectangle(22.5f, 590, 550, 1);
                     canvas.Fill();
@@ -493,13 +434,11 @@ namespace teklif_programi.ViewModels
                     canvas.Rectangle(22.5f, 555, 550, 1);
                     canvas.Fill();
 
-                    // Ürünler başlığı
                     Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", urunBaslikFont);
                     ColumnText ctUrunBaslik = new ColumnText(canvas);
                     ctUrunBaslik.SetSimpleColumn(urunBaslik, 22.5f, 560f, 572.5f, 580f, 15, Element.ALIGN_CENTER);
                     ctUrunBaslik.Go();
 
-                    // Ürün tablosu
                     PdfPTable table = new PdfPTable(7) { TotalWidth = 550f, LockedWidth = true };
                     table.SetWidths(new float[] { 1f, 2f, 5f, 1f, 2f, 2f, 2f });
                     AddCellToHeader(table, "No", headerFont, new BaseColor(240, 240, 240));
@@ -526,7 +465,6 @@ namespace teklif_programi.ViewModels
                     }
                     table.WriteSelectedRows(0, -1, 22.5f, 520, canvas);
 
-                    // Toplamlar tablosu
                     PdfPTable toplamTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 }, HorizontalAlignment = Element.ALIGN_RIGHT };
                     toplamTable.SetWidths(new float[] { 3f, 2f });
                     toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{GenelIndirimOrani}):", headerFont));
@@ -537,7 +475,6 @@ namespace teklif_programi.ViewModels
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(GenelToplam), headerFont));
                     toplamTable.WriteSelectedRows(0, -1, 352.5f, 150, canvas);
 
-                    // Yeni sayfa ekleyip satış sözleşmesini yazar
                     stamper.InsertPage(reader.NumberOfPages + 1, reader.GetPageSizeWithRotation(1));
                     currentPage = reader.NumberOfPages;
                     canvas = stamper.GetOverContent(currentPage);
@@ -560,7 +497,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // AddCellToHeader: PDF tablosuna başlık hücresi ekler
         private void AddCellToHeader(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -573,7 +509,6 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // AddCellToBody: PDF tablosuna veri hücresi ekler
         private void AddCellToBody(PdfPTable table, string text, Font font, BaseColor backgroundColor)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font))
@@ -586,23 +521,19 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // CreateRightAlignedHeaderCell: Sağ hizalı başlık hücresi oluşturur
         private PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font)) { HorizontalAlignment = Element.ALIGN_LEFT, Border = 0, PaddingRight = 5 };
             return cell;
         }
 
-        // CreateLeftAlignedBodyCell: Sol hizalı veri hücresi oluşturur
         private PdfPCell CreateLeftAlignedBodyCell(string text, Font font)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text, font)) { HorizontalAlignment = Element.ALIGN_LEFT, Border = 0 };
             return cell;
         }
 
-        // PropertyChanged: UI veri bağlama için özellik değişim olayı
         public event PropertyChangedEventHandler? PropertyChanged;
-        // OnPropertyChanged: Özellik değiştiğinde UI’yi günceller
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
 }

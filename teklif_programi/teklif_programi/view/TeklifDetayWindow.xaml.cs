@@ -1,43 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions; // Regex kullanmak için
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input; // TextCompositionEventArgs için
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using teklif_programi.Models;
+using teklif_programi.ViewModels;
 
 namespace teklif_programi.view
 {
-    /// <summary>
-    /// TeklifDetayWindow.xaml için etkileşim mantığı.
-    /// Bu pencere, teklif detaylarını görüntülemek veya düzenlemek için kullanılır.
-    /// </summary>
     public partial class TeklifDetayWindow : Window
     {
-        // Pencereyi başlatan constructor
-        public TeklifDetayWindow()
+        public TeklifDetayWindow(Teklif teklif)
         {
-            InitializeComponent(); // XAML tarafındaki bileşenleri yükler
+            InitializeComponent();
+            DataContext = new TeklifDetayViewModel(teklif);
         }
 
-        /// <summary>
-        /// TextBox gibi alanlara yalnızca sayı ve ondalık nokta (.) girişine izin verir.
-        /// Bu metod, PreviewTextInput olayı ile tetiklenir.
-        /// </summary>
-        private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
+        // Test için parametresiz kurucu (isteğe bağlı, production'da kaldırılabilir)
+        public TeklifDetayWindow()
         {
-            // ^ = baştan başla, [^0-9.]+ = rakam VEYA nokta dışında bir karakter varsa eşleşir
-            Regex regex = new Regex("[^0-9.]+");
+            InitializeComponent();
+            DataContext = new TeklifDetayViewModel(new Teklif { TeklifId = 1 }); // Test için sabit ID
+        }
 
-            // Eğer girilen karakter regex ile eşleşirse (yani sayı değilse) engelle
-            e.Handled = regex.IsMatch(e.Text);
+        private void YeniUrunEkle_Click(object sender, RoutedEventArgs e)
+        {
+            var urunSecimWindow = new UrunSecimWindow();
+            if (urunSecimWindow.ShowDialog() == true)
+            {
+                var viewModel = urunSecimWindow.DataContext as UrunSecimViewModel;
+                if (viewModel?.SecilenUrun != null)
+                {
+                    var vm = DataContext as TeklifDetayViewModel;
+                    if (vm != null)
+                    {
+                        vm.EkleUrun(viewModel.SecilenUrun, viewModel.YeniUrunAdet, viewModel.YeniUrunIndirimliFiyat);
+                    }
+                }
+            }
         }
     }
 }

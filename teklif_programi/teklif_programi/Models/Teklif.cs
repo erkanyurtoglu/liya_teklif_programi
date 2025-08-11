@@ -32,6 +32,11 @@ namespace teklif_programi.Models
         public string? MusteriNotu { get; set; }
         // Müşteriye ait notlar (opsiyonel).
 
+        [Required]
+        [StringLength(50)]
+        public string ParaBirimi { get; set; } = "TL";
+        // Teklifin para birimi (varsayılan: "TL", maksimum 50 karakter).
+
         public virtual Musteri Musteri { get; set; } = null!;
         // Teklife ait müşteri nesnesi (1-N ilişki).
 

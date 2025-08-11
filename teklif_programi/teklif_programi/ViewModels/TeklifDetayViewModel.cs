@@ -1,5 +1,4 @@
-﻿// Gerekli isim alanları: MVVM, veritabanı, PDF oluşturma ve UI için
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.EntityFrameworkCore;
@@ -13,37 +12,37 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using System.Globalization;
 
-// ViewModel sınıflarının isim alanı
 namespace teklif_programi.ViewModels
 {
-    // TeklifDetayViewModel: Teklif detaylarını yöneten ve UI ile bağlayan ViewModel
     public class TeklifDetayViewModel : INotifyPropertyChanged
     {
-        // _context: Veritabanı bağlantısı için DbContext
         private readonly TeklifDbContext _context;
-        // _teklif: Güncel teklif nesnesi
         private Teklif _teklif;
-        // _teklifUrunler: Teklifteki ürünlerin listesi
         private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
-        // _teklifToplam: Teklifin toplam bilgileri
         private TeklifToplam? _teklifToplam;
-        // _durumlar: Teklif durumlarının listesi
         private ObservableCollection<string> _durumlar = new();
+        private ObservableCollection<string> _paraBirimiListe = new();
 
-        // Kurucu: Teklif nesnesini alır, DbContext ve durumlar başlatılır, detaylar yüklenir
         public TeklifDetayViewModel(Teklif teklif)
         {
             _context = new TeklifDbContext();
             _teklif = teklif ?? throw new ArgumentNullException(nameof(teklif));
             TeklifUrunler = new ObservableCollection<TeklifUrunModel>();
             Durumlar = new ObservableCollection<string> { "Beklemede", "Kabul Edildi", "Reddedildi" };
-            YukleTeklifDetaylari(); // Teklif detaylarını yükler
-            KaydetCommand = new RelayCommand(Kaydet, CanKaydet); // Kaydet komutu
-            PdfIndirCommand = new RelayCommand(PdfIndir, CanPdfIndir); // PDF indirme komutu
+            ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
+
+            if (string.IsNullOrEmpty(_teklif.ParaBirimi))
+            {
+                _teklif.ParaBirimi = "TL";
+            }
+
+            YukleTeklifDetaylari();
+            KaydetCommand = new RelayCommand(Kaydet, CanKaydet);
+            PdfIndirCommand = new RelayCommand(PdfIndir, CanPdfIndir);
         }
 
-        // Teklif: Güncel teklif nesnesi, UI ile bağlı
         public Teklif Teklif
         {
             get => _teklif;
@@ -52,50 +51,78 @@ namespace teklif_programi.ViewModels
                 _teklif = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PersonelAdiSoyadi));
+                OnPropertyChanged(nameof(SelectedCurrency));
+                RecalculateAll();
             }
         }
 
-        // TeklifUrunler: Teklifteki ürünlerin ObservableCollection’ı, UI ile bağlı
         public ObservableCollection<TeklifUrunModel> TeklifUrunler
         {
             get => _teklifUrunler;
-            set { _teklifUrunler = value; OnPropertyChanged(); }
+            set
+            {
+                _teklifUrunler = value;
+                OnPropertyChanged();
+            }
         }
 
-        // TeklifToplam: Teklifin toplam bilgileri, UI ile bağlı
         public TeklifToplam? TeklifToplam
         {
             get => _teklifToplam;
-            set { _teklifToplam = value; OnPropertyChanged(); }
+            set
+            {
+                _teklifToplam = value;
+                OnPropertyChanged();
+                UpdateToplamlarText();
+            }
         }
 
-        // Durumlar: Teklif durumlarının ObservableCollection’ı, UI ile bağlı
         public ObservableCollection<string> Durumlar
         {
             get => _durumlar;
             set { _durumlar = value; OnPropertyChanged(); }
         }
 
-        // KaydetCommand: Değişiklikleri kaydetmek için komut
+        public ObservableCollection<string> ParaBirimiListe
+        {
+            get => _paraBirimiListe;
+            set { _paraBirimiListe = value; OnPropertyChanged(); }
+        }
+
+        public string SelectedCurrency
+        {
+            get => _teklif.ParaBirimi ?? "TL";
+            set
+            {
+                if (_teklif.ParaBirimi != value)
+                {
+                    _teklif.ParaBirimi = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Teklif));
+                    RecalculateAll();
+                }
+            }
+        }
+
+        public string IndirimliToplamText { get; set; }
+        public string KdvTutariText { get; set; }
+        public string GenelToplamText { get; set; }
+
         public RelayCommand KaydetCommand { get; }
-        // PdfIndirCommand: Teklif detaylarını PDF olarak indirmek için komut
         public RelayCommand PdfIndirCommand { get; }
 
         public string PersonelAdiSoyadi => Teklif?.Personel != null
-        ? $"{Teklif.Personel.AdSoyad}"
-        : "Personel bilgisi yok";
+            ? $"{Teklif.Personel.AdSoyad}"
+            : "Personel bilgisi yok";
 
-
-        // YukleTeklifDetaylari: Teklif ürünlerini ve toplamlarını veritabanından yükler
         private void YukleTeklifDetaylari()
         {
             try
             {
-                // Teklif ürünlerini yükle (mevcut)
                 var urunler = _context.TeklifUrunleri
                     .Include(tu => tu.Urun)
                     .Where(tu => tu.TeklifId == Teklif.TeklifId)
-                    .ToList();
+                    .ToList() ?? new System.Collections.Generic.List<TeklifUrun>();
 
                 TeklifUrunler.Clear();
                 foreach (var urun in urunler)
@@ -103,21 +130,26 @@ namespace teklif_programi.ViewModels
                     var model = new TeklifUrunModel
                     {
                         UrunId = urun.UrunId,
-                        UrunKodu = urun.Urun.UrunKodu,
-                        UrunAciklamasi = urun.Urun.UrunAciklamasi,
+                        UrunKodu = urun.Urun?.UrunKodu ?? "Bilinmiyor",
+                        UrunAciklamasi = urun.Urun?.UrunAciklamasi ?? "Bilinmiyor",
                         Adet = urun.Adet,
                         BirimFiyat = urun.BirimFiyat,
-                        IndirimliFiyat = urun.IndirimliBirimFiyat
+                        IndirimliFiyat = urun.IndirimliBirimFiyat,
+                        FiyatTL = urun.Urun?.FiyatTL ?? 0,
+                        FiyatUSD = urun.Urun?.FiyatUSD ?? 0,
+                        FiyatEUR = urun.Urun?.FiyatEUR ?? 0,
+                        BirimFiyatText = FormatPrice(urun.BirimFiyat),
+                        IndirimliFiyatText = FormatPrice(urun.IndirimliBirimFiyat),
+                        ToplamText = FormatPrice(urun.Adet * urun.IndirimliBirimFiyat)
                     };
-                    model.OnBirimFiyatDegisti += TeklifUrunDegisti;
+                    model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+                    model.PropertyChanged += Model_PropertyChanged; // Adet ve IndirimliFiyat değişikliklerini yakala
                     TeklifUrunler.Add(model);
                 }
 
-                // Teklif toplamını yükle
                 TeklifToplam = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId)
                     ?? new TeklifToplam { TeklifId = Teklif.TeklifId, IndirimliToplam = 0, KdvTutari = 0, GenelToplam = 0 };
 
-                // Teklif detayını (Personel ve Musteri ile birlikte) tekrar yükle
                 var teklifWithRelations = _context.Teklifler
                     .Include(t => t.Personel)
                     .Include(t => t.Musteri)
@@ -128,7 +160,7 @@ namespace teklif_programi.ViewModels
                     Teklif = teklifWithRelations;
                 }
 
-                HesaplaToplamlar();
+                RecalculateAll();
             }
             catch (Exception ex)
             {
@@ -136,27 +168,93 @@ namespace teklif_programi.ViewModels
             }
         }
 
-
-        // TeklifUrunDegisti: Ürün fiyat/adet değiştiğinde toplamları günceller
-        private void TeklifUrunDegisti(object? sender, EventArgs e)
+        private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
         {
-            HesaplaToplamlar();
+            if (sender is TeklifUrunModel model)
+            {
+                model.BirimFiyatText = FormatPrice(model.BirimFiyat);
+                model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
+                model.ToplamText = FormatPrice(model.Toplam);
+            }
+            UpdateToplamlarText();
         }
 
-        // HesaplaToplamlar: Teklif toplamlarını hesaplar (indirimli toplam, KDV, genel toplam)
-        private void HesaplaToplamlar()
+        private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (TeklifToplam == null) return;
-            TeklifToplam.IndirimliToplam = TeklifUrunler.Sum(u => u.Toplam);
-            TeklifToplam.KdvTutari = TeklifToplam.IndirimliToplam * (Teklif.KdvOrani / 100);
-            TeklifToplam.GenelToplam = TeklifToplam.IndirimliToplam + TeklifToplam.KdvTutari;
-            OnPropertyChanged(nameof(TeklifToplam)); // UI’yi günceller
+            if (sender is TeklifUrunModel && (e.PropertyName == nameof(TeklifUrunModel.Adet) || e.PropertyName == nameof(TeklifUrunModel.IndirimliFiyat)))
+            {
+                UpdateToplamlarText();
+            }
         }
 
-        // CanKaydet: Kaydet komutunun çalışabilirliğini kontrol eder
+        private void RecalculateAll()
+        {
+            foreach (var urun in TeklifUrunler)
+            {
+                var dbUrun = _context.Urunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
+                if (dbUrun != null)
+                {
+                    urun.BirimFiyat = GetFiyatByCurrency(dbUrun, Teklif.ParaBirimi ?? "TL");
+                    urun.IndirimliFiyat = urun.BirimFiyat * (1 - Teklif.GenelIndirimOrani / 100);
+                }
+                else
+                {
+                    urun.BirimFiyat = 0;
+                    urun.IndirimliFiyat = 0;
+                    urun.BirimFiyatText = FormatPrice(0);
+                    urun.IndirimliFiyatText = FormatPrice(0);
+                    urun.ToplamText = FormatPrice(0);
+                }
+            }
+            UpdateToplamlarText();
+        }
+
+        private void UpdateToplamlarText()
+        {
+            if (TeklifToplam != null)
+            {
+                TeklifToplam.IndirimliToplam = TeklifUrunler.Sum(u => u.Toplam);
+                TeklifToplam.KdvTutari = TeklifToplam.IndirimliToplam * (Teklif.KdvOrani / 100);
+                TeklifToplam.GenelToplam = TeklifToplam.IndirimliToplam + TeklifToplam.KdvTutari;
+
+                IndirimliToplamText = FormatPrice(TeklifToplam.IndirimliToplam);
+                KdvTutariText = FormatPrice(TeklifToplam.KdvTutari);
+                GenelToplamText = FormatPrice(TeklifToplam.GenelToplam);
+
+                OnPropertyChanged(nameof(TeklifToplam));
+                OnPropertyChanged(nameof(IndirimliToplamText));
+                OnPropertyChanged(nameof(KdvTutariText));
+                OnPropertyChanged(nameof(GenelToplamText));
+            }
+        }
+
+        private decimal GetFiyatByCurrency(Urun urun, string currency)
+        {
+            return currency switch
+            {
+                "USD" => urun.FiyatUSD,
+                "EUR" => urun.FiyatEUR,
+                _ => urun.FiyatTL
+            };
+        }
+
+        private string FormatPrice(decimal price)
+        {
+            return price.ToString("C2", GetCultureByCurrency(Teklif.ParaBirimi ?? "TL"));
+        }
+
+        private CultureInfo GetCultureByCurrency(string currency)
+        {
+            return currency switch
+            {
+                "USD" => new CultureInfo("en-US"),
+                "EUR" => new CultureInfo("en-IE"),
+                _ => new CultureInfo("tr-TR"),
+            };
+        }
+
         private bool CanKaydet() => Teklif != null;
 
-        // Kaydet: Teklif ve ürün değişikliklerini veritabanına kaydeder
         private void Kaydet()
         {
             if (Teklif == null) return;
@@ -167,7 +265,8 @@ namespace teklif_programi.ViewModels
                 if (dbTeklif != null)
                 {
                     dbTeklif.Durum = Teklif.Durum;
-                    dbTeklif.MusteriNotu = Teklif.MusteriNotu; // Teklif durum ve notunu günceller
+                    dbTeklif.MusteriNotu = Teklif.MusteriNotu;
+                    dbTeklif.ParaBirimi = Teklif.ParaBirimi;
                 }
                 foreach (var urunModel in TeklifUrunler)
                 {
@@ -178,7 +277,19 @@ namespace teklif_programi.ViewModels
                         dbUrun.Adet = urunModel.Adet;
                         dbUrun.BirimFiyat = urunModel.BirimFiyat;
                         dbUrun.IndirimliBirimFiyat = urunModel.IndirimliFiyat;
-                        dbUrun.ToplamTutar = urunModel.Toplam; // Ürün detaylarını günceller
+                        dbUrun.ToplamTutar = urunModel.Toplam;
+                    }
+                    else
+                    {
+                        _context.TeklifUrunleri.Add(new TeklifUrun
+                        {
+                            TeklifId = Teklif.TeklifId,
+                            UrunId = urunModel.UrunId,
+                            Adet = urunModel.Adet,
+                            BirimFiyat = urunModel.BirimFiyat,
+                            IndirimliBirimFiyat = urunModel.IndirimliFiyat,
+                            ToplamTutar = urunModel.Toplam
+                        });
                     }
                 }
                 var dbToplam = _context.TeklifToplamlari
@@ -189,7 +300,7 @@ namespace teklif_programi.ViewModels
                     {
                         dbToplam.IndirimliToplam = TeklifToplam.IndirimliToplam;
                         dbToplam.KdvTutari = TeklifToplam.KdvTutari;
-                        dbToplam.GenelToplam = TeklifToplam.GenelToplam; // Toplamları günceller
+                        dbToplam.GenelToplam = TeklifToplam.GenelToplam;
                     }
                 }
                 else
@@ -199,11 +310,11 @@ namespace teklif_programi.ViewModels
                         TeklifId = Teklif.TeklifId,
                         IndirimliToplam = TeklifToplam?.IndirimliToplam ?? 0,
                         KdvTutari = TeklifToplam?.KdvTutari ?? 0,
-                        GenelToplam = TeklifToplam?.GenelToplam ?? 0 // Yeni toplam kaydı ekler
+                        GenelToplam = TeklifToplam?.GenelToplam ?? 0
                     });
                 }
-                _context.SaveChanges(); // Veritabanına kaydeder
-                transaction.Commit(); // İşlemi tamamlar
+                _context.SaveChanges();
+                transaction.Commit();
                 MessageBox.Show("Değişiklikler kaydedildi!", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -212,10 +323,8 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // CanPdfIndir: PDF indirme komutunun çalışabilirliğini kontrol eder
         private bool CanPdfIndir() => Teklif != null;
 
-        // PdfIndir: Teklif detaylarını PDF olarak kaydeder
         private void PdfIndir()
         {
             if (Teklif == null) return;
@@ -225,22 +334,23 @@ namespace teklif_programi.ViewModels
                 {
                     Filter = "PDF Dosyaları (*.pdf)|*.pdf",
                     FileName = $"Teklif_{Teklif.Musteri.FirmaAdi}_{Teklif.OlusturmaTarihi:yyyyMMdd}.pdf"
-                }; // PDF dosya adı oluşturur
+                };
                 if (saveFileDialog.ShowDialog() != true) return;
                 string dosyaYolu = saveFileDialog.FileName;
                 using var fs = new FileStream(dosyaYolu, FileMode.Create);
-                Document pdfDoc = new Document(PageSize.A4, 50, 50, 50, 50); // A4 boyutunda PDF oluşturur
+                Document pdfDoc = new Document(PageSize.A4, 50, 50, 50, 50);
                 PdfWriter writer = PdfWriter.GetInstance(pdfDoc, fs);
                 pdfDoc.Open();
                 var titleFont = FontFactory.GetFont("Arial", 16, iTextSharp.text.Font.BOLD);
-                pdfDoc.Add(new Paragraph($"Teklif Detayları - {Teklif.Musteri.FirmaAdi}", titleFont)); // Başlık ekler
-                pdfDoc.Add(new Paragraph($"Tarih: {Teklif.OlusturmaTarihi:dd.MM.yyyy}")); // Tarih ekler
-                pdfDoc.Add(new Paragraph($"Durum: {Teklif.Durum}")); // Durum ekler
-                pdfDoc.Add(new Paragraph($"Müşteri Notu: {Teklif.MusteriNotu ?? "-"}")); // Not ekler
+                pdfDoc.Add(new Paragraph($"Teklif Detayları - {Teklif.Musteri.FirmaAdi}", titleFont));
+                pdfDoc.Add(new Paragraph($"Tarih: {Teklif.OlusturmaTarihi:dd.MM.yyyy}"));
+                pdfDoc.Add(new Paragraph($"Durum: {Teklif.Durum}"));
+                pdfDoc.Add(new Paragraph($"Müşteri Notu: {Teklif.MusteriNotu ?? "-"}"));
+                pdfDoc.Add(new Paragraph($"Para Birimi: {Teklif.ParaBirimi ?? "TL"}"));
                 pdfDoc.Add(new Paragraph("\n"));
-                PdfPTable table = new PdfPTable(6) { WidthPercentage = 100 }; // 6 sütunlu tablo
-                table.SetWidths(new float[] { 2f, 5f, 1f, 2f, 2f, 2f }); // Sütun genişlikleri
-                AddCellToHeader(table, "Ürün Kodu"); // Tablo başlıkları
+                PdfPTable table = new PdfPTable(6) { WidthPercentage = 100 };
+                table.SetWidths(new float[] { 2f, 5f, 1f, 2f, 2f, 2f });
+                AddCellToHeader(table, "Ürün Kodu");
                 AddCellToHeader(table, "Açıklama");
                 AddCellToHeader(table, "Adet");
                 AddCellToHeader(table, "Birim Fiyat");
@@ -248,22 +358,22 @@ namespace teklif_programi.ViewModels
                 AddCellToHeader(table, "Toplam");
                 foreach (var urun in TeklifUrunler)
                 {
-                    AddCellToBody(table, urun.UrunKodu); // Ürün detaylarını tabloya ekler
+                    AddCellToBody(table, urun.UrunKodu);
                     AddCellToBody(table, urun.UrunAciklamasi);
                     AddCellToBody(table, urun.Adet.ToString());
-                    AddCellToBody(table, urun.BirimFiyat.ToString("C2"));
-                    AddCellToBody(table, urun.IndirimliFiyat.ToString("C2"));
-                    AddCellToBody(table, urun.Toplam.ToString("C2"));
+                    AddCellToBody(table, urun.BirimFiyatText);
+                    AddCellToBody(table, urun.IndirimliFiyatText);
+                    AddCellToBody(table, urun.ToplamText);
                 }
-                pdfDoc.Add(table); // Tabloyu PDF’ye ekler
+                pdfDoc.Add(table);
                 pdfDoc.Add(new Paragraph("\n"));
                 if (TeklifToplam != null)
                 {
-                    pdfDoc.Add(new Paragraph($"İndirimli Toplam: {TeklifToplam.IndirimliToplam:C2}")); // Toplamları ekler
-                    pdfDoc.Add(new Paragraph($"KDV Tutarı: {TeklifToplam.KdvTutari:C2}"));
-                    pdfDoc.Add(new Paragraph($"Genel Toplam: {TeklifToplam.GenelToplam:C2}"));
+                    pdfDoc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}"));
+                    pdfDoc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}"));
+                    pdfDoc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}"));
                 }
-                pdfDoc.Close(); // PDF’yi kapatır
+                pdfDoc.Close();
                 MessageBox.Show("PDF başarıyla oluşturuldu.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -272,7 +382,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // AddCellToHeader: PDF tablosuna başlık hücresi ekler
         private static void AddCellToHeader(PdfPTable table, string text)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text))
@@ -284,7 +393,6 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // AddCellToBody: PDF tablosuna veri hücresi ekler
         private void AddCellToBody(PdfPTable table, string text)
         {
             PdfPCell cell = new PdfPCell(new Phrase(text))
@@ -295,10 +403,52 @@ namespace teklif_programi.ViewModels
             table.AddCell(cell);
         }
 
-        // PropertyChanged: UI veri bağlama için özellik değişim olayı
+        public void EkleUrun(Urun urun, int adet, decimal indirimliFiyat)
+        {
+            try
+            {
+                var yeniUrun = new TeklifUrunModel
+                {
+                    UrunId = urun.UrunId,
+                    UrunKodu = urun.UrunKodu,
+                    UrunAciklamasi = urun.UrunAciklamasi,
+                    Adet = adet,
+                    BirimFiyat = GetFiyatByCurrency(urun, Teklif.ParaBirimi ?? "TL"),
+                    IndirimliFiyat = indirimliFiyat,
+                    FiyatTL = urun.FiyatTL,
+                    FiyatUSD = urun.FiyatUSD,
+                    FiyatEUR = urun.FiyatEUR,
+                    BirimFiyatText = FormatPrice(GetFiyatByCurrency(urun, Teklif.ParaBirimi ?? "TL")),
+                    IndirimliFiyatText = FormatPrice(indirimliFiyat),
+                    ToplamText = FormatPrice(adet * indirimliFiyat)
+                };
+                yeniUrun.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+                yeniUrun.PropertyChanged += Model_PropertyChanged; // Yeni ürün için de değişiklikleri yakala
+                TeklifUrunler.Add(yeniUrun);
+
+                var dbUrun = new TeklifUrun
+                {
+                    TeklifId = Teklif.TeklifId,
+                    UrunId = urun.UrunId,
+                    Adet = adet,
+                    BirimFiyat = yeniUrun.BirimFiyat,
+                    IndirimliBirimFiyat = indirimliFiyat,
+                    ToplamTutar = yeniUrun.Toplam
+                };
+                _context.TeklifUrunleri.Add(dbUrun);
+                _context.SaveChanges();
+                UpdateToplamlarText();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ürün eklenirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
-        // OnPropertyChanged: Özellik değiştiğinde UI’yi günceller
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
+        }
     }
 }
