@@ -475,16 +475,28 @@ namespace teklif_programi.ViewModels
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(GenelToplam), headerFont));
                     toplamTable.WriteSelectedRows(0, -1, 352.5f, 150, canvas);
 
-                    stamper.InsertPage(reader.NumberOfPages + 1, reader.GetPageSizeWithRotation(1));
-                    currentPage = reader.NumberOfPages;
-                    canvas = stamper.GetOverContent(currentPage);
-                    Phrase sozlesmeBaslik = new Phrase("SATIŞ SÖZLEŞMESİ", sozlesmeBaslikFont);
-                    ColumnText ctSozlesmeBaslik = new ColumnText(canvas);
-                    ctSozlesmeBaslik.SetSimpleColumn(sozlesmeBaslik, 22.5f, 780f, 572.5f, 800f, 15, Element.ALIGN_CENTER);
-                    ctSozlesmeBaslik.Go();
-                    ColumnText ctSozlesme = new ColumnText(canvas);
-                    ctSozlesme.SetSimpleColumn(new Phrase(SatisSozlesmesiMetni, sozlesmeFont), 40f, 50f, 550f, 760f, 18, Element.ALIGN_LEFT);
+                    string sozlesmePdfPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\satisSozlesmesi.pdf";
+
+                    using var sozlesmeReader = new PdfReader(sozlesmePdfPath);
+
+                    int lastPage = reader.NumberOfPages;
+
+                    // Yeni sayfa ekle
+                    stamper.InsertPage(lastPage + 1, sozlesmeReader.GetPageSizeWithRotation(1));
+                    currentPage = lastPage + 1;
+
+                    // Arka plan olarak şablon PDF sayfasını ekle (under content)
+                    PdfContentByte underContent = stamper.GetUnderContent(currentPage);
+                    PdfImportedPage page = stamper.GetImportedPage(sozlesmeReader, 1);
+                    underContent.AddTemplate(page, 0, 0);
+
+                    // Üstüne metinleri basmaya devam et (over content)
+                    PdfContentByte overContent = stamper.GetOverContent(currentPage);
+
+                    ColumnText ctSozlesme = new ColumnText(overContent);
+                    ctSozlesme.SetSimpleColumn(new Phrase(SatisSozlesmesiMetni, sozlesmeFont), 40f, 50f, 550f, 700f, 18, Element.ALIGN_LEFT);
                     ctSozlesme.Go();
+
 
                     stamper.Close();
                     reader.Close();
