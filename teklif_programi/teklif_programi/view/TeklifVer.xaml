@@ -230,8 +230,27 @@
                 </StackPanel>
             </Border>
 
+            <!-- Dil Seçimi -->
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="5" Margin="20,70,0,79" BorderBrush="#ededed" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Dil" FontWeight="SemiBold" FontSize="13" Margin="0,0,10,0" Foreground="#13183E" FontFamily="Segoe UI" VerticalAlignment="Center"/>
+                    <ComboBox ItemsSource="{Binding DilListe}"
+                              SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Width="135" Height="27" FontSize="14" 
+                              VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
             <!-- Para Birimi Seçimi -->
-            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="5" Margin="20,110,0,20" BorderBrush="#ededed" BorderThickness="1">
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="5" Margin="20,115,0,0" BorderBrush="#ededed" BorderThickness="1" RenderTransformOrigin="0.5,0.5" Height="53" VerticalAlignment="Top">
+                <Border.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleY="1"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Border.RenderTransform>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="13" Margin="0,0,10,0" Foreground="#13183E" FontFamily="Segoe UI" VerticalAlignment="Center"/>
                     <ComboBox ItemsSource="{Binding ParaBirimiListe}"
@@ -243,7 +262,7 @@
             </Border>
 
             <!-- Döviz Kurları Kutusu -->
-            <Border Grid.Column="3" Background="White" CornerRadius="4" Margin="20,0,0,90" BorderBrush="#ededed" BorderThickness="1">
+            <Border Grid.Column="3" Background="White" CornerRadius="4" Margin="20,0,0,123" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
                     <TextBlock Text="Döviz Kurları" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI" HorizontalAlignment="Center"/>
                     <UniformGrid Columns="3" Margin="0,0,0,5 ">

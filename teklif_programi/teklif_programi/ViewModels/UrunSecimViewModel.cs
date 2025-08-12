@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using teklif_programi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
@@ -88,7 +88,7 @@ namespace teklif_programi.ViewModels
                     YeniUrunIndirimliFiyat = _secilenUrun.BirimFiyat; // Veritabanındaki birim fiyatı indirimli fiyata ata
                 }
                 OnPropertyChanged();
-                UrunEkleOnayCommand.NotifyCanExecuteChanged();
+                UrunEkleOnayCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -99,7 +99,7 @@ namespace teklif_programi.ViewModels
             {
                 _yeniUrunAdet = value > 0 ? value : 1;
                 OnPropertyChanged();
-                UrunEkleOnayCommand.NotifyCanExecuteChanged(); // Yazım hatası düzeltildi
+                UrunEkleOnayCommand.RaiseCanExecuteChanged(); // Yazım hatası düzeltildi
             }
         }
 
@@ -110,7 +110,7 @@ namespace teklif_programi.ViewModels
             {
                 _yeniUrunIndirimliFiyat = value >= 0 ? value : 0;
                 OnPropertyChanged();
-                UrunEkleOnayCommand.NotifyCanExecuteChanged();
+                UrunEkleOnayCommand.RaiseCanExecuteChanged();
             }
         }
 

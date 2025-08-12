@@ -22,6 +22,9 @@ namespace teklif_programi.Models
         // UrunAciklamasi: Ürünün açıklaması (varsayılan boş string)
         public string UrunAciklamasi { get; set; } = string.Empty;
 
+        // UrunAciklamasiEn: Ürünün İngilizce açıklaması (varsayılan boş string)
+        public string UrunAciklamasiEn { get; set; } = string.Empty;
+
         // Adet: Ürün miktarı, veritabanına kaydedilmez (NotMapped), genellikle geçici veya UI için kullanılır
         [System.ComponentModel.DataAnnotations.Schema.NotMapped]
         public int Adet { get; set; }

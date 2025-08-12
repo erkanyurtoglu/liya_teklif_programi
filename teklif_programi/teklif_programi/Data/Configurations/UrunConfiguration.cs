@@ -36,6 +36,12 @@ namespace teklif_programi.Data.Configurations
                 .HasMaxLength(500);
             // UrunAciklamasi zorunlu bir alan, maksimum 500 karakter.
 
+            builder.Property(u => u.UrunAciklamasiEn)
+            .IsRequired()
+            .HasMaxLength(500);
+            // UrunAciklamasiEn zorunlu bir alan, maksimum 500 karakter.
+
+
             builder.Property(u => u.BirimFiyat)
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();

@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using teklif_programi.Helpers;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Microsoft.Win32;
@@ -24,6 +24,8 @@ namespace teklif_programi.ViewModels
         private string _urunArama = string.Empty;
         private string _selectedCurrency = "TL";
         private ObservableCollection<string> _paraBirimiListe = new();
+        private ObservableCollection<string> _dilListe = new();
+        private string _selectedLanguage = "TR";
         private string _ilgiliKisi = string.Empty;
         private string _ilgiliKisiNumarasi = string.Empty;
         private string _ilgiliKisiEposta = string.Empty;
@@ -34,6 +36,8 @@ namespace teklif_programi.ViewModels
         public TeklifVerViewModel()
         {
             ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
+            DilListe = new ObservableCollection<string> { "TR", "EN" };
+            SelectedLanguage = "TR";
             UrunleriYukle();
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, CanSepeteEkle);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar);
@@ -127,10 +131,22 @@ namespace teklif_programi.ViewModels
             set { _paraBirimiListe = value; OnPropertyChanged(); }
         }
 
+        public ObservableCollection<string> DilListe
+        {
+            get => _dilListe;
+            set { _dilListe = value; OnPropertyChanged(); }
+        }
+
         public string SelectedCurrency
         {
             get => _selectedCurrency;
             set { _selectedCurrency = value; OnPropertyChanged(); RecalculateAll(); }
+        }
+
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set { _selectedLanguage = value; OnPropertyChanged(); UpdateDescriptions(); }
         }
 
         private void UrunleriYukle()
@@ -154,8 +170,18 @@ namespace teklif_programi.ViewModels
             else
                 FiltrelenmisUrunler = new ObservableCollection<Urun>(TumUrunler.Where(u =>
                     u.UrunKodu.Contains(UrunArama, StringComparison.OrdinalIgnoreCase) ||
-                    u.UrunAciklamasi.Contains(UrunArama, StringComparison.OrdinalIgnoreCase)));
+                    u.UrunAciklamasi.Contains(UrunArama, StringComparison.OrdinalIgnoreCase) ||
+                    (!string.IsNullOrEmpty(u.UrunAciklamasiEn) && u.UrunAciklamasiEn.Contains(UrunArama, StringComparison.OrdinalIgnoreCase))));
             OnPropertyChanged(nameof(FiltrelenmisUrunler));
+        }
+
+        private void UpdateDescriptions()
+        {
+            foreach (var model in SecilenUrunler)
+            {
+                model.UrunAciklamasi = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
+            }
+            OnPropertyChanged(nameof(SecilenUrunler));
         }
 
         private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
@@ -194,7 +220,9 @@ namespace teklif_programi.ViewModels
                 {
                     UrunId = urun.UrunId,
                     UrunKodu = urun.UrunKodu,
-                    UrunAciklamasi = urun.UrunAciklamasi,
+                    UrunAciklamasiTr = urun.UrunAciklamasi,
+                    UrunAciklamasiEn = urun.UrunAciklamasiEn,
+                    UrunAciklamasi = SelectedLanguage == "EN" ? urun.UrunAciklamasiEn : urun.UrunAciklamasi,
                     FiyatTL = urun.FiyatTL,
                     FiyatUSD = urun.FiyatUSD,
                     FiyatEUR = urun.FiyatEUR,
@@ -316,6 +344,7 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
             UpdateTotalsText();
+            UpdateDescriptions();
         }
 
         public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);

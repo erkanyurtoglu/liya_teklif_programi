@@ -10,6 +10,8 @@ namespace teklif_programi.Models
         private int _urunId;
         private string _urunKodu = string.Empty;
         private string _urunAciklamasi = string.Empty;
+        private string _urunAciklamasiTr = string.Empty;
+        private string _urunAciklamasiEn = string.Empty;
         private int _adet;
         private decimal _birimFiyat;
         private decimal _indirimliFiyat;
@@ -36,6 +38,18 @@ namespace teklif_programi.Models
         {
             get => _urunAciklamasi;
             set { _urunAciklamasi = value; OnPropertyChanged(); }
+        }
+
+        public string UrunAciklamasiTr
+        {
+            get => _urunAciklamasiTr;
+            set { _urunAciklamasiTr = value; OnPropertyChanged(); }
+        }
+
+        public string UrunAciklamasiEn
+        {
+            get => _urunAciklamasiEn;
+            set { _urunAciklamasiEn = value; OnPropertyChanged(); }
         }
 
         public int Adet
