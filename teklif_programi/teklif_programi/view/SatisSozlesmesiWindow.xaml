@@ -101,14 +101,18 @@
                         ToolTip="Metni altı çizili yap (Ctrl+U)"
                         Style="{StaticResource ModernButtonStyle}" Width="140" Margin="10"/>
                 <Separator Margin="5,0"/>
-                <Button Content="Madde İşareti" 
-                        Command="EditingCommands.ToggleBullets" 
-                        ToolTip="Madde işaretli liste ekle"
-                        Style="{StaticResource ModernButtonStyle}" Width="140" Margin="10"/>
-                <Button Content="Numaralı Liste" 
-                        Command="EditingCommands.ToggleNumbering" 
-                        ToolTip="Numaralı liste ekle"
-                        Style="{StaticResource ModernButtonStyle}" Width="158"/>
+                <Button Content="Sola Hizala"
+                        Command="EditingCommands.AlignLeft"
+                        ToolTip="Metni sola hizala"
+                        Style="{StaticResource ModernButtonStyle}" Width="120" Margin="10"/>
+                <Button Content="Ortala"
+                        Command="EditingCommands.AlignCenter"
+                        ToolTip="Metni ortala"
+                        Style="{StaticResource ModernButtonStyle}" Width="100" Margin="10"/>
+                <Button Content="Sağa Hizala"
+                        Command="EditingCommands.AlignRight"
+                        ToolTip="Metni sağa hizala"
+                        Style="{StaticResource ModernButtonStyle}" Width="120" Margin="10"/>
             </ToolBar>
         </Border>
 

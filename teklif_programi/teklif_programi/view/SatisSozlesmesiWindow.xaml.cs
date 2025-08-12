@@ -1,4 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using teklif_programi.ViewModels;
@@ -21,13 +24,9 @@ namespace teklif_programi.view
         // Pencere açıldığında saklanan varsayılan sözleşme metni (sıfırlama işlemi için)
         private readonly string _varsayilanSozlesmeMetni;
 
-        /// <summary>
-        /// Pencere oluşturulurken TeklifVerViewModel parametresi alır.
-        /// Bu sayede sözleşme metni teklif süreciyle entegre olur.
-        /// </summary>
         public SatisSozlesmesiWindow(TeklifVerViewModel teklifVerViewModel)
         {
-            InitializeComponent(); // XAML bileşenlerini başlatır
+            InitializeComponent();
 
             _viewModel = new SatisSozlesmesiViewModel();
             _teklifVerViewModel = teklifVerViewModel;
@@ -46,45 +45,52 @@ namespace teklif_programi.view
             LoadSozlesmeMetniToRichTextBox();
         }
 
-        /// <summary>
-        /// ViewModel’deki sözleşme metnini RichTextBox’a satır satır ekler.
-        /// Her satır bir Paragraph olarak eklenir ve girinti/formatlama yapılır.
-        /// </summary>
         private void LoadSozlesmeMetniToRichTextBox()
         {
             // Önce mevcut içerik temizlenir
             SatisSozlesmesiBox.Document.Blocks.Clear();
 
-            // Metin satırlara ayrılır (boş satırlar atılır)
-            string[] lines = _viewModel.SozlesmeMetni.Split(
-                new[] { Environment.NewLine },
-                StringSplitOptions.RemoveEmptyEntries
-            );
-
-            foreach (string line in lines)
+            if (string.IsNullOrWhiteSpace(_viewModel.SozlesmeMetni))
+                return;
             {
-                // Her satır bir Paragraph olarak oluşturulur
-                Paragraph paragraph = new Paragraph(new Run(line.Trim()))
+                try
                 {
-                    Margin = new Thickness(0, 5, 0, 5), // Satırlar arası boşluk
-                    TextAlignment = TextAlignment.Left // Metin sola yaslı
-                };
-
-                // Eğer satır numaralı madde ise girinti uygula
-                if (line.Trim().StartsWith("1.") || line.Trim().StartsWith("2.") || line.Trim().StartsWith("3.") ||
-                    line.Trim().StartsWith("4.") || line.Trim().StartsWith("5.") || line.Trim().StartsWith("6.") ||
-                    line.Trim().StartsWith("7.") || line.Trim().StartsWith("8."))
-                {
-                    paragraph.TextIndent = 20; // Numaralı maddeler için girinti
-                }
-                // Eğer satır "-" ile başlıyorsa (alt madde) daha fazla girinti uygula
-                else if (line.Trim().StartsWith("-"))
-                {
-                    paragraph.TextIndent = 40;
+                    byte[] bytes = Encoding.UTF8.GetBytes(_viewModel.SozlesmeMetni);
+                    using MemoryStream stream = new MemoryStream(bytes);
+                    TextRange range = new TextRange(
+                        SatisSozlesmesiBox.Document.ContentStart,
+                        SatisSozlesmesiBox.Document.ContentEnd);
+                    range.Load(stream, DataFormats.Xaml);
                 }
 
-                // Paragraph’ı RichTextBox’a ekle
-                SatisSozlesmesiBox.Document.Blocks.Add(paragraph);
+                catch 
+                {
+                    string[] lines = _viewModel.SozlesmeMetni.Split(
+                        new[] { Environment.NewLine },
+                        StringSplitOptions.RemoveEmptyEntries);
+
+                    foreach (string line in lines)
+                    {
+                        Paragraph paragraph = new Paragraph(new Run(line.Trim()))
+                        {
+                            Margin = new Thickness(0, 5, 0, 5),
+                            TextAlignment = TextAlignment.Left
+                        };
+
+                        if (line.Trim().StartsWith("1.") || line.Trim().StartsWith("2.") || line.Trim().StartsWith("3.") ||
+                            line.Trim().StartsWith("4.") || line.Trim().StartsWith("5.") || line.Trim().StartsWith("6.") ||
+                            line.Trim().StartsWith("7.") || line.Trim().StartsWith("8."))
+                        {
+                            paragraph.TextIndent = 20;
+                        }
+                        else if (line.Trim().StartsWith("-"))
+                        {
+                            paragraph.TextIndent = 40;
+                        }
+
+                        SatisSozlesmesiBox.Document.Blocks.Add(paragraph);
+                    }
+                }
             }
         }
 
@@ -98,11 +104,11 @@ namespace teklif_programi.view
             // RichTextBox’taki tüm metni al
             TextRange textRange = new TextRange(
                 SatisSozlesmesiBox.Document.ContentStart,
-                SatisSozlesmesiBox.Document.ContentEnd
-            );
+                SatisSozlesmesiBox.Document.ContentEnd); ;
 
-            // ViewModel’deki sözleşme metnini güncelle
-            _viewModel.SozlesmeMetni = textRange.Text.Trim();
+            using MemoryStream stream = new MemoryStream();
+            textRange.Save(stream, DataFormats.Xaml);
+            _viewModel.SozlesmeMetni = Encoding.UTF8.GetString(stream.ToArray());
 
             // Teklif süreci ViewModel’ine metni aktar
             _teklifVerViewModel.SatisSozlesmesiMetni = _viewModel.SozlesmeMetni;
@@ -117,8 +123,8 @@ namespace teklif_programi.view
         /// </summary>
         private void Sifirla_Click(object sender, RoutedEventArgs e)
         {
-            _viewModel.SozlesmeMetni = _varsayilanSozlesmeMetni; // Varsayılan metin yüklenir
-            LoadSozlesmeMetniToRichTextBox(); // RichTextBox’a yeniden aktarılır
+            _viewModel.SozlesmeMetni = _varsayilanSozlesmeMetni;
+            LoadSozlesmeMetniToRichTextBox();
         }
     }
 }
