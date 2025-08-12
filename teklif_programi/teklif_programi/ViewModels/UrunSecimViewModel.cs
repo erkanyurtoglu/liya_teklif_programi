@@ -116,7 +116,7 @@ namespace teklif_programi.ViewModels
 
         public RelayCommand UrunEkleOnayCommand { get; private set; }
         public RelayCommand IptalCommand { get; private set; }
-
+    
         private void FiltreleUrunler()
         {
             try
