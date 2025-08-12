@@ -70,9 +70,10 @@ namespace teklif_programi.Services
                 });
             }
 
-            var toplamFiyat = urunler.Sum(u => u.Toplam);
-            var kdvTutari = toplamFiyat * (kdvOrani / 100);
-            var genelToplam = toplamFiyat + kdvTutari;
+            // Hesaplamalar merkezi TeklifHesaplayici üzerinden yapılır
+            var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
+            var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani);
 
             _context.TeklifToplamlari.Add(new TeklifToplam
             {

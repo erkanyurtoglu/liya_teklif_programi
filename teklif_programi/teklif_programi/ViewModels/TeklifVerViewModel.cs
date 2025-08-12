@@ -188,10 +188,14 @@ namespace teklif_programi.ViewModels
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
+                model.MaliyetFiyatText = FormatPrice(model.MaliyetFiyati);
 
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
                 OnPropertyChanged(nameof(GenelToplam));
+                OnPropertyChanged(nameof(ToplamMaliyet));
+                OnPropertyChanged(nameof(KarTutari));
+                OnPropertyChanged(nameof(KarOrani));
                 UpdateTotalsText();
             }
         }
@@ -224,6 +228,7 @@ namespace teklif_programi.ViewModels
                     FiyatUSD = urun.FiyatUSD,
                     FiyatEUR = urun.FiyatEUR,
                     BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency),
+                    MaliyetFiyati = ConvertTlToSelectedCurrency(urun.MaliyetFiyati),
                     Adet = 1
                 };
                 model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
@@ -232,11 +237,16 @@ namespace teklif_programi.ViewModels
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
+                model.MaliyetFiyatText = FormatPrice(model.MaliyetFiyati);
             }
             OnPropertyChanged(nameof(SecilenUrunler));
             OnPropertyChanged(nameof(ToplamFiyat));
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
+            OnPropertyChanged(nameof(ToplamMaliyet));
+            OnPropertyChanged(nameof(KarTutari));
+            OnPropertyChanged(nameof(KarOrani));
+            UpdateTotalsText();
         }
 
         private void SepettenCikar(TeklifUrunModel? urun)
@@ -249,13 +259,16 @@ namespace teklif_programi.ViewModels
                 OnPropertyChanged(nameof(ToplamFiyat));
                 OnPropertyChanged(nameof(KdvUcreti));
                 OnPropertyChanged(nameof(GenelToplam));
+                OnPropertyChanged(nameof(ToplamMaliyet));
+                OnPropertyChanged(nameof(KarTutari));
+                OnPropertyChanged(nameof(KarOrani));
             }
         }
 
         private void HesaplaIndirimliFiyat(TeklifUrunModel model)
         {
-            decimal indirim = GenelIndirimOrani / 100;
-            model.IndirimliFiyat = model.BirimFiyat * (1 - indirim);
+            // İndirimli fiyat hesaplamasını merkezi hesaba aktar
+            model.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(model.BirimFiyat, GenelIndirimOrani);
             OnPropertyChanged(nameof(SecilenUrunler));
         }
 
@@ -266,6 +279,16 @@ namespace teklif_programi.ViewModels
                 "USD" => urun.FiyatUSD,
                 "EUR" => urun.FiyatEUR,
                 _ => urun.FiyatTL
+            };
+        }
+
+        private decimal ConvertTlToSelectedCurrency(decimal tlValue)
+        {
+            return SelectedCurrency switch
+            {
+                "USD" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "USD")?.Satis ?? 1),
+                "EUR" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "EUR")?.Satis ?? 1),
+                _ => tlValue
             };
         }
 
@@ -284,6 +307,16 @@ namespace teklif_programi.ViewModels
             return price.ToString("C2", GetCultureByCurrency(SelectedCurrency));
         }
 
+        private string _toplamMaliyetText = string.Empty;
+        public string ToplamMaliyetText { get => _toplamMaliyetText; set { _toplamMaliyetText = value; OnPropertyChanged(); } }
+
+        private string _karTutariText = string.Empty;
+        public string KarTutariText { get => _karTutariText; set { _karTutariText = value; OnPropertyChanged(); } }
+
+        private string _karOraniText = string.Empty;
+        public string KarOraniText { get => _karOraniText; set { _karOraniText = value; OnPropertyChanged(); } }
+
+
         private string _toplamFiyatText = string.Empty;
         public string ToplamFiyatText { get => _toplamFiyatText; set { _toplamFiyatText = value; OnPropertyChanged(); } }
 
@@ -295,6 +328,9 @@ namespace teklif_programi.ViewModels
 
         private void UpdateTotalsText()
         {
+            ToplamMaliyetText = FormatPrice(ToplamMaliyet);
+            KarTutariText = FormatPrice(KarTutari);
+            KarOraniText = KarOrani.ToString("F2") + "%";
             ToplamFiyatText = FormatPrice(ToplamFiyat);
             KdvUcretiText = FormatPrice(KdvUcreti);
             GenelToplamText = FormatPrice(GenelToplam);
@@ -322,31 +358,42 @@ namespace teklif_programi.ViewModels
                 if (matchedUrun != null)
                 {
                     urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
+                    urun.MaliyetFiyati = ConvertTlToSelectedCurrency(matchedUrun.MaliyetFiyati);
                     HesaplaIndirimliFiyat(urun);
                     urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
                     urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
                     urun.ToplamText = FormatPrice(urun.Toplam);
+                    urun.MaliyetFiyatText = FormatPrice(urun.MaliyetFiyati);
                 }
                 else
                 {
                     urun.BirimFiyat = 0;
+                    urun.MaliyetFiyati = 0;
                     HesaplaIndirimliFiyat(urun);
                     urun.BirimFiyatText = FormatPrice(0);
                     urun.IndirimliFiyatText = FormatPrice(0);
                     urun.ToplamText = FormatPrice(0);
+                    urun.MaliyetFiyatText = FormatPrice(0);
                 }
             }
 
             OnPropertyChanged(nameof(ToplamFiyat));
             OnPropertyChanged(nameof(KdvUcreti));
             OnPropertyChanged(nameof(GenelToplam));
+            OnPropertyChanged(nameof(ToplamMaliyet));
+            OnPropertyChanged(nameof(KarTutari));
+            OnPropertyChanged(nameof(KarOrani));
             UpdateTotalsText();
             UpdateDescriptions();
         }
 
-        public decimal ToplamFiyat => SecilenUrunler.Sum(u => u.Toplam);
-        public decimal KdvUcreti => ToplamFiyat * (KdvOrani / 100);
-        public decimal GenelToplam => ToplamFiyat + KdvUcreti;
+        // Toplam ve KDV hesaplamaları merkezi hesaba devredildi
+        public decimal ToplamFiyat => TeklifHesaplayici.HesaplaToplamFiyat(SecilenUrunler);
+        public decimal KdvUcreti => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, KdvOrani);
+        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, KdvOrani);
+        public decimal ToplamMaliyet => TeklifHesaplayici.HesaplaToplamMaliyet(SecilenUrunler);
+        public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
+        public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
 
         private void KaydetVePdfIndir()
         {

@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Globalization;
+using teklif_programi.Services;
 
 namespace teklif_programi.Models
 {
@@ -21,6 +22,8 @@ namespace teklif_programi.Models
         private string _birimFiyatText = string.Empty;
         private string _indirimliFiyatText = string.Empty;
         private string _toplamText = string.Empty;
+        private decimal _maliyetFiyati;
+        private string _maliyetFiyatText = string.Empty;
 
         public int UrunId
         {
@@ -124,6 +127,18 @@ namespace teklif_programi.Models
             set { _toplamText = value; OnPropertyChanged(); }
         }
 
+        public decimal MaliyetFiyati
+        {
+            get => _maliyetFiyati;
+            set { _maliyetFiyati = value; OnPropertyChanged(); }
+        }
+
+        public string MaliyetFiyatText
+        {
+            get => _maliyetFiyatText;
+            set { _maliyetFiyatText = value; OnPropertyChanged(); }
+        }
+
         public decimal FiyatTL
         {
             get => _fiyatTL;
@@ -142,7 +157,8 @@ namespace teklif_programi.Models
             set { _fiyatEUR = value; OnPropertyChanged(); }
         }
 
-        public decimal Toplam => Adet * IndirimliFiyat;
+        // Toplam tutar hesaplaması TeklifHesaplayici üzerinden yapılır
+        public decimal Toplam => TeklifHesaplayici.HesaplaToplam(Adet, IndirimliFiyat);
 
         public event EventHandler OnBirimFiyatDegisti;
         public event PropertyChangedEventHandler PropertyChanged;
