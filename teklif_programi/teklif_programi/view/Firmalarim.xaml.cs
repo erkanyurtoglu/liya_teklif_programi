@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Services;
 
 namespace teklif_programi.view
 {
@@ -32,13 +33,23 @@ namespace teklif_programi.view
         
         private void FirmaListele(string arama = "")
         {
-            var firmalar = string.IsNullOrWhiteSpace(arama)
-                ? _db.Musteriler.ToList()
-                : _db.Musteriler
-                      .Where(f => f.FirmaAdi.Contains(arama) || f.FirmaTelefonu.Contains(arama))
-                      .ToList();
-
-            dgFirmalar.ItemsSource = firmalar;
+            try
+            {
+                var firmalar = string.IsNullOrWhiteSpace(arama)
+                    ? _db.Musteriler.ToList()
+                    : _db.Musteriler
+                          .Where(f => f.FirmaAdi.Contains(arama) || f.FirmaTelefonu.Contains(arama))
+                          .ToList();
+                dgFirmalar.ItemsSource = firmalar;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Firmalar yüklenirken bir hata oluştu: {ex.Message}",
+                    "Hata",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void txtArama_TextChanged(object sender, TextChangedEventArgs e)
@@ -76,9 +87,7 @@ namespace teklif_programi.view
 
             if (result == true)
             {
-                const string dogruSifre = "Liya2015";
-
-                if (pwdDialog.EnteredPassword == dogruSifre)
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
                 {
                     using (var db = new TeklifDbContext())
                     {

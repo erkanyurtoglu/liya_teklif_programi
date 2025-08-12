@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Services;
 
 // WPF pencerelerinin isim alanı
 namespace teklif_programi.view
@@ -49,8 +50,7 @@ namespace teklif_programi.view
             bool? result = pwdDialog.ShowDialog();
             if (result == true)
             {
-                const string dogruSifre = "Liya2015"; // Sabit şifre
-                if (pwdDialog.EnteredPassword == dogruSifre)
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
                 {
                     // TextBox'lardan firma bilgilerini günceller
                     _firma.FirmaAdi = txtFirmaAdi.Text;

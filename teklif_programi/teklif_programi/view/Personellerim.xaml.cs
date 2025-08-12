@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using teklif_programi.Data;     // Veritabanı erişimi için proje içindeki Data katmanı
 using teklif_programi.Models;  // Personel gibi model sınıfları
+using teklif_programi.Services;
 
 namespace teklif_programi.view
 {
@@ -110,9 +111,7 @@ namespace teklif_programi.view
 
             if (result == true)
             {
-                const string dogruSifre = "Liya2015"; // Silme için gerekli doğru şifre
-
-                if (pwdDialog.EnteredPassword == dogruSifre)
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
                 {
                     // Kullanıcıdan son onay alınır
                     if (MessageBox.Show("Bu personel kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)

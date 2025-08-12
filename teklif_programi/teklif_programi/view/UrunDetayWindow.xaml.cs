@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using teklif_programi.Data;   // Veritabanı erişimi için
 using teklif_programi.Models; // Urun model sınıfı
+using teklif_programi.Services; // Parola doğrulama servisi
 
 namespace teklif_programi.view
 {
@@ -53,11 +54,10 @@ namespace teklif_programi.view
         /// </summary>
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
         {
-            var pwdWindow = new PasswordDialog();
-            pwdWindow.Owner = this; // Diyalog bu pencereye bağlı açılır
+            var pwdWindow = new PasswordDialog { Owner = this };
 
-            // Şifre penceresi onaylandı ve şifre doğruysa işlem yapılır
-            if (pwdWindow.ShowDialog() == true && pwdWindow.EnteredPassword == "Liya2015")
+            // Şifre penceresi onaylandı ve parola doğruysa işlem yapılır
+            if (pwdWindow.ShowDialog() == true && PasswordService.Verify(pwdWindow.EnteredPassword))
             {
                 // TextBox’lardaki değerler ürüne aktarılır
                 _urun.Kategori = txtKategori.Text;

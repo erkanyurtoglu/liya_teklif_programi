@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using teklif_programi.Models;
 
 namespace teklif_programi.view
 {
@@ -36,21 +35,7 @@ namespace teklif_programi.view
 
         private void BtnIptal_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
+            DialogResult = false;
         }
-
-        private void BtnDetay_Click(object sender, RoutedEventArgs e)
-        {
-            var button = sender as Button;
-            var secilenUrun = button?.DataContext as Urun;
-
-            if (secilenUrun != null)
-            {
-                var detayWindow = new UrunDetayWindow(secilenUrun);
-                detayWindow.ShowDialog();
-            }
-        }
-
-
     }
 }

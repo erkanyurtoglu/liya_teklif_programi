@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using teklif_programi.Data;    // Veritabanı bağlantı sınıfı
 using teklif_programi.Models; // Urun model sınıfı
+using teklif_programi.Services; // Parola doğrulama servisis
 
 namespace teklif_programi.view
 {
@@ -97,9 +98,7 @@ namespace teklif_programi.view
 
             if (result == true)
             {
-                const string dogruSifre = "Liya2015"; // Sabit şifre (daha güvenli olması için veritabanı veya config'de saklanmalı)
-
-                if (pwdDialog.EnteredPassword == dogruSifre)
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
                 {
                     // Silme işlemini onaylat
                     if (MessageBox.Show("Bu ürün kalıcı olarak silinecek. Emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)

@@ -26,8 +26,20 @@ namespace teklif_programi.view
 
         private void btnGirisYap_Click_1(object sender, RoutedEventArgs e)
         {
-            anaEkran anaEkran = new anaEkran();
-            anaEkran.Show();
+            try
+            {
+                var anaEkran = new anaEkran();
+                anaEkran.Show();
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Uygulama başlatılırken bir hata oluştu: {ex.Message}",
+                    "Hata",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private void chkBeniHatirla_Checked(object sender, RoutedEventArgs e)

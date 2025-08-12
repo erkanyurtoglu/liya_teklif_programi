@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Services;
 
 // WPF pencerelerinin isim alanı
 namespace teklif_programi.view
@@ -50,8 +51,7 @@ namespace teklif_programi.view
             var pwdDialog = new PasswordDialog { Owner = this }; // Şifre giriş penceresini modal olarak açar
             if (pwdDialog.ShowDialog() is true)
             {
-                const string dogruSifre = "Liya2015"; // Sabit şifre
-                if (pwdDialog.EnteredPassword == dogruSifre)
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
                 {
                     // TextBox'lardan personel bilgilerini günceller
                     _personel.AdSoyad = txtAdSoyad.Text;
