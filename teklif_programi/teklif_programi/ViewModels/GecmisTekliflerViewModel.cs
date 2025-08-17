@@ -189,17 +189,33 @@ namespace teklif_programi.ViewModels
 
             try
             {
-                var detayWindow = new TeklifDetayWindow
+                var detayWindow = new TeklifDetayWindow(teklif);
+
+                // Aktif ve gösterilmiş bir pencere bul
+                var owner = System.Windows.Application.Current?.Windows
+                               .OfType<Window>()
+                               .FirstOrDefault(w => w.IsActive && w.IsVisible)
+                           ?? System.Windows.Application.Current?.MainWindow;
+
+                if (owner != null && owner.IsVisible)  // yalnızca görünürse owner yap
                 {
-                    DataContext = new TeklifDetayViewModel(teklif)
-                };
+                    detayWindow.Owner = owner;
+                    detayWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                }
+                else
+                {
+                    detayWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                }
+
                 detayWindow.ShowDialog();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));

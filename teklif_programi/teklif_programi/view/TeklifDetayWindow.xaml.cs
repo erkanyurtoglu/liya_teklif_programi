@@ -18,22 +18,5 @@ namespace teklif_programi.view
             InitializeComponent();
             DataContext = new TeklifDetayViewModel(new Teklif { TeklifId = 1 }); // Test için sabit ID
         }
-
-        private void YeniUrunEkle_Click(object sender, RoutedEventArgs e)
-        {
-            var urunSecimWindow = new UrunSecimWindow();
-            if (urunSecimWindow.ShowDialog() == true)
-            {
-                var viewModel = urunSecimWindow.DataContext as UrunSecimViewModel;
-                if (viewModel?.SecilenUrun != null)
-                {
-                    var vm = DataContext as TeklifDetayViewModel;
-                    if (vm != null)
-                    {
-                        vm.EkleUrun(viewModel.SecilenUrun, viewModel.YeniUrunAdet, viewModel.YeniUrunIndirimliFiyat);
-                    }
-                }
-            }
-        }
     }
 }
