@@ -9,9 +9,6 @@ using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Services;
 using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Windows.Documents;
 
 namespace teklif_programi.ViewModels
 {
@@ -408,18 +405,7 @@ namespace teklif_programi.ViewModels
 
             try
             {
-                string plainText = SatisSozlesmesiMetni;
-                try
-                {
-                    FlowDocument doc = new FlowDocument();
-                    TextRange tr = new TextRange(doc.ContentStart, doc.ContentEnd);
-                    using MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(SatisSozlesmesiMetni));
-                    tr.Load(ms, DataFormats.Xaml);
-                    plainText = tr.Text;
-                }
-                catch { }
-
-                _teklifService.KaydetVePdfIndir(FirmaBilgisi, SecilenUrunler, GenelIndirimOrani, KdvOrani, SelectedCurrency, plainText);
+                _teklifService.KaydetVePdfIndir(FirmaBilgisi, SecilenUrunler, GenelIndirimOrani, KdvOrani, SelectedCurrency, SatisSozlesmesiMetni);
             }
             catch (Exception ex)
             {

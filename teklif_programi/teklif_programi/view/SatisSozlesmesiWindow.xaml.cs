@@ -1,8 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
+using System.Windows;   
 using System.Windows.Documents;
 using teklif_programi.ViewModels;
 
@@ -47,51 +44,10 @@ namespace teklif_programi.view
 
         private void LoadSozlesmeMetniToRichTextBox()
         {
-            // Önce mevcut içerik temizlenir
-            SatisSozlesmesiBox.Document.Blocks.Clear();
-
-            if (string.IsNullOrWhiteSpace(_viewModel.SozlesmeMetni))
-                return;
-            {
-                try
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes(_viewModel.SozlesmeMetni);
-                    using MemoryStream stream = new MemoryStream(bytes);
-                    TextRange range = new TextRange(
-                        SatisSozlesmesiBox.Document.ContentStart,
-                        SatisSozlesmesiBox.Document.ContentEnd);
-                    range.Load(stream, DataFormats.Xaml);
-                }
-
-                catch 
-                {
-                    string[] lines = _viewModel.SozlesmeMetni.Split(
-                        new[] { Environment.NewLine },
-                        StringSplitOptions.RemoveEmptyEntries);
-
-                    foreach (string line in lines)
-                    {
-                        Paragraph paragraph = new Paragraph(new Run(line.Trim()))
-                        {
-                            Margin = new Thickness(0, 5, 0, 5),
-                            TextAlignment = TextAlignment.Left
-                        };
-
-                        if (line.Trim().StartsWith("1.") || line.Trim().StartsWith("2.") || line.Trim().StartsWith("3.") ||
-                            line.Trim().StartsWith("4.") || line.Trim().StartsWith("5.") || line.Trim().StartsWith("6.") ||
-                            line.Trim().StartsWith("7.") || line.Trim().StartsWith("8."))
-                        {
-                            paragraph.TextIndent = 20;
-                        }
-                        else if (line.Trim().StartsWith("-"))
-                        {
-                            paragraph.TextIndent = 40;
-                        }
-
-                        SatisSozlesmesiBox.Document.Blocks.Add(paragraph);
-                    }
-                }
-            }
+            TextRange textRange = new TextRange(
+                SatisSozlesmesiBox.Document.ContentStart,
+                SatisSozlesmesiBox.Document.ContentEnd);
+            textRange.Text = _viewModel.SozlesmeMetni;
         }
 
         /// <summary>
@@ -104,11 +60,9 @@ namespace teklif_programi.view
             // RichTextBox’taki tüm metni al
             TextRange textRange = new TextRange(
                 SatisSozlesmesiBox.Document.ContentStart,
-                SatisSozlesmesiBox.Document.ContentEnd); ;
 
-            using MemoryStream stream = new MemoryStream();
-            textRange.Save(stream, DataFormats.Xaml);
-            _viewModel.SozlesmeMetni = Encoding.UTF8.GetString(stream.ToArray());
+             SatisSozlesmesiBox.Document.ContentEnd);
+            _viewModel.SozlesmeMetni = textRange.Text;
 
             // Teklif süreci ViewModel’ine metni aktar
             _teklifVerViewModel.SatisSozlesmesiMetni = _viewModel.SozlesmeMetni;

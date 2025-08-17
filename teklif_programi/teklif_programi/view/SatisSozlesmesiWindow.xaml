@@ -54,8 +54,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <!-- Başlık -->
-            <RowDefinition Height="Auto"/>
-            <!-- Araç çubuğu -->
             <RowDefinition Height="*"/>
             <!-- RichTextBox -->
             <RowDefinition Height="Auto"/>
@@ -78,54 +76,17 @@
                     CornerRadius="1"/>
         </StackPanel>
 
-        <!-- Araç Çubuğu -->
-        <Border Grid.Row="1" 
-                Background="White" 
-                CornerRadius="4" 
-                Padding="5" 
-                Margin="0,0,0,10" 
-                BorderBrush="#ededed" 
-                BorderThickness="1"
-                Effect="{StaticResource MaterialDesignShadow}">
-            <ToolBar Background="Transparent" BorderThickness="0">
-                <Button Content="Kalın" 
-                        Command="EditingCommands.ToggleBold" 
-                        ToolTip="Metni kalın yap (Ctrl+B)"
-                        Style="{StaticResource ModernButtonStyle}" Width="100" Margin="10"/>
-                <Button Content="İtalik" 
-                        Command="EditingCommands.ToggleItalic" 
-                        ToolTip="Metni italik yap (Ctrl+I)"
-                        Style="{StaticResource ModernButtonStyle}" Width="100" Margin="10"/>
-                <Button Content="Altı Çizili" 
-                        Command="EditingCommands.ToggleUnderline" 
-                        ToolTip="Metni altı çizili yap (Ctrl+U)"
-                        Style="{StaticResource ModernButtonStyle}" Width="140" Margin="10"/>
-                <Separator Margin="5,0"/>
-                <Button Content="Sola Hizala"
-                        Command="EditingCommands.AlignLeft"
-                        ToolTip="Metni sola hizala"
-                        Style="{StaticResource ModernButtonStyle}" Width="120" Margin="10"/>
-                <Button Content="Ortala"
-                        Command="EditingCommands.AlignCenter"
-                        ToolTip="Metni ortala"
-                        Style="{StaticResource ModernButtonStyle}" Width="100" Margin="10"/>
-                <Button Content="Sağa Hizala"
-                        Command="EditingCommands.AlignRight"
-                        ToolTip="Metni sağa hizala"
-                        Style="{StaticResource ModernButtonStyle}" Width="120" Margin="10"/>
-            </ToolBar>
-        </Border>
 
         <!-- RichTextBox ile düzenlenebilir sözleşme alanı -->
-        <Border Grid.Row="2" 
-                Background="White" 
-                CornerRadius="4" 
-                Padding="10" 
-                Margin="0,0,0,15" 
-                BorderBrush="#ededed" 
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="4"
+                Padding="10"
+                Margin="0,0,0,15"
+                BorderBrush="#ededed"
                 BorderThickness="1"
                 Effect="{StaticResource MaterialDesignShadow}">
-            <RichTextBox x:Name="SatisSozlesmesiBox" 
+            <RichTextBox x:Name="SatisSozlesmesiBox"
                          Style="{StaticResource ModernRichTextBox}"
                          AcceptsReturn="True">
                 <RichTextBox.Resources>
@@ -137,11 +98,11 @@
         </Border>
 
         <!-- Butonlar -->
-        <StackPanel Grid.Row="3" 
-                    Orientation="Horizontal" 
+        <StackPanel Grid.Row="2"
+                    Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Content="Varsayılana Sıfırla" 
-                    Width="150" 
+            <Button Content="Varsayılana Sıfırla"
+                    Width="150"
                     Style="{StaticResource ModernButtonStyle}"
                     Click="Sifirla_Click"
                     Margin="0,0,10,0"/>
