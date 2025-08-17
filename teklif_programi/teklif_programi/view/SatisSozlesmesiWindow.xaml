@@ -106,7 +106,8 @@
                     Style="{StaticResource ModernButtonStyle}"
                     Click="Sifirla_Click"
                     Margin="0,0,10,0"/>
-            <Button Content="Kapat" 
+            
+            <Button Content="Kaydet" 
                     Width="120" 
                     Style="{StaticResource ModernButtonStyle}"
                     Click="Kapat_Click"/>

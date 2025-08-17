@@ -423,12 +423,15 @@
 
             <!-- Teklifi Kaydet ve PDF İndir Butonu -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,27,0,26" Width="344">
+                <Button Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" 
+                        Width="147" 
+                        Click="SatisSozlesmesi_Click"
+                        Margin="0,0,10,0"/>
+
                 <Button Content="Teklifi Kaydet ve PDF İndir" Style="{StaticResource ModernButtonStyle}" 
                         Width="187" Margin="0,0,10,0"
                         Command="{Binding KaydetVePdfIndirCommand}"/>
-                <Button Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" 
-                        Width="147" 
-                        Click="SatisSozlesmesi_Click"/>
+
             </StackPanel>
         </Grid>
     </Grid>

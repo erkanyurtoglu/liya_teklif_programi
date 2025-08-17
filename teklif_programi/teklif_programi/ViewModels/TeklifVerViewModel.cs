@@ -28,6 +28,29 @@ namespace teklif_programi.ViewModels
         private string _ilgiliKisiEposta = string.Empty;
         private string _satisSozlesmesiMetni = string.Empty;
 
+        private const string SatisSozlesmesiTr = @"1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
+        2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
+        3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
+        4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
+        5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
+        6. Nakliye: Satıcı firmaya aittir.
+        7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
+        8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+           İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
+           HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
+
+        private const string SatisSozlesmesiEn = @"Our price is quoted in USD and includes VAT. The effective selling exchange rate of the Central Bank of the Republic of Turkey (CBRT) valid on the invoice date will be applied.
+        Device payment terms: 30% is payable in advance at the time of order, and the remaining amount upon delivery.
+        The devices are covered by a warranty of 1 year for mechanical parts and 2 years for electronic parts. Technical service and training services will be provided for a period of 10 years on a paid basis.
+        Delivery of the devices: Within 1 week following the order.
+        Offer validity: The offer is valid for 3 days from the quotation date.
+        Transportation: To be borne by the seller.
+        Alternative device prices are not included in the total quotation amount.
+        Bank Account Information: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+        İş Bankası: TR16 0006 4000 0014 1520 1653 38
+        Halk Bankası: TR51 0001 2009 4140 0010 2645 69";
+
+
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
 
         public TeklifVerViewModel()
@@ -41,17 +64,7 @@ namespace teklif_programi.ViewModels
             KaydetVePdfIndirCommand = new RelayCommand(KaydetVePdfIndir);
             DovizKurlari = new ObservableCollection<DovizKuru>();
             DovizKurlariGuncelle();
-            SatisSozlesmesiMetni = @"
-            1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
-            2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
-            3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
-            4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
-            5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
-            6. Nakliye: Satıcı firmaya aittir.
-            7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
-            8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
-               İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
-               HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
+            UpdateContractText();
         }
 
         public string SatisSozlesmesiMetni
@@ -143,7 +156,16 @@ namespace teklif_programi.ViewModels
         public string SelectedLanguage
         {
             get => _selectedLanguage;
-            set { _selectedLanguage = value; OnPropertyChanged(); UpdateDescriptions(); }
+            set
+            {
+                if (_selectedLanguage != value)
+                {
+                    _selectedLanguage = value;
+                    OnPropertyChanged();
+                    UpdateDescriptions();
+                    UpdateContractText();
+                }
+            }
         }
 
         private void UrunleriYukle()
@@ -179,6 +201,11 @@ namespace teklif_programi.ViewModels
                 model.UrunAciklamasi = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
             }
             OnPropertyChanged(nameof(SecilenUrunler));
+        }
+
+        private void UpdateContractText()   
+        {
+            SatisSozlesmesiMetni = SelectedLanguage == "EN" ? SatisSozlesmesiEn : SatisSozlesmesiTr;
         }
 
         private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
