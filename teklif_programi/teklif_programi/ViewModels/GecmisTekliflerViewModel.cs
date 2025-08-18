@@ -97,6 +97,13 @@ namespace teklif_programi.ViewModels
             _secilenTarihFiltresi = "1 Hafta";
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
             TeklifleriYukle();
+
+            EventHub.TeklifGuncellendi += OnTeklifGuncellendi;
+        }
+
+        ~GecmisTekliflerViewModel()
+        {
+            EventHub.TeklifGuncellendi -= OnTeklifGuncellendi;
         }
 
         private void TeklifleriYukle()
@@ -107,18 +114,15 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.Musteri)
                     .Include(t => t.Personel)
                     .Include(t => t.TeklifToplam)
-                    .Include(t => t.TeklifUrunleri)       // Bu satır eklendi
-                    .ThenInclude(tu => tu.Urun)      // Bu satır eklendi
+                    .Include(t => t.TeklifUrunleri)
+                        .ThenInclude(tu => tu.Urun)
+                    .AsNoTracking()
                     .ToList();
 
-
                 TumTeklifler.Clear();
-                FiltrelenmisTeklifler.Clear();
                 foreach (var teklif in teklifler)
-                {
                     TumTeklifler.Add(teklif);
-                    FiltrelenmisTeklifler.Add(teklif);
-                }
+
                 TeklifleriFiltrele();
             }
             catch (Exception ex)
@@ -136,16 +140,16 @@ namespace teklif_programi.ViewModels
             switch (SecilenTarihFiltresi)
             {
                 case "1 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-1) && t.OlusturmaTarihi.Date <= bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-1)).ToList();
                     break;
                 case "1 Hafta":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-7) && t.OlusturmaTarihi.Date <= bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-7)).ToList();
                     break;
                 case "15 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-15) && t.OlusturmaTarihi.Date <= bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-15)).ToList();
                     break;
                 case "30 Gün":
-                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-30) && t.OlusturmaTarihi.Date <= bugun).ToList();
+                    filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-30)).ToList();
                     break;
                 case "Özel Tarih":
                     if (BaslangicTarihi.HasValue && BitisTarihi.HasValue)
@@ -162,21 +166,53 @@ namespace teklif_programi.ViewModels
             {
                 filtreliTeklifler = filtreliTeklifler.Where(t =>
                     t.TeklifId.ToString().Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ||
-                    (t.Musteri != null && t.Musteri.FirmaAdi != null && t.Musteri.FirmaAdi.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
-                    (t.Personel != null && t.Personel.AdSoyad != null && t.Personel.AdSoyad.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
+                    (t.Musteri?.FirmaAdi?.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (t.Personel?.AdSoyad?.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (t.TeklifUrunleri != null && t.TeklifUrunleri.Any(tu =>
-                        tu.Urun != null &&
-                        (
-                            (tu.Urun.UrunAciklamasi != null && tu.Urun.UrunAciklamasi.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase)) ||
-                            (tu.Urun.UrunKodu != null && tu.Urun.UrunKodu.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase))
-                        )
+                        (tu.Urun?.UrunAciklamasi?.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (tu.Urun?.UrunKodu?.Contains(TeklifArama, StringComparison.OrdinalIgnoreCase) ?? false)
                     ))
                 ).ToList();
             }
 
+            // Yeni koleksiyon atamak yerine temizle + doldur
+            FiltrelenmisTeklifler.Clear();
+            foreach (var teklif in filtreliTeklifler.OrderByDescending(t => t.OlusturmaTarihi))
+                FiltrelenmisTeklifler.Add(teklif);
+        }
 
+        private void OnTeklifGuncellendi(int teklifId)
+        {
+            try
+            {
+                var updated = _context.Teklifler
+                    .Include(t => t.Musteri)
+                    .Include(t => t.Personel)
+                    .Include(t => t.TeklifToplam)
+                    .Include(t => t.TeklifUrunleri)
+                        .ThenInclude(tu => tu.Urun)
+                    .AsNoTracking()
+                    .FirstOrDefault(t => t.TeklifId == teklifId);
 
-            FiltrelenmisTeklifler = new ObservableCollection<Teklif>(filtreliTeklifler.OrderByDescending(t => t.OlusturmaTarihi));
+                if (updated is null) return;
+
+                var mevcut = TumTeklifler.FirstOrDefault(x => x.TeklifId == teklifId);
+                if (mevcut != null)
+                {
+                    var index = TumTeklifler.IndexOf(mevcut);
+                    TumTeklifler[index] = updated;
+                }
+                else
+                {
+                    TumTeklifler.Insert(0, updated);
+                }
+
+                TeklifleriFiltrele();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Teklif güncellenirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void DetayGoster(Teklif? teklif)
@@ -191,13 +227,12 @@ namespace teklif_programi.ViewModels
             {
                 var detayWindow = new TeklifDetayWindow(teklif);
 
-                // Aktif ve gösterilmiş bir pencere bul
-                var owner = System.Windows.Application.Current?.Windows
-                               .OfType<Window>()
-                               .FirstOrDefault(w => w.IsActive && w.IsVisible)
-                           ?? System.Windows.Application.Current?.MainWindow;
+                var owner = Application.Current?.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(w => w.IsActive && w.IsVisible)
+                    ?? Application.Current?.MainWindow;
 
-                if (owner != null && owner.IsVisible)  // yalnızca görünürse owner yap
+                if (owner != null && owner.IsVisible)
                 {
                     detayWindow.Owner = owner;
                     detayWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;
@@ -211,13 +246,12 @@ namespace teklif_programi.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
+        protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty));
     }
 }

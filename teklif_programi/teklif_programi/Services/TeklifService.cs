@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Helpers;
 
 namespace teklif_programi.Services
 {
@@ -94,6 +95,9 @@ namespace teklif_programi.Services
 
             _context.SaveChanges();
             transaction.Commit();
+
+            EventHub.RaiseTeklifGuncellendi(teklif.TeklifId);
+
 
             // Ardından PDF oluştur
             SaveFileDialog saveFileDialog = new()

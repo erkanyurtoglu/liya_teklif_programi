@@ -15,6 +15,7 @@ using iTextSharp.text.pdf;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Services;
+using teklif_programi.Helpers;
 
 namespace teklif_programi.ViewModels
 {
@@ -77,6 +78,29 @@ namespace teklif_programi.ViewModels
 
         public ObservableCollection<string> Durumlar { get; }
         public ObservableCollection<string> ParaBirimiListe { get; }
+
+        public string SelectedDurum
+        {
+            get => Teklif?.Durum ?? "Beklemede";
+            set
+            {
+                if (Teklif == null) return;
+                if (Teklif.Durum != value)
+                {
+                    Teklif.Durum = value;
+                    OnPropertyChanged();
+                    try
+                    {
+                        _context.SaveChanges();
+                        EventHub.RaiseTeklifGuncellendi(Teklif.TeklifId);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Durum güncellenirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+        }
 
         public string SelectedCurrency
         {
@@ -460,6 +484,7 @@ namespace teklif_programi.ViewModels
                 _context.SaveChanges();
                 tr.Commit();
 
+                EventHub.RaiseTeklifGuncellendi(Teklif.TeklifId);
                 MessageBox.Show("Değişiklikler kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -482,11 +507,14 @@ namespace teklif_programi.ViewModels
                     MusteriId = Teklif.MusteriId,
                     PersonelId = Teklif.PersonelId,
                     OlusturmaTarihi = DateTime.Now,
-                    Durum = Teklif.Durum,
+                    Durum = "Beklemede", // <<< her zaman beklemede başlasın
                     ParaBirimi = Teklif.ParaBirimi,
                     GenelIndirimOrani = Teklif.GenelIndirimOrani,
                     KdvOrani = Teklif.KdvOrani,
-                    MusteriNotu = Teklif.MusteriNotu
+                    MusteriNotu = Teklif.MusteriNotu,
+                    IlgiliKisi = Teklif.IlgiliKisi,
+                    IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu,
+                    IlgiliKisiEposta = Teklif.IlgiliKisiEposta
                 };
                 _context.Teklifler.Add(yeni);
                 _context.SaveChanges();
@@ -519,11 +547,16 @@ namespace teklif_programi.ViewModels
                 _context.SaveChanges();
                 tr.Commit();
 
-                MessageBox.Show($"Yeni teklif oluşturuldu. Teklif No: {yeni.TeklifId}", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                // ✅ Burada yeni teklif tabloya düşsün diye Id ile çağır
+                EventHub.RaiseTeklifGuncellendi(yeni.TeklifId);
+
+                MessageBox.Show($"Yeni teklif oluşturuldu. Teklif No: {yeni.TeklifId}",
+                    "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Farklı kaydederken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Farklı kaydederken hata: {ex.Message}", "Hata",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
