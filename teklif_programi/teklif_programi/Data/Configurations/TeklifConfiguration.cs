@@ -44,6 +44,19 @@ namespace teklif_programi.Data.Configurations
                 .HasMaxLength(1000);
             // MusteriNotu opsiyonel bir alan, maksimum 1000 karakter.
 
+            builder.Property(t => t.IlgiliKisi)
+    .HasMaxLength(100);
+            // Teklifte belirtilen ilgili kişi adı (opsiyonel, max 100 karakter).
+
+            builder.Property(t => t.IlgiliKisiTelefonu)
+                .HasMaxLength(20);
+            // İlgili kişinin telefon numarası (opsiyonel, max 20 karakter).
+
+            builder.Property(t => t.IlgiliKisiEposta)
+                .HasMaxLength(100);
+            // İlgili kişinin e-posta adresi (opsiyonel, max 100 karakter).
+
+
             // İlişkiler
             builder.HasOne(t => t.Musteri)
                 .WithMany(m => m.Teklifler)

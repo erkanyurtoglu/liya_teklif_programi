@@ -432,7 +432,15 @@ namespace teklif_programi.ViewModels
 
             try
             {
-                _teklifService.KaydetVePdfIndir(FirmaBilgisi, SecilenUrunler, GenelIndirimOrani, KdvOrani, SelectedCurrency, SatisSozlesmesiMetni);
+                _teklifService.KaydetVePdfIndir(FirmaBilgisi,
+                                              SecilenUrunler,
+                                              GenelIndirimOrani,
+                                              KdvOrani,
+                                              SelectedCurrency,
+                                              IlgiliKisi,
+                                              IlgiliKisiNumarasi,
+                                              IlgiliKisiEposta,
+                                              SatisSozlesmesiMetni);
             }
             catch (Exception ex)
             {

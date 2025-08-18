@@ -30,12 +30,18 @@ namespace teklif_programi.Services
         /// <param name="genelIndirimOrani">Genel indirim yüzdesi.</param>
         /// <param name="kdvOrani">KDV oranı.</param>
         /// <param name="currency">Teklif para birimi.</param>
+        /// <param name="ilgiliKisi">Teklifte belirtilen ilgili kişi.</param>
+        /// <param name="ilgiliKisiTelefonu">İlgili kişinin telefon numarası.</param>
+        /// <param name="ilgiliKisiEposta">İlgili kişinin e-posta adresi.</param>
         /// <param name="sozlesmeMetni">Satış sözleşmesi metni.</param>
         public void KaydetVePdfIndir(Musteri firma,
                                       IEnumerable<TeklifUrunModel> urunler,
                                       decimal genelIndirimOrani,
                                       decimal kdvOrani,
                                       string currency,
+                                      string ilgiliKisi,
+                                      string ilgiliKisiTelefonu,
+                                      string ilgiliKisiEposta,
                                       string sozlesmeMetni)
         {
             if (firma == null) throw new ArgumentNullException(nameof(firma));
@@ -51,7 +57,10 @@ namespace teklif_programi.Services
                 OlusturmaTarihi = DateTime.Now,
                 GenelIndirimOrani = genelIndirimOrani,
                 KdvOrani = kdvOrani,
-                ParaBirimi = currency
+                ParaBirimi = currency,
+                IlgiliKisi = ilgiliKisi,
+                IlgiliKisiTelefonu = ilgiliKisiTelefonu,
+                IlgiliKisiEposta = ilgiliKisiEposta
             };
 
             _context.Teklifler.Add(teklif);

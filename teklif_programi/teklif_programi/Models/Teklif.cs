@@ -37,6 +37,16 @@ namespace teklif_programi.Models
         public string ParaBirimi { get; set; } = "TL";
         // Teklifin para birimi (varsayılan: "TL", maksimum 50 karakter).
 
+        public string IlgiliKisi { get; set; } = string.Empty;
+        // Teklifte belirtilen ilgili kişi adı.
+
+        public string IlgiliKisiTelefonu { get; set; } = string.Empty;
+        // İlgili kişinin telefon numarası.
+
+        public string IlgiliKisiEposta { get; set; } = string.Empty;
+        // İlgili kişinin e-posta adresi.
+
+
         public virtual Musteri Musteri { get; set; } = null!;
         // Teklife ait müşteri nesnesi (1-N ilişki).
 

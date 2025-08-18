@@ -398,6 +398,9 @@ namespace teklif_programi.ViewModels
                     dbT.ParaBirimi = Teklif.ParaBirimi;
                     dbT.GenelIndirimOrani = Teklif.GenelIndirimOrani;
                     dbT.KdvOrani = Teklif.KdvOrani;
+                    dbT.IlgiliKisi = Teklif.IlgiliKisi;
+                    dbT.IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu;
+                    dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;
                 }
 
                 // Silinecekler
