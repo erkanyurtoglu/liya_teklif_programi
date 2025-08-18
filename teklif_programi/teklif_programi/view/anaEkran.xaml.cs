@@ -33,5 +33,6 @@ namespace teklif_programi.view
         private void btnPersonelEkle_Click(object sender, RoutedEventArgs e) => contentArea.Content = new PersonelEkle();
         private void btnTeklifVer_Click(object sender, RoutedEventArgs e) => contentArea.Content = new TeklifVer();
         private void btnGecmisTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new GecmisTekliflerim();
+        private void btnAlinanTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new AlinanTekliflerim();
     }
 }

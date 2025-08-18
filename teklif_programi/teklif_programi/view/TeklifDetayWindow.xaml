@@ -114,7 +114,7 @@
             <TextBlock Text="📝 Teklif Detay / Güncelle"
                        FontSize="32" FontWeight="Bold" Foreground="#13183E"
                        HorizontalAlignment="Center" Margin="0,0,0,5"/>
-            <Border Height="2" Width="350" Background="#13183E" HorizontalAlignment="Center" CornerRadius="1"/>
+            <Border Height="2" Width="410" Background="#13183E" HorizontalAlignment="Center" CornerRadius="1"/>
         </StackPanel>
 
         <!-- Üst Bilgiler -->
