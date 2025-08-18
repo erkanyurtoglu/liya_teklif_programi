@@ -18,5 +18,10 @@ namespace teklif_programi.view
             InitializeComponent();
             DataContext = new TeklifDetayViewModel(new Teklif { TeklifId = 1 }); // Test için sabit ID
         }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
     }
 }
