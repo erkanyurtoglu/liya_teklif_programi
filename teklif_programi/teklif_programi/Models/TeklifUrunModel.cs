@@ -112,10 +112,36 @@ namespace teklif_programi.Models
                 {
                     _indirimliFiyatText = value;
                     OnPropertyChanged();
-                    // Metni decimal'e çevir ve IndirimliFiyat'ı güncelle
-                    if (decimal.TryParse(value.Replace("₺", "").Replace("$", "").Replace("€", "").Trim(), NumberStyles.Currency, CultureInfo.CurrentCulture, out decimal parsedValue))
+
+                    var raw = value
+                        .Replace("₺", string.Empty)
+                        .Replace("$", string.Empty)
+                        .Replace("€", string.Empty)
+                        .Replace(" ", string.Empty)
+                        .Trim();
+
+                    if (string.IsNullOrWhiteSpace(raw)) return;
+
+                    var lastComma = raw.LastIndexOf(',');
+                    var lastDot = raw.LastIndexOf('.');
+
+                    if (lastComma > lastDot)
                     {
-                        IndirimliFiyat = parsedValue; // Bu, OnBirimFiyatDegisti'yi tetikler
+                        raw = raw.Replace(".", string.Empty);
+                        raw = raw.Replace(",", ".");
+                    }
+                    else if (lastDot > lastComma)
+                    {
+                        raw = raw.Replace(",", string.Empty);
+                    }
+                    else
+                    {
+                        raw = raw.Replace(",", string.Empty).Replace(".", string.Empty);
+                    }
+
+                    if (decimal.TryParse(raw, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue))
+                    {
+                        IndirimliFiyat = parsedValue;
                     }
                 }
             }

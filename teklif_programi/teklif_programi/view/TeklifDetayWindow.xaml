@@ -174,12 +174,12 @@
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="Genel İndirim (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="120"
-                                     Text="{Binding Teklif.GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="KDV Oranı (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="120"
-                                     Text="{Binding Teklif.KdvOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding KdvOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </StackPanel>
 

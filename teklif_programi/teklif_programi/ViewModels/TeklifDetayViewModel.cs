@@ -14,6 +14,7 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using teklif_programi.Services;
 
 namespace teklif_programi.ViewModels
 {
@@ -91,6 +92,39 @@ namespace teklif_programi.ViewModels
                 }
             }
         }
+
+        public decimal GenelIndirimOrani
+        {
+            get => Teklif?.GenelIndirimOrani ?? 0;
+            set
+            {
+                if (Teklif == null) return;
+                var val = value < 0 ? 0 : value;
+                if (Teklif.GenelIndirimOrani != val)
+                {
+                    Teklif.GenelIndirimOrani = val;
+                    OnPropertyChanged();
+                    RecalculateAll();
+                }
+            }
+        }
+
+        public decimal KdvOrani
+        {
+            get => Teklif?.KdvOrani ?? 0;
+            set
+            {
+                if (Teklif == null) return;
+                var val = value < 0 ? 0 : value;
+                if (Teklif.KdvOrani != val)
+                {
+                    Teklif.KdvOrani = val;
+                    OnPropertyChanged();
+                    RecalculateAll();
+                }
+            }
+        }
+
 
         public string PersonelAdiSoyadi => Teklif?.Personel != null ? Teklif.Personel.AdSoyad : "Personel bilgisi yok";
 
@@ -219,7 +253,7 @@ namespace teklif_programi.ViewModels
             {
                 mevcut.Adet++;
                 // toplam/format tetiklensin
-                mevcut.IndirimliFiyat = mevcut.BirimFiyat * (1 - (Teklif.GenelIndirimOrani / 100m));
+                mevcut.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(mevcut.BirimFiyat, Teklif.GenelIndirimOrani);
                 mevcut.BirimFiyatText = FormatPrice(mevcut.BirimFiyat);
                 mevcut.IndirimliFiyatText = FormatPrice(mevcut.IndirimliFiyat);
                 mevcut.ToplamText = FormatPrice(mevcut.Toplam);
@@ -234,7 +268,7 @@ namespace teklif_programi.ViewModels
                     UrunAciklamasi = urun.UrunAciklamasi,
                     Adet = 1,
                     BirimFiyat = birim,
-                    IndirimliFiyat = birim * (1 - (Teklif.GenelIndirimOrani / 100m)),
+                    IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(birim, Teklif.GenelIndirimOrani),
                     FiyatTL = urun.FiyatTL,
                     FiyatUSD = urun.FiyatUSD,
                     FiyatEUR = urun.FiyatEUR
@@ -274,17 +308,8 @@ namespace teklif_programi.ViewModels
         {
             foreach (var urun in TeklifUrunler)
             {
-                var dbUrun = _context.Urunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
-                if (dbUrun != null)
-                {
-                    urun.BirimFiyat = GetFiyatByCurrency(dbUrun, SelectedCurrency);
-                    urun.IndirimliFiyat = urun.BirimFiyat * (1 - (Teklif.GenelIndirimOrani / 100m));
-                }
-                else
-                {
-                    urun.BirimFiyat = 0;
-                    urun.IndirimliFiyat = 0;
-                }
+                urun.BirimFiyat = GetFiyatByCurrency(urun);
+                urun.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(urun.BirimFiyat, Teklif.GenelIndirimOrani);
 
                 urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
                 urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
@@ -338,6 +363,14 @@ namespace teklif_programi.ViewModels
             "EUR" => urun.FiyatEUR,
             _ => urun.FiyatTL
         };
+
+        private decimal GetFiyatByCurrency(TeklifUrunModel urun) => SelectedCurrency switch
+        {
+            "USD" => urun.FiyatUSD,
+            "EUR" => urun.FiyatEUR,
+            _ => urun.FiyatTL
+        };
+
 
         private string FormatPrice(decimal price) => price.ToString("C2", GetCulture(SelectedCurrency));
         private CultureInfo GetCulture(string currency) => currency switch
