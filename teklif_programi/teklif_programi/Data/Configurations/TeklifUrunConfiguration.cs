@@ -60,6 +60,13 @@ namespace teklif_programi.Data.Configurations
                 .IsRequired();
             // FiyatEUR zorunlu bir alan, EUR cinsinden fiyat, 2 ondalık basamaklı decimal.
 
+            builder.Property(tu => tu.Tamamlandi)
+                   .HasDefaultValue(false);
+
+
+            builder.Property(tu => tu.UretimNotu)
+                .HasMaxLength(1000);
+
             builder.HasOne(tu => tu.Teklif)
                 .WithMany(t => t.TeklifUrunleri)
                 .HasForeignKey(tu => tu.TeklifId)

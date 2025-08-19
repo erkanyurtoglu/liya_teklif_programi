@@ -39,6 +39,12 @@ namespace teklif_programi.Models
         // FiyatEUR: Fiyatın EUR cinsinden değeri
         public decimal FiyatEUR { get; set; }
 
+        // Tamamlandi: Ürünün üretim sürecinin tamamlanıp tamamlanmadığını belirtir
+        public bool? Tamamlandi { get; set; } 
+
+        // UretimNotu: Ürünün üretim süreciyle ilgili not
+        public string? UretimNotu { get; set; }
+
         // Teklif: Bağlı teklif nesnesi (lazy loading için virtual)
         public virtual Teklif Teklif { get; set; } = null!;
 

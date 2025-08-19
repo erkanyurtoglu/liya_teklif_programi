@@ -66,7 +66,7 @@ namespace teklif_programi.ViewModels
         private void DetayGoster(Teklif? teklif)
         {
             if (teklif is null) return;
-            var detay = new TeklifDetayWindow(teklif);
+            var detay = new AlinanTeklifDetayWindow(teklif);
             detay.ShowDialog();
         }
 
