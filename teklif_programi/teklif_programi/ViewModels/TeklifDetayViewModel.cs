@@ -9,13 +9,22 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows;
-using iTextSharp.text;
-using iTextSharp.text.pdf;
+using iText.IO.Font.Constants;
+using iText.Kernel.Colors;
+using iText.Kernel.Font;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Services;
-using teklif_programi.Helpers;
+using MessageBox = System.Windows.MessageBox;
+using MessageBoxButton = System.Windows.MessageBoxButton;
+using MessageBoxImage = System.Windows.MessageBoxImage;
+
+
 
 namespace teklif_programi.ViewModels
 {
@@ -37,6 +46,8 @@ namespace teklif_programi.ViewModels
         private readonly HashSet<int> _silinecekUrunIdSet = new();
 
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; } = new();
+
+        private static readonly float[] PdfColumnWidths = { 2f, 5f, 1f, 2f, 2f, 2f };
 
         public TeklifDetayViewModel(Teklif teklif)
         {
@@ -360,7 +371,7 @@ namespace teklif_programi.ViewModels
         {
             foreach (var urun in TeklifUrunler)
             {
-                urun.BirimFiyat = GetFiyatByCurrency(urun);
+                urun.BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency);
                 urun.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(urun.BirimFiyat, Teklif.GenelIndirimOrani);
                 var dbUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
                 urun.MaliyetFiyati = ConvertTlToSelectedCurrency(dbUrun?.MaliyetFiyati ?? 0);
@@ -423,14 +434,14 @@ namespace teklif_programi.ViewModels
                 UpdateToplamlarText();
         }
 
-        private decimal GetFiyatByCurrency(Urun urun, string currency) => currency switch
+        private static decimal GetFiyatByCurrency(Urun urun, string currency) => currency switch
         {
             "USD" => urun.FiyatUSD,
             "EUR" => urun.FiyatEUR,
             _ => urun.FiyatTL
         };
 
-        private decimal GetFiyatByCurrency(TeklifUrunModel urun) => SelectedCurrency switch
+        private static decimal GetFiyatByCurrency(TeklifUrunModel urun, string currency) => currency switch
         {
             "USD" => urun.FiyatUSD,
             "EUR" => urun.FiyatEUR,
@@ -439,7 +450,7 @@ namespace teklif_programi.ViewModels
 
 
         private string FormatPrice(decimal price) => price.ToString("C2", GetCulture(SelectedCurrency));
-        private CultureInfo GetCulture(string currency) => currency switch
+        private static CultureInfo GetCulture(string currency) => currency switch
         {
             "USD" => new CultureInfo("en-US"),
             "EUR" => new CultureInfo("en-IE"),
@@ -616,26 +627,28 @@ namespace teklif_programi.ViewModels
                 };
                 if (sfd.ShowDialog() != true) return;
 
-                using var fs = new FileStream(sfd.FileName, FileMode.Create);
-                var doc = new Document(PageSize.A4, 36, 36, 36, 36);
-                PdfWriter.GetInstance(doc, fs);
-                doc.Open();
+                using var writer = new PdfWriter(sfd.FileName);
+                using var pdf = new PdfDocument(writer);
+                using var doc = new Document(pdf, PageSize.A4);
 
-                var titleFont = FontFactory.GetFont("Arial", 16, iTextSharp.text.Font.BOLD);
-                doc.Add(new Paragraph($"Teklif Detayları - {Teklif?.Musteri?.FirmaAdi}", titleFont));
-                doc.Add(new Paragraph($"Tarih: {Teklif?.OlusturmaTarihi:dd.MM.yyyy}"));
-                doc.Add(new Paragraph($"Durum: {Teklif?.Durum}"));
-                doc.Add(new Paragraph($"Para Birimi: {Teklif?.ParaBirimi}"));
-                doc.Add(new Paragraph($"Müşteri Notu: {Teklif?.MusteriNotu ?? "-"}"));
+                PdfFont font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+                doc.Add(new Paragraph($"Teklif Detayları - {Teklif?.Musteri?.FirmaAdi}")
+                    .SetFont(boldFont).SetFontSize(16));
+                doc.Add(new Paragraph($"Tarih: {Teklif?.OlusturmaTarihi:dd.MM.yyyy}")
+                    .SetFont(font));
+                doc.Add(new Paragraph($"Durum: {Teklif?.Durum}").SetFont(font));
+                doc.Add(new Paragraph($"Para Birimi: {Teklif?.ParaBirimi}").SetFont(font));
+                doc.Add(new Paragraph($"Müşteri Notu: {Teklif?.MusteriNotu ?? "-"}").SetFont(font));
                 doc.Add(new Paragraph("\n"));
 
-                var table = new PdfPTable(6) { WidthPercentage = 100 };
-                table.SetWidths(new float[] { 2f, 5f, 1f, 2f, 2f, 2f });
+
+                var table = new Table(PdfColumnWidths).UseAllAvailableWidth();
                 AddHeader(table, "Ürün Kodu");
                 AddHeader(table, "Açıklama");
                 AddHeader(table, "Adet");
                 AddHeader(table, "Birim Fiyat");
-                AddHeader(table, $"İndirimli Fiyat (%{Teklif.GenelIndirimOrani})");
+                AddHeader(table, $"İndirimli Fiyat (%{Teklif!.GenelIndirimOrani})");
                 AddHeader(table, "Toplam");
 
                 foreach (var u in TeklifUrunler)
@@ -650,9 +663,9 @@ namespace teklif_programi.ViewModels
 
                 doc.Add(table);
                 doc.Add(new Paragraph("\n"));
-                doc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}"));
-                doc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}"));
-                doc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}"));
+                doc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}").SetFont(font));
+                doc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}").SetFont(font));
+                doc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}").SetFont(font));
 
                 doc.Close();
                 MessageBox.Show("PDF indirildi.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -663,25 +676,21 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        private static void AddHeader(PdfPTable t, string text)
+        private static void AddHeader(Table t, string text)
         {
-            var c = new PdfPCell(new Phrase(text))
-            {
-                BackgroundColor = new BaseColor(240, 240, 240),
-                HorizontalAlignment = Element.ALIGN_CENTER,
-                Padding = 5
-            };
-            t.AddCell(c);
+            t.AddHeaderCell(new Cell()
+                .Add(new Paragraph(text))
+                .SetBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetPadding(5));
         }
 
-        private static void AddCell(PdfPTable t, string text)
+        private static void AddCell(Table t, string text)
         {
-            var c = new PdfPCell(new Phrase(text))
-            {
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                Padding = 5
-            };
-            t.AddCell(c);
+            t.AddCell(new Cell()
+                .Add(new Paragraph(text))
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetPadding(5));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

@@ -1,12 +1,21 @@
-﻿using iTextSharp.text;
-using iTextSharp.text.pdf;
+﻿using iText.Kernel.Colors;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using iText.Layout.Borders;
+using iText.Kernel.Font;
+using iText.IO.Font.Constants;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using MessageBox = System.Windows.MessageBox;
+using MessageBoxButton = System.Windows.MessageBoxButton;
+using MessageBoxImage = System.Windows.MessageBoxImage;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Helpers;
@@ -21,6 +30,10 @@ namespace teklif_programi.Services
     public class TeklifService
     {
         private readonly TeklifDbContext _context = new();
+        private static readonly float[] FirmaColumnWidths = { 2f, 2f };
+        private static readonly float[] ProductColumnWidths = { 1f, 2f, 5f, 1f, 2f, 2f, 2f };
+        private static readonly float[] TotalColumnWidths = { 3f, 2f };
+        private static readonly PdfFont BoldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
         /// <summary>
         ///     Seçilen firma ve ürünlere göre teklifi kaydeder ve kullanıcıdan alınan
@@ -45,8 +58,9 @@ namespace teklif_programi.Services
                                       string ilgiliKisiEposta,
                                       string sozlesmeMetni)
         {
-            if (firma == null) throw new ArgumentNullException(nameof(firma));
-            if (urunler == null || !urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
+            ArgumentNullException.ThrowIfNull(firma);
+            ArgumentNullException.ThrowIfNull(urunler);
+            if (!urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
 
             // Önce teklifi veritabanına kaydet
             using var transaction = _context.Database.BeginTransaction();
@@ -108,101 +122,67 @@ namespace teklif_programi.Services
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                string templatePath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\LiyaTeklifBelgesi.pdf";
-                PdfReader reader = new PdfReader(templatePath);
-                using FileStream fs = new(saveFileDialog.FileName, FileMode.Create);
-                PdfStamper stamper = new PdfStamper(reader, fs);
+                using var writer = new PdfWriter(saveFileDialog.FileName);
+                using var pdf = new PdfDocument(writer);
+                using var doc = new Document(pdf, PageSize.A4);
 
-                string fontPath = @"C:\Windows\Fonts\arial.ttf";
-                if (!File.Exists(fontPath))
-                {
-                    MessageBox.Show("Arial font dosyası bulunamadı: " + fontPath,
-                                    "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                    stamper.Close();
-                    reader.Close();
-                    return;
-                }
+                Table firmaTable = new Table(FirmaColumnWidths);
+                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adı:"));
+                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaAdi));
+                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adresi:"));
+                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaAdresi));
+                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Telefonu:"));
+                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaTelefonu ?? "Belirtilmemiş"));
+                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma E-Posta:"));
+                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaEposta ?? "Belirtilmemiş"));
+                doc.Add(firmaTable);
 
-                BaseFont baseFont = BaseFont.CreateFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-                Font firmaFont = new(baseFont, 12, Font.NORMAL, new BaseColor(128, 128, 128));
-                Font headerFont = new(baseFont, 12, Font.BOLD, BaseColor.BLACK);
-                Font bodyFont = new(baseFont, 11, Font.NORMAL, BaseColor.BLACK);
-                Font urunBaslikFont = new(baseFont, 14, Font.BOLD, BaseColor.BLACK);
-                Font sozlesmeBaslikFont = new(baseFont, 16, Font.BOLD, BaseColor.BLACK);
-                Font sozlesmeFont = new(baseFont, 12, Font.NORMAL, BaseColor.BLACK);
+                doc.Add(new Paragraph("Teklif Edilen Ürünler")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(BoldFont));
 
-                int currentPage = 2;
-                PdfContentByte canvas = stamper.GetOverContent(currentPage);
-
-                PdfPTable firmaTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 } };
-                firmaTable.SetWidths(new float[] { 2f, 2f });
-                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adı:", headerFont));
-                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaAdi, bodyFont));
-                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Adresi:", headerFont));
-                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaAdresi, bodyFont));
-                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma Telefonu:", headerFont));
-                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaTelefonu ?? "Belirtilmemiş", bodyFont));
-                firmaTable.AddCell(CreateRightAlignedHeaderCell("Firma E-Posta:", headerFont));
-                firmaTable.AddCell(CreateLeftAlignedBodyCell(firma.FirmaEposta ?? "Belirtilmemiş", bodyFont));
-                firmaTable.WriteSelectedRows(0, -1, 40f, 750f, canvas);
-
-                Phrase urunBaslik = new Phrase("Teklif Edilen Ürünler", urunBaslikFont);
-                ColumnText ctUrunBaslik = new ColumnText(canvas);
-                ctUrunBaslik.SetSimpleColumn(urunBaslik, 22.5f, 560f, 572.5f, 580f, 15, Element.ALIGN_CENTER);
-                ctUrunBaslik.Go();
-
-                PdfPTable table = new PdfPTable(7) { TotalWidth = 550f, LockedWidth = true };
-                table.SetWidths(new float[] { 1f, 2f, 5f, 1f, 2f, 2f, 2f });
-                AddCellToHeader(table, "No", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, "Ürün Kodu", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, "Açıklama", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, "Adet", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, "Birim Satış Fiyatı", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", headerFont, new BaseColor(240, 240, 240));
-                AddCellToHeader(table, "Toplam Fiyat", headerFont, new BaseColor(240, 240, 240));
+                Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
+                AddCellToHeader(table, "No");
+                AddCellToHeader(table, "Ürün Kodu");
+                AddCellToHeader(table, "Açıklama");
+                AddCellToHeader(table, "Adet");
+                AddCellToHeader(table, "Birim Satış Fiyatı");
+                AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})");
+                AddCellToHeader(table, "Toplam Fiyat");
 
                 int rowCount = 0;
                 int urunNo = 1;
                 foreach (var urun in urunler)
                 {
-                    BaseColor rowColor = rowCount % 2 == 0 ? BaseColor.WHITE : new BaseColor(245, 245, 245);
-                    AddCellToBody(table, urunNo.ToString(), bodyFont, rowColor);
-                    AddCellToBody(table, urun.UrunKodu, bodyFont, rowColor);
-                    AddCellToBody(table, urun.UrunAciklamasi, bodyFont, rowColor);
-                    AddCellToBody(table, urun.Adet.ToString(), bodyFont, rowColor);
-                    AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), bodyFont, rowColor);
-                    AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), bodyFont, rowColor);
-                    AddCellToBody(table, FormatPrice(urun.Toplam, currency), bodyFont, rowColor);
+                    Color rowColor = rowCount % 2 == 0 ? ColorConstants.WHITE : new DeviceRgb(245, 245, 245);
+                    AddCellToBody(table, urunNo.ToString(), rowColor);
+                    AddCellToBody(table, urun.UrunKodu, rowColor);
+                    AddCellToBody(table, urun.UrunAciklamasi, rowColor);
+                    AddCellToBody(table, urun.Adet.ToString(), rowColor);
+                    AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), rowColor);
+                    AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), rowColor);
+                    AddCellToBody(table, FormatPrice(urun.Toplam, currency), rowColor);
                     rowCount++;
                     urunNo++;
                 }
-                table.WriteSelectedRows(0, -1, 22.5f, 520, canvas);
+                doc.Add(table);
 
-                PdfPTable toplamTable = new PdfPTable(2) { TotalWidth = 240f, DefaultCell = { Border = 0 }, HorizontalAlignment = Element.ALIGN_RIGHT };
-                toplamTable.SetWidths(new float[] { 3f, 2f });
-                toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{genelIndirimOrani}):", headerFont));
-                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), headerFont));
-                toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{kdvOrani}):", headerFont));
-                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), headerFont));
-                toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", headerFont));
-                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), headerFont));
-                toplamTable.WriteSelectedRows(0, -1, 352.5f, 150, canvas);
+                Table toplamTable = new Table(TotalColumnWidths).SetHorizontalAlignment(HorizontalAlignment.RIGHT);
+                toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{genelIndirimOrani}):"));
+                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency)));
+                toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{kdvOrani}):"));
+                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency)));
+                toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:"));
+                toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency)));
+                doc.Add(toplamTable);
 
-                // Sözleşme sayfası
-                string sozlesmePdfPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\satisSozlesmesi.pdf";
-                using var sozlesmeReader = new PdfReader(sozlesmePdfPath);
-                int lastPage = reader.NumberOfPages;
-                stamper.InsertPage(lastPage + 1, sozlesmeReader.GetPageSizeWithRotation(1));
-                PdfContentByte overContent = stamper.GetOverContent(lastPage + 1);
-                PdfContentByte underContent = stamper.GetUnderContent(lastPage + 1);
-                PdfImportedPage page = stamper.GetImportedPage(sozlesmeReader, 1);
-                underContent.AddTemplate(page, 0, 0);
-                ColumnText ctSozlesme = new ColumnText(overContent);
-                ctSozlesme.SetSimpleColumn(new Phrase(sozlesmeMetni, sozlesmeFont), 40f, 50f, 550f, 700f, 18, Element.ALIGN_LEFT);
-                ctSozlesme.Go();
+                doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                doc.Add(new Paragraph("Satış Sözleşmesi")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFont(BoldFont));
+                doc.Add(new Paragraph(sozlesmeMetni));
 
-                stamper.Close();
-                reader.Close();
+                doc.Close();
 
                 MessageBox.Show("Teklif başarıyla kaydedildi ve PDF oluşturuldu!",
                                 "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -221,42 +201,41 @@ namespace teklif_programi.Services
             _ => new CultureInfo("tr-TR"),
         };
 
-        private static void AddCellToHeader(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        private static void AddCellToHeader(Table table, string text)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font))
-            {
-                BackgroundColor = backgroundColor,
-                HorizontalAlignment = Element.ALIGN_CENTER,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-                Padding = 5,
-                Border = PdfPCell.NO_BORDER
-            };
-            table.AddCell(cell);
+            table.AddHeaderCell(new Cell()
+                .Add(new Paragraph(text))
+                .SetBackgroundColor(new DeviceRgb(240, 240, 240))
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetPadding(5)
+                .SetBorder(Border.NO_BORDER));
         }
 
-        private static void AddCellToBody(PdfPTable table, string text, Font font, BaseColor backgroundColor)
+        private static void AddCellToBody(Table table, string text, Color backgroundColor)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font))
-            {
-                BackgroundColor = backgroundColor,
-                HorizontalAlignment = Element.ALIGN_LEFT,
-                VerticalAlignment = Element.ALIGN_MIDDLE,
-                Padding = 5,
-                Border = PdfPCell.NO_BORDER
-            };
-            table.AddCell(cell);
+            table.AddCell(new Cell()
+                .Add(new Paragraph(text))
+                .SetBackgroundColor(backgroundColor)
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetPadding(5)
+                .SetBorder(Border.NO_BORDER));
         }
 
-        private static PdfPCell CreateRightAlignedHeaderCell(string text, Font font)
+        private static Cell CreateRightAlignedHeaderCell(string text)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font)) { HorizontalAlignment = Element.ALIGN_LEFT, Border = 0, PaddingRight = 5 };
-            return cell;
+            return new Cell().Add(new Paragraph(text))
+                .SetTextAlignment(TextAlignment.RIGHT)
+                .SetBorder(Border.NO_BORDER)
+                .SetPaddingRight(5);
         }
 
-        private static PdfPCell CreateLeftAlignedBodyCell(string text, Font font)
+        private static Cell CreateLeftAlignedBodyCell(string text)
         {
-            PdfPCell cell = new PdfPCell(new Phrase(text, font)) { HorizontalAlignment = Element.ALIGN_LEFT, Border = 0 };
-            return cell;
+            return new Cell().Add(new Paragraph(text))
+                .SetTextAlignment(TextAlignment.LEFT)
+                .SetBorder(Border.NO_BORDER);
         }
     }
 }

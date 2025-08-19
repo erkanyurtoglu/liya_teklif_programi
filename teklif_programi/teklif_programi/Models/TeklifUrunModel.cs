@@ -186,12 +186,13 @@ namespace teklif_programi.Models
         // Toplam tutar hesaplaması TeklifHesaplayici üzerinden yapılır
         public decimal Toplam => TeklifHesaplayici.HesaplaToplam(Adet, IndirimliFiyat);
 
-        public event EventHandler OnBirimFiyatDegisti;
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler? OnBirimFiyatDegisti;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name ?? string.Empty)); // CS8625 gider
         }
+
     }
 }
