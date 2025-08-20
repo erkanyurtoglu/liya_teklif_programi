@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using teklif_programi.Data;
@@ -12,31 +11,29 @@ using teklif_programi.view;
 
 namespace teklif_programi.ViewModels
 {
-    public class AlinanTekliflerViewModel : INotifyPropertyChanged
+    public class BitenTekliflerViewModel : INotifyPropertyChanged
     {
         private readonly TeklifDbContext _context;
-        private ObservableCollection<Teklif> _alinanTeklifler = new();
+        private ObservableCollection<Teklif> _bitenTeklifler = new();
 
-        public ObservableCollection<Teklif> AlinanTeklifler
+        public ObservableCollection<Teklif> BitenTeklifler
         {
-            get => _alinanTeklifler;
-            set { _alinanTeklifler = value; OnPropertyChanged(); }
+            get => _bitenTeklifler;
+            set { _bitenTeklifler = value; OnPropertyChanged(); }
         }
 
         public RelayCommand<Teklif> DetayGosterCommand { get; }
-        public RelayCommand<Teklif> TamamlaCommand { get; }
 
-        public AlinanTekliflerViewModel()
+        public BitenTekliflerViewModel()
         {
             _context = new TeklifDbContext();
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
-            TamamlaCommand = new RelayCommand<Teklif>(TeklifTamamla);
             TeklifleriYukle();
 
             EventHub.TeklifGuncellendi += OnTeklifGuncellendi;
         }
 
-        ~AlinanTekliflerViewModel()
+        ~BitenTekliflerViewModel()
         {
             EventHub.TeklifGuncellendi -= OnTeklifGuncellendi;
         }
@@ -51,13 +48,13 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.TeklifToplam)
                     .Include(t => t.TeklifUrunleri)
                         .ThenInclude(tu => tu.Urun)
-                    .Where(t => t.Durum == "Kabul Edildi")
+                    .Where(t => t.Durum == "Tamamlandı")
                     .AsNoTracking()
                     .ToList();
 
-                AlinanTeklifler.Clear();
+                BitenTeklifler.Clear();
                 foreach (var teklif in teklifler)
-                    AlinanTeklifler.Add(teklif);
+                    BitenTeklifler.Add(teklif);
             }
             catch (Exception ex)
             {
@@ -72,38 +69,12 @@ namespace teklif_programi.ViewModels
             detay.ShowDialog();
         }
 
-        private void TeklifTamamla(Teklif? teklif)
-        {
-            if (teklif is null) return;
-
-            try
-            {
-                var entity = _context.Teklifler
-                    .Include(t => t.TeklifUrunleri)
-                    .First(t => t.TeklifId == teklif.TeklifId);
-
-                foreach (var u in entity.TeklifUrunleri)
-                    u.Tamamlandi = true;
-
-                entity.Durum = "Tamamlandı";
-                _context.SaveChanges();
-
-                EventHub.RaiseTeklifGuncellendi(entity.TeklifId);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Teklif tamamlanırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-
         private void OnTeklifGuncellendi(int teklifId)
         {
             TeklifleriYukle();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
         private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

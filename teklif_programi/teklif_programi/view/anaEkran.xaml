@@ -18,7 +18,7 @@
         <!-- Navigation Menu -->
         <Border Grid.Column="0" Background="#13183E">
             <StackPanel>
-                <Image Source="/resimler/liya_logo.png" Width="200" Height="100" HorizontalAlignment="Center" Margin="15"/>
+                <Image Source="/resimler/liya_logo.png" Width="106" Height="66" HorizontalAlignment="Center" Margin="15"/>
                 <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🏢" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,40,0"/>
@@ -71,6 +71,12 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="📥" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
                         <TextBlock Text="Alınan Tekliflerim" Margin="5,0"/>
+                    </StackPanel>
+                </Button>
+                <Button Click="btnBitenTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✅" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
+                        <TextBlock Text="Biten Tekliflerim" Margin="5,0"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

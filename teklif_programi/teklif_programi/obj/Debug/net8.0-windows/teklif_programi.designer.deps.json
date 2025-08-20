@@ -150,6 +150,18 @@
           }
         }
       },
+      "itext.bouncy-castle-adapter/9.2.0": {
+        "dependencies": {
+          "BouncyCastle.Cryptography": "2.4.0",
+          "itext.commons": "9.2.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/itext.bouncy-castle-adapter.dll": {
+            "assemblyVersion": "9.2.0.0",
+            "fileVersion": "9.2.0.0"
+          }
+        }
+      },
       "itext.commons/9.2.0": {
         "dependencies": {
           "Microsoft.Extensions.Logging": "9.0.6",
@@ -165,17 +177,6 @@
       "itext7/9.2.0": {
         "dependencies": {
           "itext": "9.2.0"
-        }
-      },
-      "iTextSharp/5.5.13.4": {
-        "dependencies": {
-          "BouncyCastle.Cryptography": "2.4.0"
-        },
-        "runtime": {
-          "lib/net461/itextsharp.dll": {
-            "assemblyVersion": "5.5.13.4",
-            "fileVersion": "5.5.13.4"
-          }
         }
       },
       "MahApps.Metro/2.4.10": {
@@ -1985,6 +1986,13 @@
       "path": "itext/9.2.0",
       "hashPath": "itext.9.2.0.nupkg.sha512"
     },
+    "itext.bouncy-castle-adapter/9.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qn2exafWaUTDK45co7U76BZvQ2xcIz8F1X0lkc9icH86kZOfZZr89qkM7wIIN9R/9nvsC7ErF60whcgLmBYBpA==",
+      "path": "itext.bouncy-castle-adapter/9.2.0",
+      "hashPath": "itext.bouncy-castle-adapter.9.2.0.nupkg.sha512"
+    },
     "itext.commons/9.2.0": {
       "type": "package",
       "serviceable": true,
@@ -1998,13 +2006,6 @@
       "sha512": "sha512-fsOz8BpXlMN5GJM+7gdpUCqYhOR4GWKT3krnhB6Tbwio7QxIMyos3x7DTfdYsDAPOojr+NW/iKmnDCB4Vc9xWg==",
       "path": "itext7/9.2.0",
       "hashPath": "itext7.9.2.0.nupkg.sha512"
-    },
-    "iTextSharp/5.5.13.4": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-/cvCNv8AJ+XuD99u4NfHSSxkBJKTdvP36wcfQF9V1Cjzi1ycyFSa4vJ64a3DhFVUTKVO60WF8OmAqngQDTHgYA==",
-      "path": "itextsharp/5.5.13.4",
-      "hashPath": "itextsharp.5.5.13.4.nupkg.sha512"
     },
     "MahApps.Metro/2.4.10": {
       "type": "package",

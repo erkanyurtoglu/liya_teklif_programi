@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="teklif_programi.view.AlinanTekliflerim"
+﻿<UserControl x:Class="teklif_programi.view.BitenTekliflerim"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,7 +15,7 @@
 
         <!-- Başlık -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="📥 Alınan Teklifler"
+            <TextBlock Text="✅ Biten Teklifler"
                        FontSize="32"
                        FontWeight="Bold"
                        FontFamily="Segoe UI"
@@ -44,7 +44,7 @@
                   GridLinesVisibility="None"
                   BorderBrush="#ededed"
                   BorderThickness="1"
-                  ItemsSource="{Binding AlinanTeklifler}"
+                  ItemsSource="{Binding BitenTeklifler}"
                   SelectionMode="Single">
 
             <DataGrid.Resources>
@@ -157,7 +157,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="İşlemler" Width="260">
+                <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -167,12 +167,6 @@
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DetayGosterCommand}"
                                         CommandParameter="{Binding}"
                                         Background="#1874CD"/>
-                                <Button Content="Tamamla"
-                                        Style="{StaticResource ModernButtonStyle}"
-                                        Width="90" Height="30" Margin="4,0"
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.TamamlaCommand}"
-                                        CommandParameter="{Binding}"
-                                        Background="#28A745"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
