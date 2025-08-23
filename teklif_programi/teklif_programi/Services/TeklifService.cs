@@ -1,4 +1,4 @@
-﻿using iText.IO.Font.Constants;
+﻿using iText.IO.Font;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
@@ -24,58 +24,37 @@ using MessageBoxImage = System.Windows.MessageBoxImage;
 
 namespace teklif_programi.Services
 {
-    /// <summary>
-    ///     Veritabanına teklif kaydetme ve PDF oluşturma işlemlerini yöneten servis.
-    ///     Bu sınıf, <see cref="TeklifVerViewModel"/> içerisindeki karmaşık mantığı
-    ///     ayrı bir katmanda toplamak için oluşturulmuştur.
-    /// </summary>
     public class TeklifService
     {
         private readonly TeklifDbContext _context = new();
         private static readonly float[] FirmaColumnWidths = { 2f, 2f };
         private static readonly float[] ProductColumnWidths = { 1f, 2f, 5f, 1f, 2f, 2f, 2f };
         private static readonly float[] TotalColumnWidths = { 3f, 2f };
-        private static readonly PdfFont BoldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-        // Arka plan PDF dosya yolları
         private static readonly string GirisSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfa.pdf";
         private static readonly string TeklifSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfa.pdf";
         private static readonly string SozlesmeSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfa.pdf";
 
-        /// <summary>
-        ///     Seçilen firma ve ürünlere göre teklifi kaydeder ve kullanıcıdan alınan
-        ///     dosya yoluna teklif PDF'i oluşturur.
-        /// </summary>
-        /// <param name="firma">Teklifin oluşturulduğu firma.</param>
-        /// <param name="urunler">Teklifte yer alan ürünler.</param>
-        /// <param name="genelIndirimOrani">Genel indirim yüzdesi.</param>
-        /// <param name="kdvOrani">KDV oranı.</param>
-        /// <param name="currency">Teklif para birimi.</param>
-        /// <param name="ilgiliKisi">Teklifte belirtilen ilgili kişi.</param>
-        /// <param name="ilgiliKisiTelefonu">İlgili kişinin telefon numarası.</param>
-        /// <param name="ilgiliKisiEposta">İlgili kişinin e-posta adresi.</param>
-        /// <param name="sozlesmeMetni">Satış sözleşmesi metni.</param>
         public void KaydetVePdfIndir(Musteri firma,
-                                      IEnumerable<TeklifUrunModel> urunler,
-                                      decimal genelIndirimOrani,
-                                      decimal kdvOrani,
-                                      string currency,
-                                      string ilgiliKisi,
-                                      string ilgiliKisiTelefonu,
-                                      string ilgiliKisiEposta,
-                                      string sozlesmeMetni)
+                                     IEnumerable<TeklifUrunModel> urunler,
+                                     decimal genelIndirimOrani,
+                                     decimal kdvOrani,
+                                     string currency,
+                                     string ilgiliKisi,
+                                     string ilgiliKisiTelefonu,
+                                     string ilgiliKisiEposta,
+                                     string sozlesmeMetni)
         {
             ArgumentNullException.ThrowIfNull(firma);
             ArgumentNullException.ThrowIfNull(urunler);
             if (!urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
 
-            // Önce teklifi veritabanına kaydet
             using var transaction = _context.Database.BeginTransaction();
 
             var teklif = new Teklif
             {
                 MusteriId = firma.MusteriId,
-                PersonelId = 2, // TODO: Oturumdaki kullanıcı bilgisi
+                PersonelId = 2,
                 OlusturmaTarihi = DateTime.Now,
                 GenelIndirimOrani = genelIndirimOrani,
                 KdvOrani = kdvOrani,
@@ -101,7 +80,6 @@ namespace teklif_programi.Services
                 });
             }
 
-            // Hesaplamalar merkezi TeklifHesaplayici üzerinden yapılır
             var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
             var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani);
@@ -119,7 +97,6 @@ namespace teklif_programi.Services
 
             EventHub.RaiseTeklifGuncellendi(teklif.TeklifId);
 
-            // Ardından PDF oluştur
             SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF Dosyaları (*.pdf)|*.pdf",
@@ -132,12 +109,24 @@ namespace teklif_programi.Services
                 using var pdf = new PdfDocument(writer);
                 using var doc = new Document(pdf, PageSize.A4);
 
-                // Arka plan PDF'lerini yükle
+                // iText 9.2.0 için font tanımlama
+                PdfFont regularFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arial.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+                PdfFont boldFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arialbd.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+
                 PdfXObject girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
 
                 try
                 {
-                    // Giriş sayfası arka planı
                     if (File.Exists(GirisSayfaPath))
                     {
                         using var girisPdf = new PdfDocument(new PdfReader(GirisSayfaPath));
@@ -147,7 +136,6 @@ namespace teklif_programi.Services
                         }
                     }
 
-                    // Teklif sayfası arka planı
                     if (File.Exists(TeklifSayfaPath))
                     {
                         using var teklifPdf = new PdfDocument(new PdfReader(TeklifSayfaPath));
@@ -157,7 +145,6 @@ namespace teklif_programi.Services
                         }
                     }
 
-                    // Sözleşme sayfası arka planı
                     if (File.Exists(SozlesmeSayfaPath))
                     {
                         using var sozlesmePdf = new PdfDocument(new PdfReader(SozlesmeSayfaPath));
@@ -167,88 +154,84 @@ namespace teklif_programi.Services
                         }
                     }
 
-                    // İlk sayfa: Giriş sayfası (girisSayfa.pdf)
                     PdfPage girisPage = pdf.AddNewPage();
                     if (girisBackground != null)
                     {
-                        PdfCanvas canvas = new PdfCanvas(girisPage, true);
+                        PdfCanvas canvas = new PdfCanvas(girisPage);
                         canvas.AddXObjectAt(girisBackground, 0, 0);
                         canvas.Release();
                     }
 
-                    // Yeni sayfa: Teklif bilgileri ve ürün tablosu (teklifSayfa.pdf)
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage teklifPage = pdf.GetLastPage();
                     if (teklifBackground != null)
                     {
-                        PdfCanvas canvas = new PdfCanvas(teklifPage, true);
+                        PdfCanvas canvas = new PdfCanvas(teklifPage);
                         canvas.AddXObjectAt(teklifBackground, 0, 0);
                         canvas.Release();
                     }
 
-                    // Üstte boşluk eklemek için boş bir alan bırak
                     doc.Add(new Paragraph("\n\n\n\n")
                         .SetMarginTop(50f)
                         .SetMarginBottom(0f));
 
                     doc.Add(new Paragraph("Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
-                        .SetFont(BoldFont));
+                        .SetFont(boldFont));
 
                     Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
-                    AddCellToHeader(table, "No");
-                    AddCellToHeader(table, "Ürün Kodu");
-                    AddCellToHeader(table, "Açıklama");
-                    AddCellToHeader(table, "Adet");
-                    AddCellToHeader(table, "Birim Satış Fiyatı");
-                    AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})");
-                    AddCellToHeader(table, "Toplam Fiyat");
+                    AddCellToHeader(table, "No", boldFont);
+                    AddCellToHeader(table, "Ürün Kodu", boldFont);
+                    AddCellToHeader(table, "Açıklama", boldFont);
+                    AddCellToHeader(table, "Adet", boldFont);
+                    AddCellToHeader(table, "Birim Satış Fiyatı", boldFont);
+                    AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", boldFont);
+                    AddCellToHeader(table, "Toplam Fiyat", boldFont);
 
                     int rowCount = 0;
                     int urunNo = 1;
                     foreach (var urun in urunler)
                     {
                         Color rowColor = rowCount % 2 == 0 ? ColorConstants.WHITE : new DeviceRgb(245, 245, 245);
-                        AddCellToBody(table, urunNo.ToString(), rowColor);
-                        AddCellToBody(table, urun.UrunKodu, rowColor);
-                        AddCellToBody(table, urun.UrunAciklamasi, rowColor);
-                        AddCellToBody(table, urun.Adet.ToString(), rowColor);
-                        AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), rowColor);
-                        AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), rowColor);
-                        AddCellToBody(table, FormatPrice(urun.Toplam, currency), rowColor);
+                        AddCellToBody(table, urunNo.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, urun.UrunKodu, regularFont, rowColor);
+                        AddCellToBody(table, urun.UrunAciklamasi, regularFont, rowColor);
+                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.Toplam, currency), regularFont, rowColor);
                         rowCount++;
                         urunNo++;
                     }
                     doc.Add(table);
 
                     Table toplamTable = new Table(TotalColumnWidths).SetHorizontalAlignment(HorizontalAlignment.RIGHT);
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{genelIndirimOrani}):"));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency)));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{kdvOrani}):"));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency)));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:"));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency)));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{kdvOrani}):", boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont));
                     doc.Add(toplamTable);
 
-                    // Yeni sayfa: Sözleşme (sozlesmeSayfa.pdf)
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage sozlesmePage = pdf.GetLastPage();
                     if (sozlesmeBackground != null)
                     {
-                        PdfCanvas canvas = new PdfCanvas(sozlesmePage, true);
+                        PdfCanvas canvas = new PdfCanvas(sozlesmePage);
                         canvas.AddXObjectAt(sozlesmeBackground, 0, 0);
                         canvas.Release();
                     }
 
-                    // Üstte boşluk eklemek için boş bir alan bırak
                     doc.Add(new Paragraph("\n\n\n\n")
                         .SetMarginTop(50f)
                         .SetMarginBottom(0f));
 
                     doc.Add(new Paragraph("Satış Sözleşmesi")
                         .SetTextAlignment(TextAlignment.CENTER)
-                        .SetFont(BoldFont));
-                    doc.Add(new Paragraph(sozlesmeMetni));
+                        .SetFont(boldFont));
+                    doc.Add(new Paragraph(sozlesmeMetni)
+                        .SetFont(regularFont));
 
                     doc.Close();
 
@@ -275,10 +258,10 @@ namespace teklif_programi.Services
             _ => new CultureInfo("tr-TR"),
         };
 
-        private static void AddCellToHeader(Table table, string text)
+        private static void AddCellToHeader(Table table, string text, PdfFont font)
         {
             table.AddHeaderCell(new Cell()
-                .Add(new Paragraph(text))
+                .Add(new Paragraph(text).SetFont(font))
                 .SetBackgroundColor(new DeviceRgb(240, 240, 240))
                 .SetTextAlignment(TextAlignment.CENTER)
                 .SetVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -286,10 +269,10 @@ namespace teklif_programi.Services
                 .SetBorder(Border.NO_BORDER));
         }
 
-        private static void AddCellToBody(Table table, string text, Color backgroundColor)
+        private static void AddCellToBody(Table table, string text, PdfFont font, Color backgroundColor)
         {
             table.AddCell(new Cell()
-                .Add(new Paragraph(text))
+                .Add(new Paragraph(text).SetFont(font))
                 .SetBackgroundColor(backgroundColor)
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -297,17 +280,17 @@ namespace teklif_programi.Services
                 .SetBorder(Border.NO_BORDER));
         }
 
-        private static Cell CreateRightAlignedHeaderCell(string text)
+        private static Cell CreateRightAlignedHeaderCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text))
+            return new Cell().Add(new Paragraph(text).SetFont(font))
                 .SetTextAlignment(TextAlignment.RIGHT)
                 .SetBorder(Border.NO_BORDER)
                 .SetPaddingRight(5);
         }
 
-        private static Cell CreateLeftAlignedBodyCell(string text)
+        private static Cell CreateLeftAlignedBodyCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text))
+            return new Cell().Add(new Paragraph(text).SetFont(font))
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetBorder(Border.NO_BORDER);
         }

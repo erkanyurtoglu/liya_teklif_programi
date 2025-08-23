@@ -9,7 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using iText.IO.Font.Constants;
+using iText.IO.Font;
 using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Geom;
@@ -24,8 +24,6 @@ using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
 
-
-
 namespace teklif_programi.ViewModels
 {
     public class TeklifDetayViewModel : INotifyPropertyChanged
@@ -33,20 +31,12 @@ namespace teklif_programi.ViewModels
         private readonly TeklifDbContext _context;
         private Teklif _teklif;
         private TeklifToplam? _teklifToplam;
-
-        // Sepet mantığı için yeni alanlar
         private string _urunArama = string.Empty;
         public ObservableCollection<Urun> TumUrunler { get; set; } = new();
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
-
-        // Sepet (mevcut satırlar)
         private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
-
-        // Silinecek satırları takip (DB’den kaldırmak için)
         private readonly HashSet<int> _silinecekUrunIdSet = new();
-
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; } = new();
-
         private static readonly float[] PdfColumnWidths = { 2f, 5f, 1f, 2f, 2f, 2f };
 
         public TeklifDetayViewModel(Teklif teklif)
@@ -58,20 +48,17 @@ namespace teklif_programi.ViewModels
             ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
             if (string.IsNullOrWhiteSpace(_teklif.ParaBirimi)) _teklif.ParaBirimi = "TL";
 
-            // Komutlar
             KaydetCommand = new RelayCommand(Kaydet, CanKaydet);
             PdfIndirCommand = new RelayCommand(PdfIndir, CanPdfIndir);
             FarkliKaydetCommand = new RelayCommand(FarkliKaydet, CanFarkliKaydet);
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, u => u != null);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar, u => u != null);
 
-            // Veri
             DovizKurlariGuncelle();
             UrunleriYukle();
             YukleTeklifDetaylari();
         }
 
-        // === Public bindings ===
         public Teklif Teklif
         {
             get => _teklif;
@@ -163,10 +150,8 @@ namespace teklif_programi.ViewModels
             }
         }
 
-
         public string PersonelAdiSoyadi => Teklif?.Personel != null ? Teklif.Personel.AdSoyad : "Personel bilgisi yok";
 
-        // Toplamlar (formatlı)
         public string IndirimliToplamText { get; private set; } = "₺0,00";
         public string KdvTutariText { get; private set; } = "₺0,00";
         public string GenelToplamText { get; private set; } = "₺0,00";
@@ -174,7 +159,6 @@ namespace teklif_programi.ViewModels
         public string KarTutariText { get; private set; } = "₺0,00";
         public string KarOraniText { get; private set; } = "0%";
 
-        // Ürün arama (sol panel)
         public string UrunArama
         {
             get => _urunArama;
@@ -189,14 +173,12 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // Komutlar
         public RelayCommand KaydetCommand { get; }
         public RelayCommand PdfIndirCommand { get; }
         public RelayCommand FarkliKaydetCommand { get; }
         public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
 
-        // === Load ===
         private void UrunleriYukle()
         {
             try
@@ -253,14 +235,12 @@ namespace teklif_programi.ViewModels
         {
             try
             {
-                // Teklif + ilişkiler
                 var teklifFull = _context.Teklifler
                     .Include(t => t.Personel)
                     .Include(t => t.Musteri)
                     .FirstOrDefault(t => t.TeklifId == Teklif.TeklifId);
                 if (teklifFull != null) Teklif = teklifFull;
 
-                // Mevcut satırlar (sepet)
                 var satirlar = _context.TeklifUrunleri
                     .Include(tu => tu.Urun)
                     .Where(tu => tu.TeklifId == Teklif.TeklifId)
@@ -303,7 +283,6 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        // === Sepet işlemleri ===
         private void SepeteEkle(Urun? urun)
         {
             if (urun == null) return;
@@ -312,7 +291,6 @@ namespace teklif_programi.ViewModels
             if (mevcut != null)
             {
                 mevcut.Adet++;
-                // toplam/format tetiklensin
                 mevcut.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(mevcut.BirimFiyat, Teklif.GenelIndirimOrani);
                 mevcut.BirimFiyatText = FormatPrice(mevcut.BirimFiyat);
                 mevcut.IndirimliFiyatText = FormatPrice(mevcut.IndirimliFiyat);
@@ -346,7 +324,6 @@ namespace teklif_programi.ViewModels
                 TeklifUrunler.Add(m);
             }
 
-            // Eğer daha önce silinecekler listesine eklenmişse, geri al
             _silinecekUrunIdSet.Remove(urun.UrunId);
 
             UpdateToplamlarText();
@@ -357,7 +334,6 @@ namespace teklif_programi.ViewModels
         {
             if (item == null) return;
 
-            // Mevcut DB’de varsa, silinecek olarak işaretle
             var varMi = _context.TeklifUrunleri.Any(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == item.UrunId);
             if (varMi) _silinecekUrunIdSet.Add(item.UrunId);
 
@@ -366,7 +342,6 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(TeklifUrunler));
         }
 
-        // === Hesap/Format ===
         private void RecalculateAll()
         {
             foreach (var urun in TeklifUrunler)
@@ -448,7 +423,6 @@ namespace teklif_programi.ViewModels
             _ => urun.FiyatTL
         };
 
-
         private string FormatPrice(decimal price) => price.ToString("C2", GetCulture(SelectedCurrency));
         private static CultureInfo GetCulture(string currency) => currency switch
         {
@@ -457,7 +431,6 @@ namespace teklif_programi.ViewModels
             _ => new CultureInfo("tr-TR"),
         };
 
-        // === Kaydet / Farklı kaydet / PDF ===
         private bool CanKaydet() => Teklif != null;
         private void Kaydet()
         {
@@ -480,7 +453,6 @@ namespace teklif_programi.ViewModels
                     dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;
                 }
 
-                // Silinecekler
                 if (_silinecekUrunIdSet.Count > 0)
                 {
                     var silinecekler = _context.TeklifUrunleri
@@ -490,7 +462,6 @@ namespace teklif_programi.ViewModels
                     _silinecekUrunIdSet.Clear();
                 }
 
-                // Satırları upsert
                 foreach (var m in TeklifUrunler)
                 {
                     var dbU = _context.TeklifUrunleri.FirstOrDefault(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == m.UrunId);
@@ -515,7 +486,6 @@ namespace teklif_programi.ViewModels
                     }
                 }
 
-                // Toplamlar
                 var dbTop = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId);
                 if (dbTop != null)
                 {
@@ -560,7 +530,7 @@ namespace teklif_programi.ViewModels
                     MusteriId = Teklif.MusteriId,
                     PersonelId = Teklif.PersonelId,
                     OlusturmaTarihi = DateTime.Now,
-                    Durum = "Beklemede", // <<< her zaman beklemede başlasın
+                    Durum = "Beklemede",
                     ParaBirimi = Teklif.ParaBirimi,
                     GenelIndirimOrani = Teklif.GenelIndirimOrani,
                     KdvOrani = Teklif.KdvOrani,
@@ -600,9 +570,7 @@ namespace teklif_programi.ViewModels
                 _context.SaveChanges();
                 tr.Commit();
 
-                // ✅ Burada yeni teklif tabloya düşsün diye Id ile çağır
                 EventHub.RaiseTeklifGuncellendi(yeni.TeklifId);
-
                 MessageBox.Show($"Yeni teklif oluşturuldu. Teklif No: {yeni.TeklifId}",
                     "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -631,41 +599,48 @@ namespace teklif_programi.ViewModels
                 using var pdf = new PdfDocument(writer);
                 using var doc = new Document(pdf, PageSize.A4);
 
-                PdfFont font = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
-                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+                // iText 9.2.0 için font tanımlama
+                PdfFont font = PdfFontFactory.CreateFont("Arial", PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+                PdfFont boldFont = PdfFontFactory.CreateFont("Arial", PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
+
                 doc.Add(new Paragraph($"Teklif Detayları - {Teklif?.Musteri?.FirmaAdi}")
                     .SetFont(boldFont).SetFontSize(16));
                 doc.Add(new Paragraph($"Tarih: {Teklif?.OlusturmaTarihi:dd.MM.yyyy}")
                     .SetFont(font));
-                doc.Add(new Paragraph($"Durum: {Teklif?.Durum}").SetFont(font));
-                doc.Add(new Paragraph($"Para Birimi: {Teklif?.ParaBirimi}").SetFont(font));
-                doc.Add(new Paragraph($"Müşteri Notu: {Teklif?.MusteriNotu ?? "-"}").SetFont(font));
+                doc.Add(new Paragraph($"Durum: {Teklif?.Durum}")
+                    .SetFont(font));
+                doc.Add(new Paragraph($"Para Birimi: {Teklif?.ParaBirimi}")
+                    .SetFont(font));
+                doc.Add(new Paragraph($"Müşteri Notu: {Teklif?.MusteriNotu ?? "-"}")
+                    .SetFont(font));
                 doc.Add(new Paragraph("\n"));
 
-
                 var table = new Table(PdfColumnWidths).UseAllAvailableWidth();
-                AddHeader(table, "Ürün Kodu");
-                AddHeader(table, "Açıklama");
-                AddHeader(table, "Adet");
-                AddHeader(table, "Birim Fiyat");
-                AddHeader(table, $"İndirimli Fiyat (%{Teklif!.GenelIndirimOrani})");
-                AddHeader(table, "Toplam");
+                AddHeader(table, "Ürün Kodu", boldFont);
+                AddHeader(table, "Açıklama", boldFont);
+                AddHeader(table, "Adet", boldFont);
+                AddHeader(table, "Birim Fiyat", boldFont);
+                AddHeader(table, $"İndirimli Fiyat (%{Teklif!.GenelIndirimOrani})", boldFont);
+                AddHeader(table, "Toplam", boldFont);
 
                 foreach (var u in TeklifUrunler)
                 {
-                    AddCell(table, u.UrunKodu);
-                    AddCell(table, u.UrunAciklamasi);
-                    AddCell(table, u.Adet.ToString());
-                    AddCell(table, u.BirimFiyatText);
-                    AddCell(table, u.IndirimliFiyatText);
-                    AddCell(table, u.ToplamText);
+                    AddCell(table, u.UrunKodu, font);
+                    AddCell(table, u.UrunAciklamasi, font);
+                    AddCell(table, u.Adet.ToString(), font);
+                    AddCell(table, u.BirimFiyatText, font);
+                    AddCell(table, u.IndirimliFiyatText, font);
+                    AddCell(table, u.ToplamText, font);
                 }
 
                 doc.Add(table);
                 doc.Add(new Paragraph("\n"));
-                doc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}").SetFont(font));
-                doc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}").SetFont(font));
-                doc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}").SetFont(font));
+                doc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}")
+                    .SetFont(font));
+                doc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}")
+                    .SetFont(font));
+                doc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}")
+                    .SetFont(font));
 
                 doc.Close();
                 MessageBox.Show("PDF indirildi.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -676,19 +651,19 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        private static void AddHeader(Table t, string text)
+        private static void AddHeader(Table t, string text, PdfFont font)
         {
             t.AddHeaderCell(new Cell()
-                .Add(new Paragraph(text))
+                .Add(new Paragraph(text).SetFont(font))
                 .SetBackgroundColor(ColorConstants.LIGHT_GRAY)
                 .SetTextAlignment(TextAlignment.CENTER)
                 .SetPadding(5));
         }
 
-        private static void AddCell(Table t, string text)
+        private static void AddCell(Table t, string text, PdfFont font)
         {
             t.AddCell(new Cell()
-                .Add(new Paragraph(text))
+                .Add(new Paragraph(text).SetFont(font))
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetPadding(5));
         }
