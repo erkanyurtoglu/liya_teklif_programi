@@ -388,9 +388,9 @@ namespace teklif_programi.ViewModels
         {
             if (TeklifToplam == null) return;
 
-            var indirimliToplam = TeklifUrunler.Sum(u => u.Toplam);
-            var kdvTutari = indirimliToplam * (Teklif.KdvOrani / 100m);
-            var genelToplam = indirimliToplam + kdvTutari;
+            var indirimliToplam = TeklifHesaplayici.HesaplaToplamFiyat(TeklifUrunler);
+            var kdvTutari = TeklifHesaplayici.HesaplaKdv(indirimliToplam, Teklif.KdvOrani);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(indirimliToplam, Teklif.KdvOrani);
 
             var toplamMaliyet = TeklifHesaplayici.HesaplaToplamMaliyet(TeklifUrunler);
             var karTutari = TeklifHesaplayici.HesaplaKarTutari(indirimliToplam, toplamMaliyet);
