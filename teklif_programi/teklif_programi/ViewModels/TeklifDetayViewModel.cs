@@ -137,7 +137,7 @@ namespace teklif_programi.ViewModels
             set
             {
                 if (Teklif == null) return;
-                var val = value < 0 ? 0 : value;
+                var val = Math.Clamp(value, 0, 100);
                 if (Teklif.GenelIndirimOrani != val)
                 {
                     Teklif.GenelIndirimOrani = val;
@@ -153,7 +153,7 @@ namespace teklif_programi.ViewModels
             set
             {
                 if (Teklif == null) return;
-                var val = value < 0 ? 0 : value;
+                var val = Math.Clamp(value, 0, 100);
                 if (Teklif.KdvOrani != val)
                 {
                     Teklif.KdvOrani = val;

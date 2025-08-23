@@ -367,14 +367,14 @@ namespace teklif_programi.ViewModels
         public decimal GenelIndirimOrani
         {
             get => _genelIndirimOrani;
-            set { _genelIndirimOrani = value < 0 ? 0 : value; OnPropertyChanged(); RecalculateAll(); }
+            set { _genelIndirimOrani = Math.Clamp(value, 0, 100); OnPropertyChanged(); RecalculateAll(); }
         }
 
         private decimal _kdvOrani = 20;
         public decimal KdvOrani
         {
             get => _kdvOrani;
-            set { _kdvOrani = value < 0 ? 0 : value; OnPropertyChanged(); RecalculateAll(); }
+            set { _kdvOrani = Math.Clamp(value, 0, 100); OnPropertyChanged(); RecalculateAll(); }
         }
 
         private void RecalculateAll()
