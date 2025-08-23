@@ -440,7 +440,8 @@ namespace teklif_programi.ViewModels
                                               IlgiliKisi,
                                               IlgiliKisiNumarasi,
                                               IlgiliKisiEposta,
-                                              SatisSozlesmesiMetni);
+                                              SatisSozlesmesiMetni,
+                                              SelectedLanguage);
             }
             catch (Exception ex)
             {

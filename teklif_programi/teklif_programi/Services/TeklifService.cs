@@ -31,9 +31,12 @@ namespace teklif_programi.Services
         private static readonly float[] ProductColumnWidths = { 1f, 2f, 5f, 1f, 2f, 2f, 2f };
         private static readonly float[] TotalColumnWidths = { 3f, 2f };
 
-        private static readonly string GirisSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfa.pdf";
-        private static readonly string TeklifSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfa.pdf";
-        private static readonly string SozlesmeSayfaPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfa.pdf";
+        private static readonly string GirisSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfa.pdf";
+        private static readonly string TeklifSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfa.pdf";
+        private static readonly string SozlesmeSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfa.pdf";
+        private static readonly string GirisSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfaEnglish.pdf";
+        private static readonly string TeklifSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfaEnglish.pdf";
+        private static readonly string SozlesmeSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfaEnglish.pdf";
 
         public void KaydetVePdfIndir(Musteri firma,
                                      IEnumerable<TeklifUrunModel> urunler,
@@ -43,7 +46,8 @@ namespace teklif_programi.Services
                                      string ilgiliKisi,
                                      string ilgiliKisiTelefonu,
                                      string ilgiliKisiEposta,
-                                     string sozlesmeMetni)
+                                     string sozlesmeMetni,
+                                     string selectedLanguage)
         {
             ArgumentNullException.ThrowIfNull(firma);
             ArgumentNullException.ThrowIfNull(urunler);
@@ -125,30 +129,34 @@ namespace teklif_programi.Services
 
                 PdfFormXObject? girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
 
+                var isEnglish = selectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase);
+                var girisPath = isEnglish ? GirisSayfaEnPath : GirisSayfaTrPath;
+                var teklifPath = isEnglish ? TeklifSayfaEnPath : TeklifSayfaTrPath;
+                var sozlesmePath = isEnglish ? SozlesmeSayfaEnPath : SozlesmeSayfaTrPath;
 
                 try
                 {
-                    if (File.Exists(GirisSayfaPath))
+                    if (File.Exists(girisPath))
                     {
-                        using var girisPdf = new PdfDocument(new PdfReader(GirisSayfaPath));
+                        using var girisPdf = new PdfDocument(new PdfReader(girisPath));
                         if (girisPdf.GetNumberOfPages() > 0)
                         {
                             girisBackground = girisPdf.GetPage(1).CopyAsFormXObject(pdf);
                         }
                     }
 
-                    if (File.Exists(TeklifSayfaPath))
+                    if (File.Exists(teklifPath))
                     {
-                        using var teklifPdf = new PdfDocument(new PdfReader(TeklifSayfaPath));
+                        using var teklifPdf = new PdfDocument(new PdfReader(teklifPath));
                         if (teklifPdf.GetNumberOfPages() > 0)
                         {
                             teklifBackground = teklifPdf.GetPage(1).CopyAsFormXObject(pdf);
                         }
                     }
 
-                    if (File.Exists(SozlesmeSayfaPath))
+                    if (File.Exists(sozlesmePath))
                     {
-                        using var sozlesmePdf = new PdfDocument(new PdfReader(SozlesmeSayfaPath));
+                        using var sozlesmePdf = new PdfDocument(new PdfReader(sozlesmePath));
                         if (sozlesmePdf.GetNumberOfPages() > 0)
                         {
                             sozlesmeBackground = sozlesmePdf.GetPage(1).CopyAsFormXObject(pdf);
@@ -176,18 +184,18 @@ namespace teklif_programi.Services
                         .SetMarginTop(50f)
                         .SetMarginBottom(0f));
 
-                    doc.Add(new Paragraph("Teklif Edilen Ürünler")
+                    doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFont(boldFont));
 
                     Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
                     AddCellToHeader(table, "No", boldFont);
-                    AddCellToHeader(table, "Ürün Kodu", boldFont);
-                    AddCellToHeader(table, "Açıklama", boldFont);
-                    AddCellToHeader(table, "Adet", boldFont);
-                    AddCellToHeader(table, "Birim Satış Fiyatı", boldFont);
-                    AddCellToHeader(table, $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", boldFont);
-                    AddCellToHeader(table, "Toplam Fiyat", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Product Code" : "Ürün Kodu", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Description" : "Açıklama", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Quantity" : "Adet", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Unit Price" : "Birim Satış Fiyatı", boldFont);
+                    AddCellToHeader(table, isEnglish ? $"Discounted Unit Price(%{genelIndirimOrani})" : $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Total Price" : "Toplam Fiyat", boldFont);
 
                     int rowCount = 0;
                     int urunNo = 1;
@@ -207,11 +215,11 @@ namespace teklif_programi.Services
                     doc.Add(table);
 
                     Table toplamTable = new Table(TotalColumnWidths).SetHorizontalAlignment(HorizontalAlignment.RIGHT);
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell($"KDV (%{kdvOrani}):", boldFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):", boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell("Genel Toplam:", boldFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? "Grand Total:" : "Genel Toplam:", boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont));
                     doc.Add(toplamTable);
 
@@ -228,7 +236,7 @@ namespace teklif_programi.Services
                         .SetMarginTop(50f)
                         .SetMarginBottom(0f));
 
-                    doc.Add(new Paragraph("Satış Sözleşmesi")
+                    doc.Add(new Paragraph(isEnglish ? "Sales Contract" : "Satış Sözleşmesi")
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFont(boldFont));
                     doc.Add(new Paragraph(sozlesmeMetni)
