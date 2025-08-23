@@ -123,7 +123,8 @@ namespace teklif_programi.Services
                 );
 
 
-                PdfXObject girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
+                PdfFormXObject? girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
+
 
                 try
                 {
