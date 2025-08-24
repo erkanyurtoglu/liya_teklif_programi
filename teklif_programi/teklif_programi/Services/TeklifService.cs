@@ -130,6 +130,8 @@ namespace teklif_programi.Services
                     PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
                 );
 
+                doc.SetFont(regularFont);
+
                 PdfFormXObject? girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
 
                 var isEnglish = selectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase);
@@ -277,6 +279,7 @@ namespace teklif_programi.Services
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont));
                     doc.Add(toplamTable);
 
+                    doc.SetMargins(80f, 20f, 30f, 20f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage sozlesmePage = pdf.GetLastPage();
                     if (sozlesmeBackground != null)
@@ -286,16 +289,9 @@ namespace teklif_programi.Services
                         canvas.Release();
                     }
 
-                    doc.Add(new Paragraph("\n\n\n\n")
-                        .SetMarginTop(50f)
-                        .SetMarginBottom(0f));
-
-                    doc.Add(new Paragraph(isEnglish ? "Sales Contract" : "Satış Sözleşmesi")
-                        .SetTextAlignment(TextAlignment.CENTER)
-                        .SetFont(boldFont)
-                        .SetFontSize(9));
                     doc.Add(new Paragraph(sozlesmeMetni)
-                        .SetFontSize(9));
+                        .SetFont(regularFont)
+                        .SetFontSize(11));
 
                     doc.Close();
 
