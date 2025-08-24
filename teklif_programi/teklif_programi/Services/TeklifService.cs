@@ -30,6 +30,7 @@ namespace teklif_programi.Services
         private static readonly float[] FirmaColumnWidths = { 2f, 2f };
         private static readonly float[] ProductColumnWidths = { 1f, 2f, 5f, 1f, 2f, 2f, 2f };
         private static readonly float[] TotalColumnWidths = { 3f, 2f };
+        private static readonly float[] InfoColumnWidths = { 1f, 1f }; // Sol ve sağ sütunlar için hizalamayı düzenlemek
 
         private static readonly string GirisSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfa.pdf";
         private static readonly string TeklifSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfa.pdf";
@@ -99,6 +100,8 @@ namespace teklif_programi.Services
             _context.SaveChanges();
             transaction.Commit();
 
+            var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
+
             EventHub.RaiseTeklifGuncellendi(teklif.TeklifId);
 
             SaveFileDialog saveFileDialog = new()
@@ -125,7 +128,6 @@ namespace teklif_programi.Services
                     PdfEncodings.IDENTITY_H,
                     PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
                 );
-
 
                 PdfFormXObject? girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
 
@@ -180,13 +182,61 @@ namespace teklif_programi.Services
                         canvas.Release();
                     }
 
-                    doc.Add(new Paragraph("\n\n\n\n")
-                        .SetMarginTop(50f)
-                        .SetMarginBottom(0f));
+                    Table infoTable = new Table(new float[] { 1f, 1f })
+                        .UseAllAvailableWidth()
+                        .SetMarginTop(50f);
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Company Name:" : "Firma Adı:",
+                        firma.FirmaAdi,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Date:" : "Teklif Tarihi:",
+                        teklif.OlusturmaTarihi.ToString("dd.MM.yyyy"),
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Contact Person:" : "İlgili Kişi:",
+                        ilgiliKisi,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Prepared By:" : "Teklifi Yapan:",
+                        personel?.AdSoyad ?? string.Empty,
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Phone:" : "Telefon:",
+                        ilgiliKisiTelefonu,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Quote No:" : "Teklif No:",
+                        teklif.TeklifId.ToString(),
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Email:" : "E-posta:",
+                        ilgiliKisiEposta,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Personnel Phone:" : "Personel Telefon:",
+                        personel?.Telefon ?? string.Empty,
+                        boldFont,
+                        regularFont));
+
+                    doc.Add(infoTable);
+                    doc.Add(new Paragraph("\n"));
 
                     doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
-                        .SetFont(boldFont));
+                        .SetFont(boldFont)
+                        .SetFontSize(9));
 
                     Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
                     AddCellToHeader(table, "No", boldFont);
@@ -238,9 +288,10 @@ namespace teklif_programi.Services
 
                     doc.Add(new Paragraph(isEnglish ? "Sales Contract" : "Satış Sözleşmesi")
                         .SetTextAlignment(TextAlignment.CENTER)
-                        .SetFont(boldFont));
+                        .SetFont(boldFont)
+                        .SetFontSize(9));
                     doc.Add(new Paragraph(sozlesmeMetni)
-                        .SetFont(regularFont));
+                        .SetFontSize(9));
 
                     doc.Close();
 
@@ -254,6 +305,22 @@ namespace teklif_programi.Services
                 }
             }
         }
+
+        private static Cell CreateInfoCell(string label, string value, PdfFont boldFont, PdfFont regularFont)
+        {
+            var paragraph = new Paragraph()
+                .SetFontSize(9)
+                .Add(new Text(label).SetFont(boldFont))
+                .Add(" ")
+                .Add(new Text(value).SetFont(regularFont));
+
+            return new Cell()
+                .Add(paragraph)
+                .SetBorder(Border.NO_BORDER)
+                .SetTextAlignment(TextAlignment.LEFT);
+        }
+
+
 
         private static string FormatPrice(decimal price, string currency)
         {
@@ -270,7 +337,7 @@ namespace teklif_programi.Services
         private static void AddCellToHeader(Table table, string text, PdfFont font)
         {
             table.AddHeaderCell(new Cell()
-                .Add(new Paragraph(text).SetFont(font))
+                .Add(new Paragraph(text).SetFont(font).SetFontSize(9))
                 .SetBackgroundColor(new DeviceRgb(240, 240, 240))
                 .SetTextAlignment(TextAlignment.CENTER)
                 .SetVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -281,7 +348,7 @@ namespace teklif_programi.Services
         private static void AddCellToBody(Table table, string text, PdfFont font, Color backgroundColor)
         {
             table.AddCell(new Cell()
-                .Add(new Paragraph(text).SetFont(font))
+                .Add(new Paragraph(text).SetFont(font).SetFontSize(9))
                 .SetBackgroundColor(backgroundColor)
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetVerticalAlignment(VerticalAlignment.MIDDLE)
@@ -291,7 +358,7 @@ namespace teklif_programi.Services
 
         private static Cell CreateRightAlignedHeaderCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text).SetFont(font))
+            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(9))
                 .SetTextAlignment(TextAlignment.RIGHT)
                 .SetBorder(Border.NO_BORDER)
                 .SetPaddingRight(5);
@@ -299,7 +366,7 @@ namespace teklif_programi.Services
 
         private static Cell CreateLeftAlignedBodyCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text).SetFont(font))
+            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(9))
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetBorder(Border.NO_BORDER);
         }
