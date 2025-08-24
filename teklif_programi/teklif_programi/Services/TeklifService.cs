@@ -236,7 +236,6 @@ namespace teklif_programi.Services
                         regularFont));
 
                     doc.Add(infoTable);
-                    doc.Add(new Paragraph("\n"));
 
                     doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
