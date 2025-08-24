@@ -182,9 +182,11 @@ namespace teklif_programi.Services
                         canvas.Release();
                     }
 
-                    Table infoTable = new Table(new float[] { 1f, 1f })
-                        .UseAllAvailableWidth()
-                        .SetMarginTop(50f);
+                    Table infoTable = new Table(new float[] { 3.5f, 1f })
+                        .SetWidth(UnitValue.CreatePercentValue(80)) // sayfa genişliğinin %80’i
+                        .SetHorizontalAlignment(HorizontalAlignment.RIGHT) 
+                        .SetMarginTop(20f);
+
 
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Company Name:" : "Firma Adı:",
@@ -203,10 +205,11 @@ namespace teklif_programi.Services
                         boldFont,
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
-                        isEnglish ? "Prepared By:" : "Teklifi Yapan:",
-                        personel?.AdSoyad ?? string.Empty,
+                        isEnglish ? "Quote No:" : "Teklif No:",
+                        teklif.TeklifId.ToString(),
                         boldFont,
                         regularFont));
+
 
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Phone:" : "Telefon:",
@@ -214,10 +217,11 @@ namespace teklif_programi.Services
                         boldFont,
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
-                        isEnglish ? "Quote No:" : "Teklif No:",
-                        teklif.TeklifId.ToString(),
+                        isEnglish ? "Prepared By:" : "Teklifi Yapan:",
+                        personel?.AdSoyad ?? string.Empty,
                         boldFont,
                         regularFont));
+
 
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Email:" : "E-posta:",
@@ -236,7 +240,7 @@ namespace teklif_programi.Services
                     doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFont(boldFont)
-                        .SetFontSize(9));
+                        .SetFontSize(11));
 
                     Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
                     AddCellToHeader(table, "No", boldFont);
