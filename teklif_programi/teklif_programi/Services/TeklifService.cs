@@ -4,6 +4,7 @@ using iText.Kernel.Font;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Canvas.Draw;
 using iText.Kernel.Pdf.Xobject;
 using iText.Layout;
 using iText.Layout.Borders;
@@ -239,12 +240,24 @@ namespace teklif_programi.Services
 
                     doc.Add(infoTable);
 
+                    var topSeparator = new LineSeparator(new SolidLine(0.5f))
+                        .SetWidth(UnitValue.CreatePercentValue(100));
+                    doc.Add(topSeparator);
+
+
                     doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFont(boldFont)
                         .SetFontSize(11));
 
-                    Table table = new Table(ProductColumnWidths).UseAllAvailableWidth();
+                    var bottomSeparator = new LineSeparator(new SolidLine(0.5f))
+                        .SetWidth(UnitValue.CreatePercentValue(100));
+                    doc.Add(bottomSeparator);
+
+                    Table table = new Table(ProductColumnWidths)
+                        .UseAllAvailableWidth()
+                        .SetMarginTop(5f);
+
                     AddCellToHeader(table, "No", boldFont);
                     AddCellToHeader(table, isEnglish ? "Product Code" : "Ürün Kodu", boldFont);
                     AddCellToHeader(table, isEnglish ? "Description" : "Açıklama", boldFont);
@@ -275,10 +288,19 @@ namespace teklif_programi.Services
                         .SetMarginTop(40f);
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):", boldFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? "Grand Total:" : "Genel Toplam:", boldFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
+                            boldFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? "Grand Total:" : "Genel Toplam:",
+                            boldFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
                     doc.Add(toplamTable);
 
                     doc.SetMargins(80f, 30f, 40f, 30f);
