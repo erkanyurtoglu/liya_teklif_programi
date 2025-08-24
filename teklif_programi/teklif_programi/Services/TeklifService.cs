@@ -270,7 +270,9 @@ namespace teklif_programi.Services
                     }
                     doc.Add(table);
 
-                    Table toplamTable = new Table(TotalColumnWidths).SetHorizontalAlignment(HorizontalAlignment.RIGHT);
+                    Table toplamTable = new Table(TotalColumnWidths)
+                        .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
+                        .SetMarginTop(40f);
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):", boldFont));
@@ -279,7 +281,7 @@ namespace teklif_programi.Services
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont));
                     doc.Add(toplamTable);
 
-                    doc.SetMargins(80f, 20f, 30f, 20f);
+                    doc.SetMargins(80f, 30f, 40f, 30f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage sozlesmePage = pdf.GetLastPage();
                     if (sozlesmeBackground != null)
@@ -291,7 +293,7 @@ namespace teklif_programi.Services
 
                     doc.Add(new Paragraph(sozlesmeMetni)
                         .SetFont(regularFont)
-                        .SetFontSize(11));
+                        .SetFontSize(10));
 
                     doc.Close();
 
@@ -358,7 +360,7 @@ namespace teklif_programi.Services
 
         private static Cell CreateRightAlignedHeaderCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(9))
+            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(10))
                 .SetTextAlignment(TextAlignment.RIGHT)
                 .SetBorder(Border.NO_BORDER)
                 .SetPaddingRight(5);
@@ -366,7 +368,7 @@ namespace teklif_programi.Services
 
         private static Cell CreateLeftAlignedBodyCell(string text, PdfFont font)
         {
-            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(9))
+            return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(10))
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetBorder(Border.NO_BORDER);
         }
