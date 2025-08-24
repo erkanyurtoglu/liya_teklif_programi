@@ -115,6 +115,7 @@ namespace teklif_programi.Services
                 using var writer = new PdfWriter(saveFileDialog.FileName);
                 using var pdf = new PdfDocument(writer);
                 using var doc = new Document(pdf, PageSize.A4);
+                doc.SetMargins(20f, 5f, 30f, 5f);
 
                 // iText 9.2.0 için font tanımlama
                 PdfFont regularFont = PdfFontFactory.CreateFont(
@@ -185,7 +186,7 @@ namespace teklif_programi.Services
                     Table infoTable = new Table(new float[] { 3.5f, 1f })
                         .SetWidth(UnitValue.CreatePercentValue(80)) // sayfa genişliğinin %80’i
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT) 
-                        .SetMarginTop(20f);
+                        .SetMarginTop(40f);
 
 
                     infoTable.AddCell(CreateInfoCell(

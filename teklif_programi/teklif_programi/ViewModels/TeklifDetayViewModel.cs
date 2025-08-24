@@ -598,6 +598,7 @@ namespace teklif_programi.ViewModels
                 using var writer = new PdfWriter(sfd.FileName);
                 using var pdf = new PdfDocument(writer);
                 using var doc = new Document(pdf, PageSize.A4);
+                doc.SetMargins(20f, 5f, 20f, 5f);
 
                 // iText 9.2.0 için font tanımlama
                 PdfFont font = PdfFontFactory.CreateFont("Arial", PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
