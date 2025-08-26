@@ -4,7 +4,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             d:DesignHeight="900" d:DesignWidth="1350">
+             d:DesignHeight="900" d:DesignWidth="1350"
+             Language="tr-TR">
+
 
     <UserControl.Resources>
         <!-- Modern Buton Stili -->
@@ -130,7 +132,7 @@
                     </Style.Triggers>
                 </Style>
 
-                <!-- (İsteğe bağlı) seçim renkleri -->
+                <!-- seçim renkleri -->
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
@@ -149,21 +151,22 @@
                 <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="3*"
                                     ElementStyle="{StaticResource CellTextLeft}" />
 
-                <!-- FİYATLAR -->
-                <DataGridTextColumn Header="Birim Satış Fiyatı"
-                    Binding="{Binding BirimFiyat, StringFormat=N2}" Width="2*"
+                <!-- FİYATLAR (sembollü, ortalı) -->
+                <DataGridTextColumn Header="TL Birim Satış Fiyatı"
+                    Binding="{Binding BirimFiyat, StringFormat={}{0:N2} ₺}" Width="2*"
                     ElementStyle="{StaticResource CellTextCenter}"
                     EditingElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTextColumn Header="Dolar Birim Satış Fiyatı"
-                    Binding="{Binding FiyatUSD, StringFormat=N2}" Width="2*"
+                    Binding="{Binding FiyatUSD, StringFormat={}{0:N2} $}" Width="2*"
                     ElementStyle="{StaticResource CellTextCenter}"
                     EditingElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTextColumn Header="Euro Birim Satış Fiyatı"
-                    Binding="{Binding FiyatEUR, StringFormat=N2}" Width="2*"
+                    Binding="{Binding FiyatEUR, StringFormat={}{0:N2} €}" Width="2*"
                     ElementStyle="{StaticResource CellTextCenter}"
                     EditingElementStyle="{StaticResource CellTextCenter}" />
+
 
 
                 <!-- İŞLEMLER -->

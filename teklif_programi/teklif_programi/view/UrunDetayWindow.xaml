@@ -104,6 +104,44 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Para birimi sembolü SAĞDA olan TextBox -->
+        <Style x:Key="CurrencyTextBoxRight" TargetType="TextBox" BasedOn="{StaticResource InputStyle}">
+            <!-- Sembol için sağda yer aç -->
+            <Setter Property="Padding" Value="10,6,34,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Grid>
+                            <Border x:Name="bd"
+                                    CornerRadius="8"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                            </Border>
+                            <!-- Sağdaki sembol (Tag'den gelir) -->
+                            <TextBlock Text="{TemplateBinding Tag}"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Margin="0,0,10,0"
+                                       Foreground="#666"
+                                       FontWeight="SemiBold"
+                                       IsHitTestVisible="False"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource InputBorderFocus}"/>
+                                <Setter TargetName="bd" Property="BorderThickness" Value="1.5"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <Grid>
@@ -169,22 +207,34 @@
 
                             <!-- Satır 3 -->
                             <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,8,12">
-                                <TextBlock Text="Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txt2025BirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                                <TextBlock Text="TL Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txt2025BirimSatisFiyati"
+                                         Style="{StaticResource CurrencyTextBoxRight}"
+                                         Tag="₺"
+                                         TextAlignment="Right"/>
                             </StackPanel>
                             <StackPanel Grid.Row="2" Grid.Column="1" Margin="8,0,0,12">
                                 <TextBlock Text="Dolar Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtDolarBirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                                <TextBox x:Name="txtDolarBirimSatisFiyati"
+                                         Style="{StaticResource CurrencyTextBoxRight}"
+                                         Tag="$"
+                                         TextAlignment="Right"/>
                             </StackPanel>
 
                             <!-- Satır 4 -->
                             <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,8,0">
                                 <TextBlock Text="Euro Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtEuroBirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                                <TextBox x:Name="txtEuroBirimSatisFiyati"
+                                         Style="{StaticResource CurrencyTextBoxRight}"
+                                         Tag="€"
+                                         TextAlignment="Right"/>
                             </StackPanel>
                             <StackPanel Grid.Row="3" Grid.Column="1" Margin="8,0,0,0">
                                 <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı" Style="{StaticResource LabelStyle}"/>
-                                <TextBox x:Name="txtYurticiMaliyetBirimFiyati" Style="{StaticResource InputStyle}"/>
+                                <TextBox x:Name="txtYurticiMaliyetBirimFiyati"
+                                         Style="{StaticResource CurrencyTextBoxRight}"
+                                         Tag="₺"
+                                         TextAlignment="Right"/>
                             </StackPanel>
                         </Grid>
                     </Grid>
