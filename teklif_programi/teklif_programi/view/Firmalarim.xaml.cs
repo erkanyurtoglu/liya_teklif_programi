@@ -38,7 +38,7 @@ namespace teklif_programi.view
                 var firmalar = string.IsNullOrWhiteSpace(arama)
                     ? _db.Musteriler.ToList()
                     : _db.Musteriler
-                          .Where(f => f.FirmaAdi.Contains(arama) || f.FirmaTelefonu.Contains(arama))
+                          .Where(f => f.FirmaAdi.Contains(arama) || f.FirmaTelefonu.Contains(arama) || f.FirmaAdresi.Contains(arama))
                           .ToList();
                 dgFirmalar.ItemsSource = firmalar;
             }

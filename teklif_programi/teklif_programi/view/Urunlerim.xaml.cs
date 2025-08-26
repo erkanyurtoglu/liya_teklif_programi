@@ -43,7 +43,7 @@ namespace teklif_programi.view
             var urunler = string.IsNullOrWhiteSpace(arama)
                 ? _db.Urunler.ToList() // Arama yoksa tüm ürünler
                 : _db.Urunler
-                      .Where(f => f.UrunAciklamasi.Contains(arama) || f.UrunKodu.Contains(arama)) // Açıklama veya kodda arama kelimesi geçenler
+                      .Where(f => f.UrunAciklamasi.Contains(arama) || f.UrunKodu.Contains(arama) || f.Kategori.Contains(arama)) // Açıklama veya kodda arama kelimesi geçenler
                       .ToList();
 
             dataGridUrunler.ItemsSource = urunler; // DataGrid'e verileri bağla
