@@ -100,11 +100,8 @@ namespace teklif_programi.Services
             });
 
             _context.SaveChanges();
-            transaction.Commit();
 
             var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
-
-            EventHub.RaiseTeklifGuncellendi(teklif.TeklifId);
 
             SaveFileDialog saveFileDialog = new()
             {
@@ -320,6 +317,9 @@ namespace teklif_programi.Services
 
                     doc.Close();
 
+                    transaction.Commit();
+                    EventHub.RaiseTeklifGuncellendi(teklif.TeklifId);
+
                     MessageBox.Show("Teklif başarıyla kaydedildi ve PDF oluşturuldu!",
                                     "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -328,7 +328,13 @@ namespace teklif_programi.Services
                     MessageBox.Show($"PDF oluşturulurken bir hata oluştu: {ex.Message}",
                                     "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-
+            }
+            else
+            {
+                transaction.Rollback();
+                _context.ChangeTracker.Clear();
+                MessageBox.Show("İşlem iptal edildi, teklif kaydedilmedi.",
+                                "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
