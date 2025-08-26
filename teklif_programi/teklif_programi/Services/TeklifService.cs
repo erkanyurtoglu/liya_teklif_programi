@@ -67,7 +67,8 @@ namespace teklif_programi.Services
                 ParaBirimi = currency,
                 IlgiliKisi = ilgiliKisi,
                 IlgiliKisiTelefonu = ilgiliKisiTelefonu,
-                IlgiliKisiEposta = ilgiliKisiEposta
+                IlgiliKisiEposta = ilgiliKisiEposta,
+                Dil = selectedLanguage
             };
 
             _context.Teklifler.Add(teklif);

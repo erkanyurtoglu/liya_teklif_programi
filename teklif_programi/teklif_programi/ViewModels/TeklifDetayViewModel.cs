@@ -59,6 +59,7 @@ namespace teklif_programi.ViewModels
         {
             _context = new TeklifDbContext();
             _teklif = teklif ?? throw new ArgumentNullException(nameof(teklif));
+            _selectedLanguage = teklif.Dil;
 
             Durumlar = new ObservableCollection<string> { "Beklemede", "Kabul Edildi", "Reddedildi" };
             ParaBirimiListe = new ObservableCollection<string> { "TL", "USD", "EUR" };
@@ -143,6 +144,7 @@ namespace teklif_programi.ViewModels
                 if (_selectedLanguage != value)
                 {
                     _selectedLanguage = value;
+                    if (Teklif != null) Teklif.Dil = value;
                     OnPropertyChanged();
                     UpdateDescriptions();
                     UpdateContractText();
@@ -507,6 +509,7 @@ namespace teklif_programi.ViewModels
                     dbT.ParaBirimi = Teklif.ParaBirimi;
                     dbT.GenelIndirimOrani = Teklif.GenelIndirimOrani;
                     dbT.KdvOrani = Teklif.KdvOrani;
+                    dbT.Dil = Teklif.Dil;
                     dbT.IlgiliKisi = Teklif.IlgiliKisi;
                     dbT.IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu;
                     dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;
@@ -593,6 +596,7 @@ namespace teklif_programi.ViewModels
                     ParaBirimi = Teklif.ParaBirimi,
                     GenelIndirimOrani = Teklif.GenelIndirimOrani,
                     KdvOrani = Teklif.KdvOrani,
+                    Dil = Teklif.Dil,
                     MusteriNotu = Teklif.MusteriNotu,
                     IlgiliKisi = Teklif.IlgiliKisi,
                     IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu,

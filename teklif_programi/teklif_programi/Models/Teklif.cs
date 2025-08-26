@@ -37,6 +37,10 @@ namespace teklif_programi.Models
         public string ParaBirimi { get; set; } = "TL";
         // Teklifin para birimi (varsayılan: "TL", maksimum 50 karakter).
 
+        public string Dil { get; set; } = "TR";
+        // Teklifin dili (varsayılan: "TR").
+
+
         public string IlgiliKisi { get; set; } = string.Empty;
         // Teklifte belirtilen ilgili kişi adı.
 

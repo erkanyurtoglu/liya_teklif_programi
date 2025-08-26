@@ -44,8 +44,15 @@ namespace teklif_programi.Data.Configurations
                 .HasMaxLength(1000);
             // MusteriNotu opsiyonel bir alan, maksimum 1000 karakter.
 
+            builder.Property(t => t.Dil)
+                .IsRequired()
+                .HasMaxLength(5)
+                .HasDefaultValue("TR");
+            // Teklifin dili zorunlu bir alan, maksimum 5 karakter ve varsayılan "TR".
+
+
             builder.Property(t => t.IlgiliKisi)
-    .HasMaxLength(100);
+                 .HasMaxLength(100);
             // Teklifte belirtilen ilgili kişi adı (opsiyonel, max 100 karakter).
 
             builder.Property(t => t.IlgiliKisiTelefonu)
