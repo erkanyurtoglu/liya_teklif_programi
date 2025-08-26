@@ -1,28 +1,103 @@
 ﻿<Window x:Class="teklif_programi.view.UrunDetayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Ürün Detay" Height="700" Width="700" WindowStartupLocation="CenterScreen">
+        Title="Ürün Detay" Height="630" Width="700"
+        WindowStartupLocation="CenterScreen" Background="#ededed">
 
     <Window.Resources>
+        <!-- Tema renkleri -->
+        <SolidColorBrush x:Key="AccentBrush" Color="#13183E"/>
+        <SolidColorBrush x:Key="CardBg" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="LabelFg" Color="#333333"/>
+        <SolidColorBrush x:Key="InputBorder" Color="#D0D5DD"/>
+        <SolidColorBrush x:Key="InputBorderFocus" Color="#13183E"/>
+
+        <!-- Kart -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="{StaticResource CardBg}"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="14" ShadowDepth="2" Opacity="0.15" Color="#000000"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Etiket -->
+        <Style TargetType="TextBlock" x:Key="LabelStyle">
+            <Setter Property="Foreground" Value="{StaticResource LabelFg}"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Margin" Value="0,6,0,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!-- TextBox -->
+        <Style TargetType="TextBox" x:Key="InputStyle">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="BorderBrush" Value="{StaticResource InputBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="MinWidth" Value="260"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="bd"
+                                CornerRadius="8"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource InputBorderFocus}"/>
+                                <Setter TargetName="bd" Property="BorderThickness" Value="1.5"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Buton -->
         <Style x:Key="ModernButtonStyle" TargetType="Button">
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Background" Value="#13183E"/>
+            <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Height" Value="38"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="14,8"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="FontFamily" Value="Source Sans Pro"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border x:Name="border"
                                 Background="{TemplateBinding Background}"
-                                CornerRadius="4">
+                                CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
+                                <Setter TargetName="border" Property="Opacity" Value="0.95"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                                <Setter TargetName="border" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <ScaleTransform ScaleX="0.98" ScaleY="0.98"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.6"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -31,37 +106,99 @@
         </Style>
     </Window.Resources>
 
-    <Grid Background="#ededed">
-        <StackPanel Width="600" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,20,0,0">
-            <TextBlock Text="📦 Ürün Detayı" FontSize="30" FontWeight="Bold" Foreground="#13183E" Margin="0,0,0,30" HorizontalAlignment="Center"/>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Width="640" Margin="0,20,0,20" HorizontalAlignment="Center">
 
-            <TextBlock Text="Ürün Kodu" Foreground="#13183E" />
-            <TextBox x:Name="txtUrunKodu" Height="35" Margin="0,0,0,10" Foreground="#13183E"/>
+                <!-- Kart -->
+                <Border Style="{StaticResource CardStyle}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <!-- Başlık -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Ayraç -->
+                            <RowDefinition Height="Auto"/>
+                            <!-- Form -->
+                        </Grid.RowDefinitions>
 
-            <TextBlock Text="Kategori" Foreground="#13183E" />
-            <TextBox x:Name="txtKategori" Height="35" Margin="0,0,0,10" Foreground="#13183E"/>
+                        <!-- Başlık -->
+                        <TextBlock Grid.Row="0"
+                                   Text="Ürün Detayı"
+                                   FontSize="26" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,12"/>
 
-            <StackPanel>
-                <TextBlock Text="Ürün Açıklaması" Foreground="#13183E" />
-                <TextBox x:Name="txtAciklama" Height="100" FontSize="14" BorderBrush="#ccc" BorderThickness="1" Margin="0,0,0,10" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" Background="White"/>
+                        <Separator Grid.Row="1" Margin="0,0,0,16" Background="#E6E6E6" Height="1"/>
+
+                        <!-- FORM -->
+                        <Grid Grid.Row="2" Margin="0,4,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Satır 1 -->
+                            <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,12">
+                                <TextBlock Text="Ürün Kodu" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtUrunKodu" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="0" Grid.Column="1" Margin="8,0,0,12">
+                                <TextBlock Text="Kategori" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtKategori" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <!-- Satır 2: Açıklama (iki sütun genişlik) -->
+                            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="0,0,0,12">
+                                <TextBlock Text="Ürün Açıklaması" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtAciklama"
+                                         Style="{StaticResource InputStyle}"
+                                         Height="100"
+                                         AcceptsReturn="True" AcceptsTab="True"
+                                         VerticalScrollBarVisibility="Auto"
+                                         TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <!-- Satır 3 -->
+                            <StackPanel Grid.Row="2" Grid.Column="0" Margin="0,0,8,12">
+                                <TextBlock Text="Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txt2025BirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="2" Grid.Column="1" Margin="8,0,0,12">
+                                <TextBlock Text="Dolar Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtDolarBirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+
+                            <!-- Satır 4 -->
+                            <StackPanel Grid.Row="3" Grid.Column="0" Margin="0,0,8,0">
+                                <TextBlock Text="Euro Birim Satış Fiyatı" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtEuroBirimSatisFiyati" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="3" Grid.Column="1" Margin="8,0,0,0">
+                                <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı" Style="{StaticResource LabelStyle}"/>
+                                <TextBox x:Name="txtYurticiMaliyetBirimFiyati" Style="{StaticResource InputStyle}"/>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Butonlar (kartın altında) -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,22,0,0">
+                    <Button Content="Kaydet" Width="160" Margin="8,0"
+                            Click="BtnKaydet_Click" Style="{StaticResource ModernButtonStyle}"/>
+                    <Button Content="İptal" Width="160" Margin="8,0"
+                            Background="#C0392B" Click="BtnIptal_Click" Style="{StaticResource ModernButtonStyle}"/>
+                </StackPanel>
+
             </StackPanel>
-
-            <TextBlock Text="Birim Satış Fiyatı" Foreground="#13183E" />
-            <TextBox x:Name="txt2025BirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Dolar Birim Satış Fiyatı" Foreground="#13183E" />
-            <TextBox x:Name="txtDolarBirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Euro Birim Satış Fiyatı" Foreground="#13183E" />
-            <TextBox x:Name="txtEuroBirimSatisFiyati" Height="35" Margin="0,0,0,10"/>
-
-            <TextBlock Text="Yurtiçi Maliyet Birim Fiyatı"  Foreground="#13183E"/>
-            <TextBox x:Name="txtYurticiMaliyetBirimFiyati" Height="35" Margin="0,0,0,10"/>
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                <Button Content="Kaydet" Width="150" Margin="10,0" Click="BtnKaydet_Click" Style="{StaticResource ModernButtonStyle}"/>
-                <Button Content="İptal" Width="150" Margin="10,0" Click="BtnIptal_Click" Background="#C0392B" Style="{StaticResource ModernButtonStyle}"/>
-            </StackPanel>
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

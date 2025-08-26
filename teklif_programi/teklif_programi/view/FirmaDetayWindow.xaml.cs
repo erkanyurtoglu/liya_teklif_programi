@@ -78,5 +78,10 @@ namespace teklif_programi.view
         {
             this.Close();
         }
+
+        private void txtFirmaAdi_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }
