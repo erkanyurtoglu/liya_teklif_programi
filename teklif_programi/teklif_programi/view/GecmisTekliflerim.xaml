@@ -90,7 +90,7 @@
 
         <!-- Başlık ve Alt Çizgi -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="📜 Geçmiş Teklifler" 
+            <TextBlock Text="📜 Giden Teklifler" 
                        FontSize="32" 
                        FontWeight="Bold"
                        FontFamily="Segoe UI"

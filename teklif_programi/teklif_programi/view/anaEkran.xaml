@@ -111,7 +111,7 @@
                     <Button Click="btnGecmisTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="⏳" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
-                            <TextBlock Text="Geçmiş Tekliflerim" Margin="5,0"/>
+                            <TextBlock Text="Giden Tekliflerim" Margin="5,0"/>
                         </StackPanel>
                     </Button>
                     <Button Click="btnAlinanTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
