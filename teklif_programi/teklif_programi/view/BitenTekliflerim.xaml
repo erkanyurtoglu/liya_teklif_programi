@@ -22,11 +22,8 @@
                        Foreground="#13183E"
                        HorizontalAlignment="Center"
                        Margin="0,0,0,5"/>
-            <Border Height="2"
-                    Width="350"
-                    Background="#13183E"
-                    HorizontalAlignment="Center"
-                    CornerRadius="1"/>
+            <Border Height="2" Width="350" Background="#13183E"
+                    HorizontalAlignment="Center" CornerRadius="1"/>
         </StackPanel>
 
         <!-- Teklif Listesi -->
@@ -48,6 +45,7 @@
                   SelectionMode="Single">
 
             <DataGrid.Resources>
+                <!-- Buton -->
                 <Style x:Key="ModernButtonStyle" TargetType="Button">
                     <Setter Property="FontSize" Value="14"/>
                     <Setter Property="Background" Value="#13183E"/>
@@ -76,6 +74,7 @@
                     </Setter>
                 </Style>
 
+                <!-- Başlık -->
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -86,9 +85,11 @@
                     <Setter Property="FontWeight" Value="Bold"/>
                 </Style>
 
+                <!-- Hücreler -->
                 <Style TargetType="DataGridCell">
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="8,0,8,0"/>
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
@@ -99,63 +100,38 @@
                     </Style.Triggers>
                 </Style>
 
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True"/>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=AlternatingRowBackground}" Value="#ededed">
-                            <Setter Property="Background" Value="#ededed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=AlternatingRowBackground}" Value="#f5f5f5">
-                            <Setter Property="Background" Value="#f5f5f5"/>
-                        </DataTrigger>
-                    </Style.Triggers>
+                <!-- Metin stilleri -->
+                <Style x:Key="CellTextLeft" TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="TextAlignment" Value="Left"/>
+                    <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+                    <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
                 </Style>
 
+                <Style x:Key="CellTextCenter" TargetType="TextBlock">
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="TextAlignment" Value="Center"/>
+                </Style>
+
+                <!-- Seçim renkleri -->
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Teklif No" Binding="{Binding TeklifId}" Width="0.7*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Teklif No" Binding="{Binding TeklifId}" Width="0.7*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Firma Adı" Binding="{Binding Musteri.FirmaAdi}" Width="2*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <!-- SADECE BU SOLA -->
+                <DataGridTextColumn Header="Firma Adı" Binding="{Binding Musteri.FirmaAdi}" Width="2*"
+                                    ElementStyle="{StaticResource CellTextLeft}" />
 
-                <DataGridTextColumn Header="Tarih" Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" Width="1*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Tarih" Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="1*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="1*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>

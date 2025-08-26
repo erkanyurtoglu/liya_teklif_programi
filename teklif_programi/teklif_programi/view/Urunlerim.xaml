@@ -35,6 +35,24 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Hücre metin stilleri -->
+        <Style x:Key="CellTextLeft" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+            <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=Text}"/>
+        </Style>
+
+        <Style x:Key="CellTextCenter" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="CellTextRight" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Right"/>
+        </Style>
     </UserControl.Resources>
 
     <Grid Background="#ededed" Margin="20">
@@ -51,17 +69,17 @@
 
         <!-- Başlık ve Alt Çizgi -->
         <StackPanel Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock Text="📦 Ürünlerim" 
-                       FontSize="32" 
+            <TextBlock Text="📦 Ürünlerim"
+                       FontSize="32"
                        FontWeight="Bold"
                        FontFamily="Segoe UI"
-                       Foreground="#13183E" 
-                       HorizontalAlignment="Center" 
+                       Foreground="#13183E"
+                       HorizontalAlignment="Center"
                        Margin="0,0,0,5"/>
-            <Border Height="2" 
+            <Border Height="2"
                     Width="220"
-                    Background="#13183E" 
-                    HorizontalAlignment="Center" 
+                    Background="#13183E"
+                    HorizontalAlignment="Center"
                     CornerRadius="1"/>
         </StackPanel>
 
@@ -78,43 +96,15 @@
         </StackPanel>
 
         <!-- Ürün Listesi -->
-        <DataGrid x:Name="dataGridUrunler" Grid.Row="2" AutoGenerateColumns="False" 
-                  HeadersVisibility="Column" IsReadOnly="True" 
+        <DataGrid x:Name="dataGridUrunler" Grid.Row="2" AutoGenerateColumns="False"
+                  HeadersVisibility="Column" IsReadOnly="True"
                   Margin="0,0,0,20" RowHeight="40" ColumnHeaderHeight="45"
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
 
-
             <DataGrid.Resources>
-                <Style x:Key="ModernButtonStyle" TargetType="Button">
-                    <Setter Property="FontSize" Value="14"/>
-                    <Setter Property="Background" Value="#13183E"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="Height" Value="38"/>
-                    <Setter Property="Cursor" Value="Hand"/>
-                    <Setter Property="FontFamily" Value="Source Sans Pro"/>
-                    <Setter Property="BorderThickness" Value="0"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="4">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-
+                <!-- Başlıklar -->
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="HorizontalContentAlignment" Value="Center"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
@@ -125,9 +115,11 @@
                     <Setter Property="FontWeight" Value="Bold"/>
                 </Style>
 
+                <!-- Hücreler: Stretch + padding -->
                 <Style TargetType="DataGridCell">
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                     <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Padding" Value="8,0,8,0"/>
                     <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
@@ -138,100 +130,58 @@
                     </Style.Triggers>
                 </Style>
 
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <Trigger Property="IsSelected" Value="True">
-                        </Trigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=AlternatingRowBackground}" Value="#ededed">
-                            <Setter Property="Background" Value="#ededed"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=AlternatingRowBackground}" Value="#f5f5f5">
-                            <Setter Property="Background" Value="#f5f5f5"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-
+                <!-- (İsteğe bağlı) seçim renkleri -->
                 <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
                 <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
-                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black" />
+                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
             </DataGrid.Resources>
 
-
             <DataGrid.Columns>
+                <!-- ÜRÜN KODU -->
+                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" Width="1*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" Width="1*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <!-- KATEGORİ -->
+                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*"
+                                    ElementStyle="{StaticResource CellTextLeft}" />
 
-                <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="2*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <!-- AÇIKLAMA -->
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="3*"
+                                    ElementStyle="{StaticResource CellTextLeft}" />
 
-                <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="3*" >
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <!-- FİYATLAR -->
+                <DataGridTextColumn Header="Birim Satış Fiyatı"
+                    Binding="{Binding BirimFiyat, StringFormat=N2}" Width="2*"
+                    ElementStyle="{StaticResource CellTextCenter}"
+                    EditingElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimFiyat}" Width="2*" >
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Dolar Birim Satış Fiyatı"
+                    Binding="{Binding FiyatUSD, StringFormat=N2}" Width="2*"
+                    ElementStyle="{StaticResource CellTextCenter}"
+                    EditingElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Dolar Birim Satış Fiyatı" Binding="{Binding FiyatUSD}" Width="2*" >
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <DataGridTextColumn Header="Euro Birim Satış Fiyatı"
+                    Binding="{Binding FiyatEUR, StringFormat=N2}" Width="2*"
+                    ElementStyle="{StaticResource CellTextCenter}"
+                    EditingElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Euro Birim Satış Fiyatı" Binding="{Binding FiyatEUR}" Width="2*" >
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="HorizontalAlignment" Value="Center"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="TextAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
 
+                <!-- İŞLEMLER -->
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Content="Detay" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Click="BtnDetay_Click" Background="#1874CD"/>
-                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnUrunSil_Click"/>
+                                <Button Content="Detay" Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Click="BtnDetay_Click" Background="#1874CD"/>
+                                <Button Content="Sil" Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Background="#C0392B" Click="BtnUrunSil_Click"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-
-
     </Grid>
 </UserControl>
