@@ -22,8 +22,55 @@ namespace teklif_programi.view
         public anaEkran()
         {
             InitializeComponent();
-            contentArea.Content = new Firmalarim(); // Varsayılan ekran
         }
+
+        private void ShowNav(StackPanel activeNav)
+        {
+            navBorder.Visibility = Visibility.Visible;
+            customerNav.Visibility = Visibility.Collapsed;
+            productNav.Visibility = Visibility.Collapsed;
+            personNav.Visibility = Visibility.Collapsed;
+            teklifNav.Visibility = Visibility.Collapsed;
+            activeNav.Visibility = Visibility.Visible;
+        }
+
+        // Home buttons
+        private void HomeMusteri_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNav(customerNav);
+            contentArea.Content = new Firmalarim();
+        }
+
+        private void HomeUrun_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNav(productNav);
+            contentArea.Content = new Urunlerim();
+        }
+
+        private void HomePersonel_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNav(personNav);
+            contentArea.Content = new Personellerim();
+        }
+
+        private void HomeTeklif_Click(object sender, RoutedEventArgs e)
+        {
+            ShowNav(teklifNav);
+            contentArea.Content = new TeklifVer();
+        }
+
+        private void btnAnaSayfa_Click(object sender, RoutedEventArgs e)
+        {
+            navBorder.Visibility = Visibility.Collapsed;
+            customerNav.Visibility = Visibility.Collapsed;
+            productNav.Visibility = Visibility.Collapsed;
+            personNav.Visibility = Visibility.Collapsed;
+            teklifNav.Visibility = Visibility.Collapsed;
+            contentArea.Content = homeGrid;
+        }
+
+
+        // Navigation buttons
 
         private void btnFirmalarim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new Firmalarim();
         private void btnFirmaEkle_Click(object sender, RoutedEventArgs e) => contentArea.Content = new FirmaEkle();

@@ -9,6 +9,40 @@
         WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Maximized"
         Background="#ededed">
 
+    <Window.Resources>
+        <Style x:Key="CardButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Margin" Value="15"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Color="#888" Opacity="0.5"/>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                            CornerRadius="12"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#13183E"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="250"/>
@@ -16,73 +50,134 @@
         </Grid.ColumnDefinitions>
 
         <!-- Navigation Menu -->
-        <Border Grid.Column="0" Background="#13183E">
+        <Border x:Name="navBorder" Grid.Column="0" Background="#13183E" Visibility="Collapsed">
             <StackPanel>
-                <Image Source="/resimler/liya_logo.png" Width="106" Height="66" HorizontalAlignment="Center" Margin="15"/>
-                <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                <Image Source="/resimler/liya_logo.png" Width="200" Height="150" HorizontalAlignment="Center" Margin="15"/>
+                <Button Click="btnAnaSayfa_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🏢" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,40,0"/>
-                        <TextBlock Text="Müşterilerim" Margin="5,0"/>
+                        <TextBlock Text="🏠" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,45,0"/>
+                        <TextBlock Text="Ana Sayfa" Margin="5,0"/>
                     </StackPanel>
                 </Button>
-                <Button Click="btnFirmaEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🏢⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,35,0"/>
-                        <TextBlock Text="Müşteri Ekle" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnUrunlerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📋" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,43,0"/>
-                        <TextBlock Text="Ürünlerim" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnUrunEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📋⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,38,0"/>
-                        <TextBlock Text="Ürün Ekle" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnPersonellerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="👤" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,30,0"/>
-                        <TextBlock Text="Personellerim" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnPersonelEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="👤⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,25,0"/>
-                        <TextBlock Text="Personel Ekle" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnTeklifVer_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📨" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,47,0"/>
-                        <TextBlock Text="Teklif Ver" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnGecmisTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="⏳" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
-                        <TextBlock Text="Geçmiş Tekliflerim" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnAlinanTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="📥" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
-                        <TextBlock Text="Alınan Tekliflerim" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
-                <Button Click="btnBitenTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="✅" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
-                        <TextBlock Text="Biten Tekliflerim" Margin="5,0"/>
-                    </StackPanel>
-                </Button>
+                <StackPanel x:Name="customerNav" Visibility="Collapsed">
+                    <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🏢" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,40,0"/>
+                            <TextBlock Text="Müşterilerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnFirmaEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🏢⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,35,0"/>
+                            <TextBlock Text="Müşteri Ekle" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel x:Name="productNav" Visibility="Collapsed">
+                    <Button Click="btnUrunlerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,43,0"/>
+                            <TextBlock Text="Ürünlerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnUrunEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📋⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,38,0"/>
+                            <TextBlock Text="Ürün Ekle" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel x:Name="personNav" Visibility="Collapsed">
+                    <Button Click="btnPersonellerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👤" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,30,0"/>
+                            <TextBlock Text="Personellerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnPersonelEkle_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="👤⁺" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,25,0"/>
+                            <TextBlock Text="Personel Ekle" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+                <StackPanel x:Name="teklifNav" Visibility="Collapsed">
+                    <Button Click="btnTeklifVer_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📨" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,47,0"/>
+                            <TextBlock Text="Teklif Ver" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnGecmisTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⏳" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
+                            <TextBlock Text="Geçmiş Tekliflerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnAlinanTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📥" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
+                            <TextBlock Text="Alınan Tekliflerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Click="btnBitenTekliflerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="✅" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
+                            <TextBlock Text="Biten Tekliflerim" Margin="5,0"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Border>
 
         <!-- Content Area -->
-        <ContentControl x:Name="contentArea" Grid.Column="1" Background="#ededed" />
+        <!-- Content Area -->
+        <ContentControl x:Name="contentArea" Grid.Column="1" Background="#f5f6fa">
+            <Grid x:Name="homeGrid" HorizontalAlignment="Left" VerticalAlignment="Center" Width="1106" Height="710">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1087*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <!-- Logo kısmı -->
+                    <RowDefinition Height="309"/>
+                    <!-- Butonlar kısmı -->
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!-- Üst Logo -->
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="285,0,0,0" Height="246" Width="450">
+                    <Image Source="/resimler/liya_logo.png" Width="358" Height="181" Stretch="Uniform"/>
+                </StackPanel>
+
+                <!-- Modern Butonlar -->
+                <UniformGrid Grid.Row="1" Columns="4" HorizontalAlignment="Left" VerticalAlignment="Center" Width="1011" Height="238">
+                    <Button Style="{StaticResource CardButtonStyle}" Click="HomeMusteri_Click">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="🏢" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="Müşteri İşlemleri" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource CardButtonStyle}" Click="HomeUrun_Click">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="📦" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="Ürün İşlemleri" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource CardButtonStyle}" Click="HomePersonel_Click">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="👤" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="Personel İşlemleri" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource CardButtonStyle}" Click="HomeTeklif_Click">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="📨" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="Teklif İşlemleri" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </UniformGrid>
+            </Grid>
+        </ContentControl>
+
     </Grid>
 </Window>
