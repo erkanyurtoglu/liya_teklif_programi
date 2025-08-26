@@ -1,22 +1,12 @@
 ﻿using teklif_programi.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using iText.IO.Font;
-using iText.Kernel.Colors;
-using iText.Kernel.Font;
-using iText.Kernel.Geom;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.Layout.Properties;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.Services;
@@ -29,15 +19,41 @@ namespace teklif_programi.ViewModels
     public class TeklifDetayViewModel : INotifyPropertyChanged
     {
         private readonly TeklifDbContext _context;
+        private readonly TeklifService _teklifService = new();
         private Teklif _teklif;
         private TeklifToplam? _teklifToplam;
         private string _urunArama = string.Empty;
+        private string _satisSozlesmesiMetni = string.Empty;
+        private string _selectedLanguage = "TR";
         public ObservableCollection<Urun> TumUrunler { get; set; } = new();
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
         private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
         private readonly HashSet<int> _silinecekUrunIdSet = new();
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; } = new();
-        private static readonly float[] PdfColumnWidths = { 2f, 5f, 1f, 2f, 2f, 2f };
+        public ObservableCollection<string> DilListe { get; } = new() { "TR", "EN" };
+
+        private const string SatisSozlesmesiTr = @"1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
+        2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
+        3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
+        4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
+        5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
+        6. Nakliye: Satıcı firmaya aittir.
+        7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
+        8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+           İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
+           HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
+
+        private const string SatisSozlesmesiEn = @"Our price is quoted in USD and includes VAT. The effective selling exchange rate of the Central Bank of the Republic of Turkey (CBRT) valid on the invoice date will be applied.
+        Device payment terms: 30% is payable in advance at the time of order, and the remaining amount upon delivery.
+        The devices are covered by a warranty of 1 year for mechanical parts and 2 years for electronic parts. Technical service and training services will be provided for a period of 10 years on a paid basis.
+        Delivery of the devices: Within 1 week following the order.
+        Offer validity: The offer is valid for 3 days from the quotation date.
+        Transportation: To be borne by the seller.
+        Alternative device prices are not included in the total quotation amount.
+        Bank Account Information: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+        İş Bankası: TR16 0006 4000 0014 1520 1653 38
+        Halk Bankası: TR51 0001 2009 4140 0010 2645 69";
+
 
         public TeklifDetayViewModel(Teklif teklif)
         {
@@ -57,6 +73,7 @@ namespace teklif_programi.ViewModels
             DovizKurlariGuncelle();
             UrunleriYukle();
             YukleTeklifDetaylari();
+            UpdateContractText();
         }
 
         public Teklif Teklif
@@ -117,6 +134,28 @@ namespace teklif_programi.ViewModels
                 }
             }
         }
+
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set
+            {
+                if (_selectedLanguage != value)
+                {
+                    _selectedLanguage = value;
+                    OnPropertyChanged();
+                    UpdateDescriptions();
+                    UpdateContractText();
+                }
+            }
+        }
+
+        public string SatisSozlesmesiMetni
+        {
+            get => _satisSozlesmesiMetni;
+            set { _satisSozlesmesiMetni = value; OnPropertyChanged(); }
+        }
+
 
         public decimal GenelIndirimOrani
         {
@@ -254,6 +293,8 @@ namespace teklif_programi.ViewModels
                         UrunId = s.UrunId,
                         UrunKodu = s.Urun?.UrunKodu ?? "Bilinmiyor",
                         UrunAciklamasi = s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
+                        UrunAciklamasiTr = s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
+                        UrunAciklamasiEn = s.Urun?.UrunAciklamasiEn ?? s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
                         Adet = s.Adet,
                         BirimFiyat = s.BirimFiyat,
                         IndirimliFiyat = s.IndirimliBirimFiyat,
@@ -275,6 +316,7 @@ namespace teklif_programi.ViewModels
                 TeklifToplam = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId)
                                ?? new TeklifToplam { TeklifId = Teklif.TeklifId };
 
+                UpdateDescriptions();
                 RecalculateAll();
             }
             catch (Exception ex)
@@ -304,7 +346,9 @@ namespace teklif_programi.ViewModels
                 {
                     UrunId = urun.UrunId,
                     UrunKodu = urun.UrunKodu,
-                    UrunAciklamasi = urun.UrunAciklamasi,
+                    UrunAciklamasiTr = urun.UrunAciklamasi,
+                    UrunAciklamasiEn = urun.UrunAciklamasiEn ?? urun.UrunAciklamasi,
+                    UrunAciklamasi = SelectedLanguage == "EN" ? (urun.UrunAciklamasiEn ?? urun.UrunAciklamasi) : urun.UrunAciklamasi,
                     Adet = 1,
                     BirimFiyat = birim,
                     IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(birim, Teklif.GenelIndirimOrani),
@@ -415,6 +459,21 @@ namespace teklif_programi.ViewModels
             "EUR" => urun.FiyatEUR,
             _ => urun.FiyatTL
         };
+
+        private void UpdateDescriptions()
+        {
+            foreach (var model in TeklifUrunler)
+            {
+                model.UrunAciklamasi = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
+            }
+            OnPropertyChanged(nameof(TeklifUrunler));
+        }
+
+        private void UpdateContractText()
+        {
+            SatisSozlesmesiMetni = SelectedLanguage == "EN" ? SatisSozlesmesiEn : SatisSozlesmesiTr;
+        }
+
 
         private static decimal GetFiyatByCurrency(TeklifUrunModel urun, string currency) => currency switch
         {
@@ -588,85 +647,12 @@ namespace teklif_programi.ViewModels
 
             try
             {
-                var sfd = new SaveFileDialog
-                {
-                    Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                    FileName = $"Teklif_{Teklif?.Musteri?.FirmaAdi}_{DateTime.Now:yyyyMMdd}.pdf"
-                };
-                if (sfd.ShowDialog() != true) return;
-
-                using var writer = new PdfWriter(sfd.FileName);
-                using var pdf = new PdfDocument(writer);
-                using var doc = new Document(pdf, PageSize.A4);
-                doc.SetMargins(20f, 5f, 20f, 5f);
-
-                // iText 9.2.0 için font tanımlama
-                PdfFont font = PdfFontFactory.CreateFont("Arial", PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-                PdfFont boldFont = PdfFontFactory.CreateFont("Arial", PdfEncodings.UTF8, PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED);
-
-                doc.Add(new Paragraph($"Teklif Detayları - {Teklif?.Musteri?.FirmaAdi}")
-                    .SetFont(boldFont).SetFontSize(16));
-                doc.Add(new Paragraph($"Tarih: {Teklif?.OlusturmaTarihi:dd.MM.yyyy}")
-                    .SetFont(font));
-                doc.Add(new Paragraph($"Durum: {Teklif?.Durum}")
-                    .SetFont(font));
-                doc.Add(new Paragraph($"Para Birimi: {Teklif?.ParaBirimi}")
-                    .SetFont(font));
-                doc.Add(new Paragraph($"Müşteri Notu: {Teklif?.MusteriNotu ?? "-"}")
-                    .SetFont(font));
-                doc.Add(new Paragraph("\n"));
-
-                var table = new Table(PdfColumnWidths).UseAllAvailableWidth();
-                AddHeader(table, "Ürün Kodu", boldFont);
-                AddHeader(table, "Açıklama", boldFont);
-                AddHeader(table, "Adet", boldFont);
-                AddHeader(table, "Birim Fiyat", boldFont);
-                AddHeader(table, $"İndirimli Fiyat (%{Teklif!.GenelIndirimOrani})", boldFont);
-                AddHeader(table, "Toplam", boldFont);
-
-                foreach (var u in TeklifUrunler)
-                {
-                    AddCell(table, u.UrunKodu, font);
-                    AddCell(table, u.UrunAciklamasi, font);
-                    AddCell(table, u.Adet.ToString(), font);
-                    AddCell(table, u.BirimFiyatText, font);
-                    AddCell(table, u.IndirimliFiyatText, font);
-                    AddCell(table, u.ToplamText, font);
-                }
-
-                doc.Add(table);
-                doc.Add(new Paragraph("\n"));
-                doc.Add(new Paragraph($"İndirimli Toplam: {IndirimliToplamText}")
-                    .SetFont(font));
-                doc.Add(new Paragraph($"KDV Tutarı: {KdvTutariText}")
-                    .SetFont(font));
-                doc.Add(new Paragraph($"Genel Toplam: {GenelToplamText}")
-                    .SetFont(font));
-
-                doc.Close();
-                MessageBox.Show("PDF indirildi.", "Bilgi", MessageBoxButton.OK, MessageBoxImage.Information);
+                _teklifService.PdfIndir(Teklif, TeklifUrunler, SatisSozlesmesiMetni, SelectedLanguage);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"PDF oluşturulurken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }
-
-        private static void AddHeader(Table t, string text, PdfFont font)
-        {
-            t.AddHeaderCell(new Cell()
-                .Add(new Paragraph(text).SetFont(font))
-                .SetBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .SetTextAlignment(TextAlignment.CENTER)
-                .SetPadding(5));
-        }
-
-        private static void AddCell(Table t, string text, PdfFont font)
-        {
-            t.AddCell(new Cell()
-                .Add(new Paragraph(text).SetFont(font))
-                .SetTextAlignment(TextAlignment.LEFT)
-                .SetPadding(5));
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

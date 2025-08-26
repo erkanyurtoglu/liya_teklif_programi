@@ -327,6 +327,250 @@ namespace teklif_programi.Services
                     MessageBox.Show($"PDF oluşturulurken bir hata oluştu: {ex.Message}",
                                     "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
+            }
+        }
+
+        public void PdfIndir(Teklif teklif,
+                             IEnumerable<TeklifUrunModel> urunler,
+                             string sozlesmeMetni,
+                             string selectedLanguage)
+        {
+            ArgumentNullException.ThrowIfNull(teklif);
+            ArgumentNullException.ThrowIfNull(urunler);
+            if (!urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
+
+            var firma = teklif.Musteri ?? _context.Musteriler.First(m => m.MusteriId == teklif.MusteriId);
+            var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
+
+            var genelIndirimOrani = teklif.GenelIndirimOrani;
+            var kdvOrani = teklif.KdvOrani;
+            var currency = teklif.ParaBirimi;
+            var ilgiliKisi = teklif.IlgiliKisi;
+            var ilgiliKisiTelefonu = teklif.IlgiliKisiTelefonu;
+            var ilgiliKisiEposta = teklif.IlgiliKisiEposta;
+
+            var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
+            var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani);
+
+            SaveFileDialog saveFileDialog = new()
+            {
+                Filter = "PDF Dosyaları (*.pdf)|*.pdf",
+                FileName = $"Teklif_{firma.FirmaAdi}_{DateTime.Now:yyyyMMdd}.pdf"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                using var writer = new PdfWriter(saveFileDialog.FileName);
+                using var pdf = new PdfDocument(writer);
+                using var doc = new Document(pdf, PageSize.A4);
+                doc.SetMargins(20f, 5f, 30f, 5f);
+
+                PdfFont regularFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arial.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+                PdfFont boldFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arialbd.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+                doc.SetFont(regularFont);
+
+                PdfFormXObject? girisBackground = null, teklifBackground = null, sozlesmeBackground = null;
+
+                var isEnglish = selectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase);
+                var girisPath = isEnglish ? GirisSayfaEnPath : GirisSayfaTrPath;
+                var teklifPath = isEnglish ? TeklifSayfaEnPath : TeklifSayfaTrPath;
+                var sozlesmePath = isEnglish ? SozlesmeSayfaEnPath : SozlesmeSayfaTrPath;
+
+                try
+                {
+                    if (File.Exists(girisPath))
+                    {
+                        using var girisPdf = new PdfDocument(new PdfReader(girisPath));
+                        if (girisPdf.GetNumberOfPages() > 0)
+                        {
+                            girisBackground = girisPdf.GetPage(1).CopyAsFormXObject(pdf);
+                        }
+                    }
+
+                    if (File.Exists(teklifPath))
+                    {
+                        using var teklifPdf = new PdfDocument(new PdfReader(teklifPath));
+                        if (teklifPdf.GetNumberOfPages() > 0)
+                        {
+                            teklifBackground = teklifPdf.GetPage(1).CopyAsFormXObject(pdf);
+                        }
+                    }
+
+                    if (File.Exists(sozlesmePath))
+                    {
+                        using var sozlesmePdf = new PdfDocument(new PdfReader(sozlesmePath));
+                        if (sozlesmePdf.GetNumberOfPages() > 0)
+                        {
+                            sozlesmeBackground = sozlesmePdf.GetPage(1).CopyAsFormXObject(pdf);
+                        }
+                    }
+
+                    PdfPage girisPage = pdf.AddNewPage();
+                    if (girisBackground != null)
+                    {
+                        PdfCanvas canvas = new PdfCanvas(girisPage);
+                        canvas.AddXObjectAt(girisBackground, 0, 0);
+                        canvas.Release();
+                    }
+
+                    doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                    PdfPage teklifPage = pdf.GetLastPage();
+                    if (teklifBackground != null)
+                    {
+                        PdfCanvas canvas = new PdfCanvas(teklifPage);
+                        canvas.AddXObjectAt(teklifBackground, 0, 0);
+                        canvas.Release();
+                    }
+
+                    Table infoTable = new Table(new float[] { 3.5f, 1f })
+                        .SetWidth(UnitValue.CreatePercentValue(80))
+                        .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
+                        .SetMarginTop(40f);
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Company Name:" : "Firma Adı:",
+                        firma.FirmaAdi,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Date:" : "Teklif Tarihi:",
+                        teklif.OlusturmaTarihi.ToString("dd.MM.yyyy"),
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Contact Person:" : "İlgili Kişi:",
+                        ilgiliKisi,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Quote No:" : "Teklif No:",
+                        teklif.TeklifId.ToString(),
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Phone:" : "Telefon:",
+                        ilgiliKisiTelefonu,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Prepared By:" : "Teklifi Yapan:",
+                        personel?.AdSoyad ?? string.Empty,
+                        boldFont,
+                        regularFont));
+
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Email:" : "E-posta:",
+                        ilgiliKisiEposta,
+                        boldFont,
+                        regularFont));
+                    infoTable.AddCell(CreateInfoCell(
+                        isEnglish ? "Personnel Phone:" : "Personel Telefon:",
+                        personel?.Telefon ?? string.Empty,
+                        boldFont,
+                        regularFont));
+
+                    doc.Add(infoTable);
+
+                    var topSeparator = new LineSeparator(new SolidLine(0.5f))
+                        .SetWidth(UnitValue.CreatePercentValue(100));
+                    doc.Add(topSeparator);
+
+                    doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
+                        .SetTextAlignment(TextAlignment.CENTER)
+                        .SetFont(boldFont)
+                        .SetFontSize(11));
+
+                    var bottomSeparator = new LineSeparator(new SolidLine(0.5f))
+                        .SetWidth(UnitValue.CreatePercentValue(100));
+                    doc.Add(bottomSeparator);
+
+                    Table table = new Table(ProductColumnWidths)
+                        .UseAllAvailableWidth()
+                        .SetMarginTop(5f);
+
+                    AddCellToHeader(table, "No", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Product Code" : "Ürün Kodu", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Description" : "Açıklama", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Quantity" : "Adet", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Unit Price" : "Birim Satış Fiyatı", boldFont);
+                    AddCellToHeader(table, isEnglish ? $"Discounted Unit Price(%{genelIndirimOrani})" : $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", boldFont);
+                    AddCellToHeader(table, isEnglish ? "Total Price" : "Toplam Fiyat", boldFont);
+
+                    int rowCount = 0;
+                    int urunNo = 1;
+                    foreach (var urun in urunler)
+                    {
+                        Color rowColor = rowCount % 2 == 0 ? ColorConstants.WHITE : new DeviceRgb(245, 245, 245);
+                        AddCellToBody(table, urunNo.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, urun.UrunKodu, regularFont, rowColor);
+                        AddCellToBody(table, urun.UrunAciklamasi, regularFont, rowColor);
+                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), regularFont, rowColor);
+                        AddCellToBody(table, FormatPrice(urun.Toplam, currency), regularFont, rowColor);
+                        rowCount++;
+                        urunNo++;
+                    }
+                    doc.Add(table);
+
+                    Table toplamTable = new Table(TotalColumnWidths)
+                        .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
+                        .SetMarginTop(40f);
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
+                            boldFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? "Grand Total:" : "Genel Toplam:",
+                            boldFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont)
+                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                    doc.Add(toplamTable);
+
+                    doc.SetMargins(80f, 30f, 40f, 30f);
+                    doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
+                    PdfPage sozlesmePage = pdf.GetLastPage();
+                    if (sozlesmeBackground != null)
+                    {
+                        PdfCanvas canvas = new PdfCanvas(sozlesmePage);
+                        canvas.AddXObjectAt(sozlesmeBackground, 0, 0);
+                        canvas.Release();
+                    }
+
+                    doc.Add(new Paragraph(sozlesmeMetni)
+                        .SetFont(regularFont)
+                        .SetFontSize(10));
+
+                    doc.Close();
+
+                    MessageBox.Show("PDF başarıyla oluşturuldu!",
+                                    "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"PDF oluşturulurken bir hata oluştu: {ex.Message}",
+                                    "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

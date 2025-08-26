@@ -192,6 +192,13 @@
                                       Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
                         </StackPanel>
 
+                        <StackPanel Margin="0,0,10,0">
+                            <TextBlock Text="Dil" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
+                            <ComboBox ItemsSource="{Binding DilListe}"
+                                      SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        </StackPanel>
+
                         <StackPanel Width="121">
                             <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding ParaBirimiListe}"
@@ -219,8 +226,8 @@
                      Text="{Binding PersonelAdiSoyadi, Mode=OneWay}"/>
 
                 </StackPanel>
-                
-                
+
+
             </Border>
 
         </Grid>
@@ -357,6 +364,7 @@
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
                 <Button Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding KaydetCommand}"/>
+                <Button Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" Width="150" Margin="0,0,10,0" Click="SatisSozlesmesi_Click"/>
                 <Button Content="PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding PdfIndirCommand}"/>
                 <Button Content="Farklı Teklif Olarak Kaydet" Style="{StaticResource ModernButtonStyle}" Width="210" Command="{Binding FarkliKaydetCommand}"/>
             </StackPanel>

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Windows;   
+using System.Windows;
 using System.Windows.Documents;
 using teklif_programi.ViewModels;
 
@@ -16,7 +16,9 @@ namespace teklif_programi.view
         private readonly SatisSozlesmesiViewModel _viewModel;
 
         // Teklif verme sürecindeki ViewModel (buradan sözleşme metni alınır / buraya kaydedilir)
-        private readonly TeklifVerViewModel _teklifVerViewModel;
+        private readonly TeklifVerViewModel? _teklifVerViewModel;
+        // Teklif detay sürecindeki ViewModel
+        private readonly TeklifDetayViewModel? _teklifDetayViewModel;
 
         // Pencere açıldığında saklanan varsayılan sözleşme metni (sıfırlama işlemi için)
         private readonly string _varsayilanSozlesmeMetni;
@@ -29,16 +31,31 @@ namespace teklif_programi.view
             _teklifVerViewModel = teklifVerViewModel;
             DataContext = _viewModel; // Binding için ViewModel'i bağlar
 
-            // Varsayılan metni sakla (sıfırlama butonu için)
             _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
 
-            // Eğer TeklifVerViewModel’de önceden bir sözleşme metni varsa onu yükle
             if (!string.IsNullOrWhiteSpace(_teklifVerViewModel.SatisSozlesmesiMetni))
             {
                 _viewModel.SozlesmeMetni = _teklifVerViewModel.SatisSozlesmesiMetni;
             }
 
-            // Metni RichTextBox'a satır satır yükle
+            LoadSozlesmeMetniToRichTextBox();
+        }
+
+        public SatisSozlesmesiWindow(TeklifDetayViewModel teklifDetayViewModel)
+        {
+            InitializeComponent();
+
+            _viewModel = new SatisSozlesmesiViewModel();
+            _teklifDetayViewModel = teklifDetayViewModel;
+            DataContext = _viewModel;
+
+            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
+
+            if (!string.IsNullOrWhiteSpace(_teklifDetayViewModel.SatisSozlesmesiMetni))
+            {
+                _viewModel.SozlesmeMetni = _teklifDetayViewModel.SatisSozlesmesiMetni;
+            }
+
             LoadSozlesmeMetniToRichTextBox();
         }
 
@@ -65,7 +82,10 @@ namespace teklif_programi.view
             _viewModel.SozlesmeMetni = textRange.Text;
 
             // Teklif süreci ViewModel’ine metni aktar
-            _teklifVerViewModel.SatisSozlesmesiMetni = _viewModel.SozlesmeMetni;
+            if (_teklifVerViewModel != null)
+                _teklifVerViewModel.SatisSozlesmesiMetni = _viewModel.SozlesmeMetni;
+            else if (_teklifDetayViewModel != null)
+                _teklifDetayViewModel.SatisSozlesmesiMetni = _viewModel.SozlesmeMetni;
 
             // Pencereyi kapat
             Close();

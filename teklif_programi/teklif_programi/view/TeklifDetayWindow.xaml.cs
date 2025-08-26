@@ -23,5 +23,14 @@ namespace teklif_programi.view
         {
 
         }
+
+        private void SatisSozlesmesi_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is TeklifDetayViewModel vm)
+            {
+                var window = new SatisSozlesmesiWindow(vm);
+                window.ShowDialog();
+            }
+        }
     }
 }
