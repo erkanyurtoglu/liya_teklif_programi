@@ -579,6 +579,12 @@ namespace teklif_programi.Services
                                     "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+
+            else
+            {
+                MessageBox.Show("İşlem iptal edildi, PDF kaydedilmedi.",
+                                "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         private static Cell CreateInfoCell(string label, string value, PdfFont boldFont, PdfFont regularFont)
