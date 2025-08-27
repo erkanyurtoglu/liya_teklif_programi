@@ -244,7 +244,6 @@ namespace teklif_programi.Services
                         .SetWidth(UnitValue.CreatePercentValue(100));
                     doc.Add(topSeparator);
 
-
                     doc.Add(new Paragraph(isEnglish ? "Offered Products" : "Teklif Edilen Ürünler")
                         .SetTextAlignment(TextAlignment.CENTER)
                         .SetFont(boldFont)
@@ -254,53 +253,81 @@ namespace teklif_programi.Services
                         .SetWidth(UnitValue.CreatePercentValue(100));
                     doc.Add(bottomSeparator);
 
-                    Table table = new Table(ProductColumnWidths)
+                    // --- ÜRÜN TABLOSU: indirim sütunu dinamik ---
+                    bool showDiscountCol = genelIndirimOrani > 0;
+
+                    // No, Ürün Kodu, Açıklama, Adet, Birim Fiyat
+                    var productWidths = new List<float> { 1f, 2f, 5f, 1f, 2f };
+                    if (showDiscountCol)
+                        productWidths.Add(2f);               // İndirimli Birim
+                    productWidths.Add(2f);                   // Toplam
+
+                    Table table = new Table(productWidths.ToArray())
                         .UseAllAvailableWidth()
                         .SetMarginTop(5f);
 
+                    // Header'lar
                     AddCellToHeader(table, "No", boldFont);
                     AddCellToHeader(table, isEnglish ? "Product Code" : "Ürün Kodu", boldFont);
                     AddCellToHeader(table, isEnglish ? "Description" : "Açıklama", boldFont);
                     AddCellToHeader(table, isEnglish ? "Quantity" : "Adet", boldFont);
                     AddCellToHeader(table, isEnglish ? "Unit Price" : "Birim Satış Fiyatı", boldFont);
-                    AddCellToHeader(table, isEnglish ? $"Discounted Unit Price(%{genelIndirimOrani})" : $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})", boldFont);
+                    if (showDiscountCol)
+                    {
+                        AddCellToHeader(table,
+                            isEnglish
+                                ? $"Discounted Unit Price(%{genelIndirimOrani})"
+                                : $"İndirimli Birim Satış Fiyatı(%{genelIndirimOrani})",
+                            boldFont);
+                    }
                     AddCellToHeader(table, isEnglish ? "Total Price" : "Toplam Fiyat", boldFont);
 
-                    int rowCount = 0;
-                    int urunNo = 1;
+                    // Satırlar
+                    int rowCount = 0, urunNo = 1;
                     foreach (var urun in urunler)
                     {
                         Color rowColor = rowCount % 2 == 0 ? ColorConstants.WHITE : new DeviceRgb(245, 245, 245);
+
                         AddCellToBody(table, urunNo.ToString(), regularFont, rowColor);
                         AddCellToBody(table, urun.UrunKodu, regularFont, rowColor);
                         AddCellToBody(table, urun.UrunAciklamasi, regularFont, rowColor);
                         AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor);
                         AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), regularFont, rowColor);
-                        AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), regularFont, rowColor);
+
+                        if (showDiscountCol)
+                            AddCellToBody(table, FormatPrice(urun.IndirimliFiyat, currency), regularFont, rowColor);
+
                         AddCellToBody(table, FormatPrice(urun.Toplam, currency), regularFont, rowColor);
-                        rowCount++;
-                        urunNo++;
+
+                        rowCount++; urunNo++;
                     }
                     doc.Add(table);
+
 
                     // --- Toplamlar bölümü ---
                     Table toplamTable = new Table(TotalColumnWidths)
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .SetMarginTop(40f);
 
-                    // İndirimli Toplam (çizgisiz)
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
-                            isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):",
-                            boldFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+                    // İndirimli Toplam 
+                    if(genelIndirimOrani > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                                isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):",
+                                boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+                    }
 
-                    // KDV (çizgisiz)
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
-                            isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
-                            boldFont));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
+                    // KDV 
+                    if(kdvOrani > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                        isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
+                        boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
+                    }
 
-                    // Paketleme varsa ekle (çizgisiz)
+                    // Paketleme varsa ekle 
                     if (paketlemeUcreti > 0)
                     {
                         toplamTable.AddCell(CreateRightAlignedHeaderCell(
