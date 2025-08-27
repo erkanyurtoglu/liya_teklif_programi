@@ -133,7 +133,7 @@
             </DataGrid.Resources>
 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Kod" Binding="{Binding Urun.UrunKodu}" IsReadOnly="True" Width="*">
+                <DataGridTextColumn Header="Kod" Binding="{Binding Urun.UrunKodu}" IsReadOnly="True" Width="0.7*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -143,7 +143,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Ürün" Binding="{Binding Urun.UrunAciklamasi}" IsReadOnly="True" Width="2*">
+                <DataGridTextColumn Header="Açıklama" Binding="{Binding Urun.UrunAciklamasi}" IsReadOnly="True" Width="2.2*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -153,7 +153,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" IsReadOnly="True" Width="*">
+                <DataGridTextColumn Header="Adet" Binding="{Binding Adet}" IsReadOnly="True" Width="0.6*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -193,7 +193,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridCheckBoxColumn Header="Tamamlandı" Binding="{Binding Tamamlandi, Mode=TwoWay}" Width="0.7*">
+                <DataGridCheckBoxColumn Header="Tamamlandı" Binding="{Binding Tamamlandi, Mode=TwoWay}" Width="0.6*">
                     <DataGridCheckBoxColumn.ElementStyle>
                         <Style TargetType="CheckBox">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -208,7 +208,7 @@
                     </DataGridCheckBoxColumn.EditingElementStyle>
                 </DataGridCheckBoxColumn>
 
-                <DataGridTemplateColumn Header="Üretim Notu" Width="2*">
+                <DataGridTemplateColumn Header="Üretim Notu" Width="2.5*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding UretimNotu, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -226,12 +226,13 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1" Margin="0,0,10,0">
-                <Grid>
+                <Grid Margin="0,0,451,0">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -250,6 +251,11 @@
                     <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="2" Margin="10,5" HorizontalAlignment="Center">
                         <TextBlock Text="Kar Oranı: " FontWeight="SemiBold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
                         <TextBlock Text="{Binding KarOraniText}" FontSize="14" Margin="5,0,0,0" Foreground="#13183E" FontFamily="Segoe UI"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="23" Margin="10,5" HorizontalAlignment="Center">
+                        <TextBlock Text="Paketleme Ücreti: " FontWeight="SemiBold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
+                        <TextBlock Text="{Binding PaketlemeUcretiText}" FontSize="14" Margin="5,0,0,0" Foreground="#13183E" FontFamily="Segoe UI"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="10,5" HorizontalAlignment="Center">

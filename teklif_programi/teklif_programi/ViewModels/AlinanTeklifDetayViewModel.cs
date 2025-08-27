@@ -26,6 +26,7 @@ namespace teklif_programi.ViewModels
             Teklif = _context.Teklifler
                 .Include(t => t.TeklifUrunleri)
                     .ThenInclude(tu => tu.Urun)
+                .Include(t => t.TeklifToplam)
                 .First(t => t.TeklifId == teklif.TeklifId);
 
             DovizKurlariGuncelle();
@@ -52,7 +53,8 @@ namespace teklif_programi.ViewModels
         // Hesaplanan değerler
         public decimal ToplamFiyat => Urunler.Sum(u => u.ToplamTutar);
         public decimal KdvTutari => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, Teklif.KdvOrani);
-        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, Teklif.KdvOrani, Teklif.TeklifToplam?.PaketlemeUcreti ?? 0);
+        public decimal PaketlemeUcreti => Teklif.TeklifToplam?.PaketlemeUcreti ?? 0;
+        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, Teklif.KdvOrani, PaketlemeUcreti);
         public decimal ToplamMaliyet => Urunler.Sum(u => u.Adet * ConvertTlToTeklifCurrency(u.Urun.MaliyetFiyati));
         public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
         public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
@@ -72,6 +74,9 @@ namespace teklif_programi.ViewModels
         private string _kdvTutariText = string.Empty;
         public string KdvTutariText { get => _kdvTutariText; set { _kdvTutariText = value; OnPropertyChanged(); } }
 
+        private string _paketlemeUcretiText = string.Empty;
+        public string PaketlemeUcretiText { get => _paketlemeUcretiText; set { _paketlemeUcretiText = value; OnPropertyChanged(); } }
+
         private string _genelToplamText = string.Empty;
         public string GenelToplamText { get => _genelToplamText; set { _genelToplamText = value; OnPropertyChanged(); } }
 
@@ -82,6 +87,7 @@ namespace teklif_programi.ViewModels
             KarOraniText = KarOrani.ToString("F2") + "%";
             ToplamFiyatText = FormatPrice(ToplamFiyat);
             KdvTutariText = FormatPrice(KdvTutari);
+            PaketlemeUcretiText = FormatPrice(PaketlemeUcreti);
             GenelToplamText = FormatPrice(GenelToplam);
         }
 
@@ -106,6 +112,7 @@ namespace teklif_programi.ViewModels
             DovizKurlari.Clear();
             foreach (var kur in kurListesi) DovizKurlari.Add(kur);
         }
+
 
         private static CultureInfo GetCultureByCurrency(string currency)
         {
