@@ -16,6 +16,7 @@ namespace teklif_programi.ViewModels
         private readonly TeklifDbContext _context;
         public Teklif Teklif { get; }
         public ObservableCollection<TeklifUrun> Urunler { get; } = new();
+        public ObservableCollection<DovizKuru> DovizKurlari { get; } = new();
 
         public RelayCommand KaydetCommand { get; }
 
@@ -27,8 +28,14 @@ namespace teklif_programi.ViewModels
                     .ThenInclude(tu => tu.Urun)
                 .First(t => t.TeklifId == teklif.TeklifId);
 
+            DovizKurlariGuncelle();
+
             foreach (var u in Teklif.TeklifUrunleri)
             {
+                u.BirimFiyatText = FormatPrice(u.BirimFiyat);
+                u.IndirimliBirimFiyatText = FormatPrice(u.IndirimliBirimFiyat);
+                var maliyet = ConvertTlToTeklifCurrency(u.Urun.MaliyetFiyati);
+                u.MaliyetFiyatText = FormatPrice(maliyet);
                 Urunler.Add(u);
             }
 
@@ -46,7 +53,7 @@ namespace teklif_programi.ViewModels
         public decimal ToplamFiyat => Urunler.Sum(u => u.ToplamTutar);
         public decimal KdvTutari => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, Teklif.KdvOrani);
         public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, Teklif.KdvOrani, Teklif.TeklifToplam?.PaketlemeUcreti ?? 0);
-        public decimal ToplamMaliyet => Urunler.Sum(u => u.Adet * u.Urun.MaliyetFiyati);
+        public decimal ToplamMaliyet => Urunler.Sum(u => u.Adet * ConvertTlToTeklifCurrency(u.Urun.MaliyetFiyati));
         public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
         public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
 
@@ -81,6 +88,23 @@ namespace teklif_programi.ViewModels
         private string FormatPrice(decimal price)
         {
             return price.ToString("C2", GetCultureByCurrency(Teklif.ParaBirimi));
+        }
+
+        private decimal ConvertTlToTeklifCurrency(decimal tlValue)
+        {
+            return Teklif.ParaBirimi switch
+            {
+                "USD" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "USD")?.Satis ?? 1),
+                "EUR" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "EUR")?.Satis ?? 1),
+                _ => tlValue
+            };
+        }
+
+        private void DovizKurlariGuncelle()
+        {
+            var kurListesi = DovizServisi.KurListesiniGetir();
+            DovizKurlari.Clear();
+            foreach (var kur in kurListesi) DovizKurlari.Add(kur);
         }
 
         private static CultureInfo GetCultureByCurrency(string currency)

@@ -50,5 +50,16 @@ namespace teklif_programi.Models
 
         // Urun: Bağlı ürün nesnesi (lazy loading için virtual)
         public virtual Urun Urun { get; set; } = null!;
+
+
+        // Görüntüleme için biçimlendirilmiş fiyat alanları
+        [NotMapped]
+        public string BirimFiyatText { get; set; } = string.Empty;
+
+        [NotMapped]
+        public string IndirimliBirimFiyatText { get; set; } = string.Empty;
+
+        [NotMapped]
+        public string MaliyetFiyatText { get; set; } = string.Empty;
     }
 }

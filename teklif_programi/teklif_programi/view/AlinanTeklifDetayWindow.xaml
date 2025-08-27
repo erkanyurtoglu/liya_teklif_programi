@@ -163,7 +163,7 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimFiyat, StringFormat={}{0:N2}}" IsReadOnly="True" Width="*">
+                <DataGridTextColumn Header="Birim Maliyet" Binding="{Binding MaliyetFiyatText}" IsReadOnly="True" Width="*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -173,7 +173,17 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTextColumn Header="İndirimli Birim Satış Fiyatı" Binding="{Binding IndirimliBirimFiyat, StringFormat={}{0:N2}}" IsReadOnly="True" Width="1.5*">
+                <DataGridTextColumn Header="Birim Satış Fiyatı" Binding="{Binding BirimFiyatText}" IsReadOnly="True" Width="*">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="HorizontalAlignment" Value="Center"/>
+                            <Setter Property="VerticalAlignment" Value="Center"/>
+                            <Setter Property="TextAlignment" Value="Center"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTextColumn Header="İndirimli Birim Satış Fiyatı" Binding="{Binding IndirimliBirimFiyatText}" IsReadOnly="True" Width="1.5*">
                     <DataGridTextColumn.ElementStyle>
                         <Style TargetType="TextBlock">
                             <Setter Property="HorizontalAlignment" Value="Center"/>
