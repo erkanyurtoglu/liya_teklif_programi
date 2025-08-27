@@ -171,7 +171,7 @@
             <Border Grid.Column="1" Background="White" CornerRadius="4" BorderBrush="#ededed" BorderThickness="1" Margin="0,0,3,21" Padding="0,10">
                 <StackPanel Margin="0,0,0,10" >
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,10">
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="Genel İndirim (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="120"
@@ -189,7 +189,7 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="10,0,0,10">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="20,0,0,10">
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="Durum" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding Durumlar}"

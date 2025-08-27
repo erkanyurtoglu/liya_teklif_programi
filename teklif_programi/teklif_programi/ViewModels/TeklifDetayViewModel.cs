@@ -92,7 +92,13 @@ namespace teklif_programi.ViewModels
         public TeklifToplam? TeklifToplam
         {
             get => _teklifToplam;
-            set { _teklifToplam = value; OnPropertyChanged(); UpdateToplamlarText(); }
+            set
+            {
+                _teklifToplam = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PaketlemeUcret));
+                UpdateToplamlarText();
+            }
         }
 
         public ObservableCollection<string> Durumlar { get; }
@@ -190,6 +196,23 @@ namespace teklif_programi.ViewModels
                 }
             }
         }
+
+        public decimal PaketlemeUcret
+        {
+            get => TeklifToplam?.PaketlemeUcreti ?? 0;
+            set
+            {
+                if (TeklifToplam == null) return;
+                var val = Math.Max(0, value);
+                if (TeklifToplam.PaketlemeUcreti != val)
+                {
+                    TeklifToplam.PaketlemeUcreti = val;
+                    OnPropertyChanged();
+                    UpdateToplamlarText();
+                }
+            }
+        }
+
 
         public string PersonelAdiSoyadi => Teklif?.Personel != null ? Teklif.Personel.AdSoyad : "Personel bilgisi yok";
 
