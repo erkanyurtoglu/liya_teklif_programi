@@ -44,6 +44,7 @@ namespace teklif_programi.Services
                                      IEnumerable<TeklifUrunModel> urunler,
                                      decimal genelIndirimOrani,
                                      decimal kdvOrani,
+                                     decimal paketlemeUcreti,   
                                      string currency,
                                      string ilgiliKisi,
                                      string ilgiliKisiTelefonu,
@@ -89,13 +90,14 @@ namespace teklif_programi.Services
 
             var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
-            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani, paketlemeUcreti);
 
             _context.TeklifToplamlari.Add(new TeklifToplam
             {
                 TeklifId = teklif.TeklifId,
                 IndirimliToplam = toplamFiyat,
                 KdvTutari = kdvTutari,
+                PaketlemeUcreti = paketlemeUcreti,
                 GenelToplam = genelToplam
             });
 
@@ -281,25 +283,44 @@ namespace teklif_programi.Services
                     }
                     doc.Add(table);
 
+                    // --- Toplamlar bölümü ---
                     Table toplamTable = new Table(TotalColumnWidths)
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .SetMarginTop(40f);
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
+
+                    // İndirimli Toplam (çizgisiz)
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):",
+                            boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+
+                    // KDV (çizgisiz)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
-                            boldFont)
-                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont)
-                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                            boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
 
+                    // Paketleme varsa ekle (çizgisiz)
+                    if (paketlemeUcreti > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                                isEnglish ? "Packaging Fee:" : "Paketleme Ücreti:",
+                                boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(paketlemeUcreti, currency), regularFont));
+                    }
+
+                    // GENEL TOPLAM (SADECE burada üst çizgi var)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
                             boldFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont)
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(
+                            FormatPrice(genelToplam, currency), regularFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
                     doc.Add(toplamTable);
+
+
 
                     doc.SetMargins(80f, 30f, 40f, 30f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
@@ -534,25 +555,34 @@ namespace teklif_programi.Services
                     }
                     doc.Add(table);
 
+                    // --- Toplamlar bölümü ---
                     Table toplamTable = new Table(TotalColumnWidths)
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .SetMarginTop(40f);
-                    toplamTable.AddCell(CreateRightAlignedHeaderCell(isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):", boldFont));
+
+                    // İndirimli Toplam (çizgisiz)
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):",
+                            boldFont));
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(toplamFiyat, currency), regularFont));
+
+                    // KDV (çizgisiz)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? $"VAT (%{kdvOrani}):" : $"KDV (%{kdvOrani}):",
-                            boldFont)
-                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont)
-                        .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+                            boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
 
+                    // GENEL TOPLAM (SADECE burada üst çizgi var)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
                             boldFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
-                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(genelToplam, currency), regularFont)
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(
+                            FormatPrice(genelToplam, currency), regularFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
                     doc.Add(toplamTable);
+
 
                     doc.SetMargins(80f, 30f, 40f, 30f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));

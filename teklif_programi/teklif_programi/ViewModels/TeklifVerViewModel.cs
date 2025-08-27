@@ -377,6 +377,20 @@ namespace teklif_programi.ViewModels
             set { _kdvOrani = Math.Clamp(value, 0, 100); OnPropertyChanged(); RecalculateAll(); }
         }
 
+        private decimal _paketlemeUcret = 0;
+        public decimal PaketlemeUcret
+        {
+            get => _paketlemeUcret;
+            set
+            {
+                _paketlemeUcret = Math.Max(0, value);
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(GenelToplam));
+                UpdateTotalsText();
+            }
+        }
+
+
         private void RecalculateAll()
         {
             foreach (var urun in SecilenUrunler)
@@ -417,7 +431,7 @@ namespace teklif_programi.ViewModels
         // Toplam ve KDV hesaplamaları merkezi hesaba devredildi
         public decimal ToplamFiyat => TeklifHesaplayici.HesaplaToplamFiyat(SecilenUrunler);
         public decimal KdvUcreti => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, KdvOrani);
-        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, KdvOrani);
+        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, KdvOrani, PaketlemeUcret);
         public decimal ToplamMaliyet => TeklifHesaplayici.HesaplaToplamMaliyet(SecilenUrunler);
         public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
         public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
@@ -436,6 +450,7 @@ namespace teklif_programi.ViewModels
                                               SecilenUrunler,
                                               GenelIndirimOrani,
                                               KdvOrani,
+                                              PaketlemeUcret,
                                               SelectedCurrency,
                                               IlgiliKisi,
                                               IlgiliKisiNumarasi,

@@ -21,6 +21,9 @@ namespace teklif_programi.Models
         public decimal GenelToplam { get; set; }
         // Teklifin KDV dahil genel toplam tutarı.
 
+        public decimal PaketlemeUcreti { get; set; }
+        // Teklif için eklenen paketleme ücreti.
+
         public virtual Teklif Teklif { get; set; } = null!;
         // İlgili teklif nesnesi (1-1 ilişki).
     }

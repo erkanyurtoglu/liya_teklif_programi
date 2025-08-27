@@ -38,12 +38,16 @@ namespace teklif_programi.Services
             => toplamFiyat * (kdvOrani / 100);
 
         /// <summary>
-        /// Toplam fiyat ve KDV oranına göre genel toplamı hesaplar.
+        /// Toplam fiyat, KDV oranı ve paketleme ücreti ile genel toplamı hesaplar.
         /// </summary>
-        public static decimal HesaplaGenelToplam(decimal toplamFiyat, decimal kdvOrani)
+        /// <param name="toplamFiyat">Ürünlerin indirimli toplam fiyatı.</param>
+        /// <param name="kdvOrani">KDV yüzdesi.</param>
+        /// <param name="paketlemeUcreti">Ek paketleme ücreti.</param>
+        /// <returns>KDV ve paketleme dahil genel toplam.</returns>
+        public static decimal HesaplaGenelToplam(decimal toplamFiyat, decimal kdvOrani, decimal paketlemeUcreti = 0)
         {
             var kdv = HesaplaKdv(toplamFiyat, kdvOrani);
-            return toplamFiyat + kdv;
+            return toplamFiyat + kdv + paketlemeUcreti;
         }
 
         /// <summary>

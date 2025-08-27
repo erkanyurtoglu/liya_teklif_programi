@@ -36,6 +36,14 @@ namespace teklif_programi.Data.Configurations
                 .IsRequired();
             // GenelToplam zorunlu bir alan, 2 ondalık basamaklı decimal.
 
+            builder.Property(t => t.PaketlemeUcreti)
+                   .HasColumnType("decimal(18,2)")
+                   .HasDefaultValue(0m)
+                   .ValueGeneratedNever()   // 0 dâhil her değeri EF gönderir
+                   .IsRequired();
+
+            // Paketleme ücreti alanı, varsayılan 0 değerli.
+
             builder.HasOne(t => t.Teklif)
                 .WithOne(tk => tk.TeklifToplam)
                 .HasForeignKey<TeklifToplam>(t => t.TeklifId)
