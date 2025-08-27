@@ -383,7 +383,7 @@
             </Border>
 
             <!-- Toplamlar -->
-            <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1" Margin="22,0,37,0">
+            <Border Grid.Column="1" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1" Margin="0,0,37,0">
                 <Grid HorizontalAlignment="Right">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
