@@ -44,7 +44,8 @@ namespace teklif_programi.Services
                                      IEnumerable<TeklifUrunModel> urunler,
                                      decimal genelIndirimOrani,
                                      decimal kdvOrani,
-                                     decimal paketlemeUcreti,   
+                                     decimal paketlemeUcreti,
+                                     decimal tasimaUcreti,
                                      string currency,
                                      string ilgiliKisi,
                                      string ilgiliKisiTelefonu,
@@ -90,7 +91,7 @@ namespace teklif_programi.Services
 
             var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
-            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani, paketlemeUcreti);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani, paketlemeUcreti, tasimaUcreti);
 
             _context.TeklifToplamlari.Add(new TeklifToplam
             {
@@ -98,6 +99,7 @@ namespace teklif_programi.Services
                 IndirimliToplam = toplamFiyat,
                 KdvTutari = kdvTutari,
                 PaketlemeUcreti = paketlemeUcreti,
+                TasimaUcreti = tasimaUcreti,
                 GenelToplam = genelToplam
             });
 
@@ -336,6 +338,17 @@ namespace teklif_programi.Services
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(paketlemeUcreti, currency), regularFont));
                     }
 
+                    // Taşıma varsa ekle
+                    if (tasimaUcreti > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                                isEnglish ? "Transport Fee:" : "Taşıma Ücreti:",
+                                boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(tasimaUcreti, currency), regularFont));
+                    }
+
+
+
                     // GENEL TOPLAM (SADECE burada üst çizgi var)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
@@ -405,9 +418,12 @@ namespace teklif_programi.Services
             var ilgiliKisiTelefonu = teklif.IlgiliKisiTelefonu;
             var ilgiliKisiEposta = teklif.IlgiliKisiEposta;
 
+            var paketlemeUcreti = teklif.TeklifToplam?.PaketlemeUcreti ?? 0;
+            var tasimaUcreti = teklif.TeklifToplam?.TasimaUcreti ?? 0;
+
             var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
-            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani, paketlemeUcreti, tasimaUcreti);
 
             SaveFileDialog saveFileDialog = new()
             {
@@ -624,6 +640,23 @@ namespace teklif_programi.Services
                             boldFont));
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
                     }
+
+                    if (paketlemeUcreti > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? "Packaging Fee:" : "Paketleme Ücreti:",
+                            boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(paketlemeUcreti, currency), regularFont));
+                    }
+
+                    if (tasimaUcreti > 0)
+                    {
+                        toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                            isEnglish ? "Transport Fee:" : "Taşıma Ücreti:",
+                            boldFont));
+                        toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(tasimaUcreti, currency), regularFont));
+                    }
+
 
 
                     // GENEL TOPLAM (SADECE burada üst çizgi var)

@@ -97,6 +97,7 @@ namespace teklif_programi.ViewModels
                 _teklifToplam = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PaketlemeUcret));
+                OnPropertyChanged(nameof(TasimaUcret));
                 UpdateToplamlarText();
             }
         }
@@ -207,6 +208,22 @@ namespace teklif_programi.ViewModels
                 if (TeklifToplam.PaketlemeUcreti != val)
                 {
                     TeklifToplam.PaketlemeUcreti = val;
+                    OnPropertyChanged();
+                    UpdateToplamlarText();
+                }
+            }
+        }
+
+        public decimal TasimaUcret
+        {
+            get => TeklifToplam?.TasimaUcreti ?? 0;
+            set
+            {
+                if (TeklifToplam == null) return;
+                var val = Math.Max(0, value);
+                if (TeklifToplam.TasimaUcreti != val)
+                {
+                    TeklifToplam.TasimaUcreti = val;
                     OnPropertyChanged();
                     UpdateToplamlarText();
                 }
@@ -339,7 +356,8 @@ namespace teklif_programi.ViewModels
                 }
 
                 TeklifToplam = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId)
-                               ?? new TeklifToplam { TeklifId = Teklif.TeklifId, PaketlemeUcreti = 0 };
+                               ?? new TeklifToplam { TeklifId = Teklif.TeklifId, PaketlemeUcreti = 0, TasimaUcreti = 0 };
+
 
                 UpdateDescriptions();
                 RecalculateAll();
@@ -434,7 +452,7 @@ namespace teklif_programi.ViewModels
 
             var indirimliToplam = TeklifHesaplayici.HesaplaToplamFiyat(TeklifUrunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(indirimliToplam, Teklif.KdvOrani);
-            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(indirimliToplam, Teklif.KdvOrani, TeklifToplam.PaketlemeUcreti);
+            var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(indirimliToplam, Teklif.KdvOrani, TeklifToplam.PaketlemeUcreti, TeklifToplam.TasimaUcreti);
 
             var toplamMaliyet = TeklifHesaplayici.HesaplaToplamMaliyet(TeklifUrunler);
             var karTutari = TeklifHesaplayici.HesaplaKarTutari(indirimliToplam, toplamMaliyet);
@@ -577,6 +595,7 @@ namespace teklif_programi.ViewModels
                     dbTop.IndirimliToplam = TeklifToplam?.IndirimliToplam ?? 0;
                     dbTop.KdvTutari = TeklifToplam?.KdvTutari ?? 0;
                     dbTop.PaketlemeUcreti = TeklifToplam?.PaketlemeUcreti ?? 0;
+                    dbTop.TasimaUcreti = TeklifToplam?.TasimaUcreti ?? 0;
                     dbTop.GenelToplam = TeklifToplam?.GenelToplam ?? 0;
                 }
                 else
@@ -587,6 +606,7 @@ namespace teklif_programi.ViewModels
                         IndirimliToplam = TeklifToplam?.IndirimliToplam ?? 0,
                         KdvTutari = TeklifToplam?.KdvTutari ?? 0,
                         PaketlemeUcreti = TeklifToplam?.PaketlemeUcreti ?? 0,
+                        TasimaUcreti = TeklifToplam?.TasimaUcreti ?? 0,
                         GenelToplam = TeklifToplam?.GenelToplam ?? 0
                     });
                 }
@@ -645,7 +665,7 @@ namespace teklif_programi.ViewModels
 
                 var indTop = TeklifUrunler.Sum(u => u.Toplam);
                 var kdv = indTop * (yeni.KdvOrani / 100m);
-                var genTop = indTop + kdv + (TeklifToplam?.PaketlemeUcreti ?? 0);
+                var genTop = indTop + kdv + (TeklifToplam?.PaketlemeUcreti ?? 0) + (TeklifToplam?.TasimaUcreti ?? 0);
 
                 _context.TeklifToplamlari.Add(new TeklifToplam
                 {
@@ -653,6 +673,7 @@ namespace teklif_programi.ViewModels
                     IndirimliToplam = indTop,
                     KdvTutari = kdv,
                     PaketlemeUcreti = TeklifToplam?.PaketlemeUcreti ?? 0,
+                    TasimaUcreti = TeklifToplam?.TasimaUcreti ?? 0,
                     GenelToplam = genTop
                 });
 

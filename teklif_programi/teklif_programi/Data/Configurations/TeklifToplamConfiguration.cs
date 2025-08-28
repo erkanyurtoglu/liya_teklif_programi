@@ -44,6 +44,14 @@ namespace teklif_programi.Data.Configurations
 
             // Paketleme ücreti alanı, varsayılan 0 değerli.
 
+            builder.Property(t => t.TasimaUcreti)
+                   .HasColumnType("decimal(18,2)")
+                   .HasDefaultValue(0m)
+                   .ValueGeneratedNever()
+                   .IsRequired();
+
+            // Taşıma ücreti alanı, varsayılan 0 değerli.
+
             builder.HasOne(t => t.Teklif)
                 .WithOne(tk => tk.TeklifToplam)
                 .HasForeignKey<TeklifToplam>(t => t.TeklifId)

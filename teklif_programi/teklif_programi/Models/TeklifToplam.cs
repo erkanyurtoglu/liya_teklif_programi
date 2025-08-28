@@ -24,6 +24,9 @@ namespace teklif_programi.Models
         public decimal PaketlemeUcreti { get; set; }
         // Teklif için eklenen paketleme ücreti.
 
+        public decimal TasimaUcreti { get; set; }
+        // Teklif için eklenen taşıma ücreti.
+
         public virtual Teklif Teklif { get; set; } = null!;
         // İlgili teklif nesnesi (1-1 ilişki).
     }

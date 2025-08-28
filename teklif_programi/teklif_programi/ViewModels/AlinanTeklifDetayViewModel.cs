@@ -54,7 +54,8 @@ namespace teklif_programi.ViewModels
         public decimal ToplamFiyat => Urunler.Sum(u => u.ToplamTutar);
         public decimal KdvTutari => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, Teklif.KdvOrani);
         public decimal PaketlemeUcreti => Teklif.TeklifToplam?.PaketlemeUcreti ?? 0;
-        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, Teklif.KdvOrani, PaketlemeUcreti);
+        public decimal TasimaUcreti => Teklif.TeklifToplam?.TasimaUcreti ?? 0;
+        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, Teklif.KdvOrani, PaketlemeUcreti, TasimaUcreti);
         public decimal ToplamMaliyet => Urunler.Sum(u => u.Adet * ConvertTlToTeklifCurrency(u.Urun.MaliyetFiyati));
         public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
         public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
@@ -77,6 +78,9 @@ namespace teklif_programi.ViewModels
         private string _paketlemeUcretiText = string.Empty;
         public string PaketlemeUcretiText { get => _paketlemeUcretiText; set { _paketlemeUcretiText = value; OnPropertyChanged(); } }
 
+        private string _tasimaUcretiText = string.Empty;
+        public string TasimaUcretiText { get => _tasimaUcretiText; set { _tasimaUcretiText = value; OnPropertyChanged(); } }
+
         private string _genelToplamText = string.Empty;
         public string GenelToplamText { get => _genelToplamText; set { _genelToplamText = value; OnPropertyChanged(); } }
 
@@ -88,6 +92,7 @@ namespace teklif_programi.ViewModels
             ToplamFiyatText = FormatPrice(ToplamFiyat);
             KdvTutariText = FormatPrice(KdvTutari);
             PaketlemeUcretiText = FormatPrice(PaketlemeUcreti);
+            TasimaUcretiText = FormatPrice(TasimaUcreti);
             GenelToplamText = FormatPrice(GenelToplam);
         }
 

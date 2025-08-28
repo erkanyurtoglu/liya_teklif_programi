@@ -226,12 +226,13 @@
             </Grid.ColumnDefinitions>
 
             <Border Grid.Column="0" Background="White" CornerRadius="4" Padding="15" BorderBrush="#ededed" BorderThickness="1" Margin="0,0,10,0">
-                <Grid Margin="0,0,451,0">
+                <Grid Margin="0,0,50,0">
                     <Grid.RowDefinitions>
                         <RowDefinition/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
@@ -253,9 +254,14 @@
                         <TextBlock Text="{Binding KarOraniText}" FontSize="14" Margin="5,0,0,0" Foreground="#13183E" FontFamily="Segoe UI"/>
                     </StackPanel>
 
-                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="23" Margin="10,5" HorizontalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="3" Margin="10,5" HorizontalAlignment="Center">
                         <TextBlock Text="Paketleme Ücreti: " FontWeight="SemiBold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI"/>
                         <TextBlock Text="{Binding PaketlemeUcretiText}" FontSize="14" Margin="5,0,0,0" Foreground="#13183E" FontFamily="Segoe UI"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="4" Margin="10,5" HorizontalAlignment="Center">
+                        <TextBlock Text="Taşıma Ücreti: " FontWeight="SemiBold" FontSize="14" Foreground="#13183E" FontFamily="Segoe UI" Width="94"/>
+                        <TextBlock Text="{Binding TasimaUcretiText}" FontSize="14" Margin="5,0,0,0" Foreground="#13183E" FontFamily="Segoe UI"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="10,5" HorizontalAlignment="Center">

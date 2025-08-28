@@ -390,6 +390,20 @@ namespace teklif_programi.ViewModels
             }
         }
 
+        private decimal _tasimaUcret = 0;
+        public decimal TasimaUcret
+        {
+            get => _tasimaUcret;
+            set
+            {
+                _tasimaUcret = Math.Max(0, value);
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(GenelToplam));
+                UpdateTotalsText();
+            }
+        }
+
+
 
         private void RecalculateAll()
         {
@@ -431,7 +445,7 @@ namespace teklif_programi.ViewModels
         // Toplam ve KDV hesaplamaları merkezi hesaba devredildi
         public decimal ToplamFiyat => TeklifHesaplayici.HesaplaToplamFiyat(SecilenUrunler);
         public decimal KdvUcreti => TeklifHesaplayici.HesaplaKdv(ToplamFiyat, KdvOrani);
-        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, KdvOrani, PaketlemeUcret);
+        public decimal GenelToplam => TeklifHesaplayici.HesaplaGenelToplam(ToplamFiyat, KdvOrani, PaketlemeUcret, TasimaUcret);
         public decimal ToplamMaliyet => TeklifHesaplayici.HesaplaToplamMaliyet(SecilenUrunler);
         public decimal KarTutari => TeklifHesaplayici.HesaplaKarTutari(ToplamFiyat, ToplamMaliyet);
         public decimal KarOrani => TeklifHesaplayici.HesaplaKarOrani(KarTutari, ToplamMaliyet);
@@ -451,6 +465,7 @@ namespace teklif_programi.ViewModels
                                               GenelIndirimOrani,
                                               KdvOrani,
                                               PaketlemeUcret,
+                                              TasimaUcret,
                                               SelectedCurrency,
                                               IlgiliKisi,
                                               IlgiliKisiNumarasi,

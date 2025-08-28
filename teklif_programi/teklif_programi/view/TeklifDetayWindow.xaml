@@ -124,8 +124,8 @@
                 <RowDefinition Height="33*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="437*"/>
-                <ColumnDefinition Width="278*"/>
+                <ColumnDefinition Width="574*"/>
+                <ColumnDefinition Width="541*"/>
 
                 <ColumnDefinition Width="345"/>
             </Grid.ColumnDefinitions>
@@ -188,6 +188,12 @@
                             <TextBlock Text="Paketleme Ücreti" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="120"
                                      Text="{Binding PaketlemeUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
+                                     PreviewTextInput="OnlyAllowNumbers"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="Taşıma Ücreti" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
+                            <TextBox Style="{StaticResource ModernTextBox}" Width="120"
+                                     Text="{Binding TasimaUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
                                      PreviewTextInput="OnlyAllowNumbers"/>
                         </StackPanel>
                     </StackPanel>
