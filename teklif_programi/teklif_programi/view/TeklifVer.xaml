@@ -238,8 +238,30 @@
 
             <!-- Teslimat Bilgisi -->
             <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="10" Margin="0,0,0,20" BorderBrush="#ededed" BorderThickness="1">
+                <StackPanel>
 
+                    <!-- Teslimat Şekli -->
+                    <StackPanel Margin="0,0,0,10">
+                        <TextBlock Text="Teslimat Şekli:" 
+                       FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource ModernTextBox}"
+                     Text="{Binding TeslimatSekli, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" TextWrapping="Wrap" Height="35"
+                     ToolTip="Örn: Kara yolu, Hava yolu, Deniz yolu"/>
+                    </StackPanel>
+
+                    <!-- Teslimat Yeri -->
+                    <StackPanel>
+                        <TextBlock Text="Teslimat Yeri:" 
+                       FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
+                        <TextBox Style="{StaticResource ModernTextBox}"
+                     Text="{Binding TeslimatYeri, UpdateSourceTrigger=PropertyChanged}"
+                     AcceptsReturn="True" TextWrapping="Wrap" Height="39"
+                     ToolTip="Örn: Demirexport fabrikasına teslimat"/>
+                    </StackPanel>
+                </StackPanel>
             </Border>
+
 
             <!-- Dil ve Para Birimi -->
             <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="10" Margin="10,0,0,20" BorderBrush="#ededed" BorderThickness="1">
