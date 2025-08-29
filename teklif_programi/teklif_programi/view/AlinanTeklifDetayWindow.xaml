@@ -206,7 +206,7 @@
                             <ComboBox ItemsSource="{Binding Durumlar}"
                                       SelectedItem="{Binding Teklif.Durum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-                                      IsEnabled="False"/>
+                                      IsEnabled="True"/>
                         </StackPanel>
 
                         <StackPanel Margin="0,0,10,0">
@@ -373,7 +373,7 @@
             </Border>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
-
+                <Button Content="Kaydet" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding KaydetCommand}"/>
                 <Button Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" Width="150" Margin="0,0,10,0" Click="SatisSozlesmesi_Click"/>
                 <Button Content="PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding PdfIndirCommand}"/>
 
