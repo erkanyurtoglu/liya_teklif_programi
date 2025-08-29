@@ -39,6 +39,7 @@ namespace teklif_programi.Services
         private static readonly string GirisSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfaEnglish.pdf";
         private static readonly string TeklifSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfaEnglish.pdf";
         private static readonly string SozlesmeSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfaEnglish.pdf";
+        private static readonly string UretimListesiPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\uretimListesi.pdf";
 
         public void KaydetVePdfIndir(Musteri firma,
                                      IEnumerable<TeklifUrunModel> urunler,
@@ -774,6 +775,91 @@ namespace teklif_programi.Services
                                 "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+
+        public void UretimListesiPdfIndir(Teklif teklif, IEnumerable<TeklifUrunModel> urunler)
+        {
+            ArgumentNullException.ThrowIfNull(teklif);
+            ArgumentNullException.ThrowIfNull(urunler);
+            if (!urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
+
+            try
+            {
+                using var writer = new PdfWriter(UretimListesiPath);
+                using var pdf = new PdfDocument(writer);
+                using var doc = new Document(pdf, PageSize.A4);
+                doc.SetMargins(20f, 20f, 20f, 20f);
+
+                PdfFont regularFont = PdfFontFactory.CreateFont(
+                    @"C:\\Windows\\Fonts\\arial.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+                PdfFont boldFont = PdfFontFactory.CreateFont(
+                    @"C:\\Windows\\Fonts\\arialbd.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+
+                doc.SetFont(regularFont);
+
+                doc.Add(new Paragraph("Üretim Listesi")
+                    .SetFont(boldFont)
+                    .SetFontSize(12)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetMarginBottom(10f));
+
+                Table table = new Table(new float[] { 1f, 2f, 5f, 1f, 2f, 3f })
+                    .UseAllAvailableWidth();
+
+                Cell CreateHeader(string text) => new Cell()
+                    .Add(new Paragraph(text).SetFont(boldFont).SetFontSize(9))
+                    .SetBackgroundColor(new DeviceRgb(240, 240, 240))
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetPadding(5)
+                    .SetBorder(Border.NO_BORDER);
+
+                Cell CreateBody(string text, TextAlignment alignment = TextAlignment.LEFT) => new Cell()
+                    .Add(new Paragraph(text).SetFont(regularFont).SetFontSize(9))
+                    .SetBackgroundColor(ColorConstants.WHITE)
+                    .SetTextAlignment(alignment)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetPadding(5)
+                    .SetBorder(Border.NO_BORDER);
+
+                table.AddHeaderCell(CreateHeader("Sıra No"));
+                table.AddHeaderCell(CreateHeader("Ürün Kodu"));
+                table.AddHeaderCell(CreateHeader("Açıklama"));
+                table.AddHeaderCell(CreateHeader("Adet"));
+                table.AddHeaderCell(CreateHeader("Tamamlandı"));
+                table.AddHeaderCell(CreateHeader("Not"));
+
+                int sira = 1;
+                foreach (var u in urunler)
+                {
+                    table.AddCell(CreateBody(sira.ToString()));
+                    table.AddCell(CreateBody(u.UrunKodu));
+                    table.AddCell(CreateBody(u.UrunAciklamasi));
+                    table.AddCell(CreateBody(u.Adet.ToString()));
+                    table.AddCell(CreateBody(u.Tamamlandi ? "☑" : "☐", TextAlignment.CENTER));
+                    table.AddCell(CreateBody(u.UretimNotu));
+                    sira++;
+                }
+
+                doc.Add(table);
+                doc.Close();
+
+                MessageBox.Show("Üretim listesi PDF oluşturuldu!",
+                                "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Üretim listesi oluşturulurken bir hata oluştu: {ex.Message}",
+                                "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         private static Cell CreateInfoCell(string label, string value, PdfFont boldFont, PdfFont regularFont)
         {

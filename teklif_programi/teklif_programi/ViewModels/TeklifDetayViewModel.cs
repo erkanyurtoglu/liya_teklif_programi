@@ -69,6 +69,7 @@ namespace teklif_programi.ViewModels
 
             KaydetCommand = new RelayCommand(Kaydet, CanKaydet);
             PdfIndirCommand = new RelayCommand(PdfIndir, CanPdfIndir);
+            UretimListesiIndirCommand = new RelayCommand(UretimListesiIndir, CanPdfIndir);
             FarkliKaydetCommand = new RelayCommand(FarkliKaydet, CanFarkliKaydet);
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, u => u != null);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar, u => u != null);
@@ -290,6 +291,7 @@ namespace teklif_programi.ViewModels
 
         public RelayCommand KaydetCommand { get; }
         public RelayCommand PdfIndirCommand { get; }
+        public RelayCommand UretimListesiIndirCommand { get; }
         public RelayCommand FarkliKaydetCommand { get; }
         public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
@@ -741,6 +743,21 @@ namespace teklif_programi.ViewModels
         }
 
         private bool CanPdfIndir() => Teklif != null;
+
+        private void UretimListesiIndir()
+        {
+            if (Teklif == null) return;
+
+            try
+            {
+                _teklifService.UretimListesiPdfIndir(Teklif, TeklifUrunler);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Üretim listesi oluşturulurken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void PdfIndir()
         {
             if (Teklif == null) return;
