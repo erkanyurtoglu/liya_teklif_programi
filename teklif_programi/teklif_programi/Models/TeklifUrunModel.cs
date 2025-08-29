@@ -24,6 +24,8 @@ namespace teklif_programi.Models
         private string _toplamText = string.Empty;
         private decimal _maliyetFiyati;
         private string _maliyetFiyatText = string.Empty;
+        private bool _tamamlandi;
+        private string _uretimNotu = string.Empty;
 
         public int UrunId
         {
@@ -182,6 +184,19 @@ namespace teklif_programi.Models
             get => _fiyatEUR;
             set { _fiyatEUR = value; OnPropertyChanged(); }
         }
+
+        public bool Tamamlandi
+        {
+            get => _tamamlandi;
+            set { _tamamlandi = value; OnPropertyChanged(); }
+        }
+
+        public string UretimNotu
+        {
+            get => _uretimNotu;
+            set { _uretimNotu = value; OnPropertyChanged(); }
+        }
+
 
         // Toplam tutar hesaplaması TeklifHesaplayici üzerinden yapılır
         public decimal Toplam => TeklifHesaplayici.HesaplaToplam(Adet, IndirimliFiyat);

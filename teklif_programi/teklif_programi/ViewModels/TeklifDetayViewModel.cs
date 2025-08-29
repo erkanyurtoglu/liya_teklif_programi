@@ -378,6 +378,8 @@ namespace teklif_programi.ViewModels
                         FiyatUSD = s.Urun?.FiyatUSD ?? 0,
                         FiyatEUR = s.Urun?.FiyatEUR ?? 0,
                         MaliyetFiyati = ConvertTlToSelectedCurrency(s.Urun?.MaliyetFiyati ?? 0),
+                        Tamamlandi = s.Tamamlandi ?? false,
+                        UretimNotu = s.UretimNotu ?? string.Empty,
                     };
                     m.BirimFiyatText = FormatPrice(m.BirimFiyat);
                     m.IndirimliFiyatText = FormatPrice(m.IndirimliFiyat);
@@ -432,7 +434,9 @@ namespace teklif_programi.ViewModels
                     FiyatTL = urun.FiyatTL,
                     FiyatUSD = urun.FiyatUSD,
                     FiyatEUR = urun.FiyatEUR,
-                    MaliyetFiyati = ConvertTlToSelectedCurrency(urun.MaliyetFiyati)
+                    MaliyetFiyati = ConvertTlToSelectedCurrency(urun.MaliyetFiyati),
+                    Tamamlandi = false,
+                    UretimNotu = string.Empty
                 };
                 m.BirimFiyatText = FormatPrice(m.BirimFiyat);
                 m.IndirimliFiyatText = FormatPrice(m.IndirimliFiyat);
@@ -610,6 +614,8 @@ namespace teklif_programi.ViewModels
                         dbU.BirimFiyat = m.BirimFiyat;
                         dbU.IndirimliBirimFiyat = m.IndirimliFiyat;
                         dbU.ToplamTutar = m.Toplam;
+                        dbU.Tamamlandi = m.Tamamlandi;
+                        dbU.UretimNotu = m.UretimNotu;
                     }
                     else
                     {
@@ -620,7 +626,9 @@ namespace teklif_programi.ViewModels
                             Adet = m.Adet,
                             BirimFiyat = m.BirimFiyat,
                             IndirimliBirimFiyat = m.IndirimliFiyat,
-                            ToplamTutar = m.Toplam
+                            ToplamTutar = m.Toplam,
+                            Tamamlandi = m.Tamamlandi,
+                            UretimNotu = m.UretimNotu
                         });
                     }
                 }
@@ -698,7 +706,9 @@ namespace teklif_programi.ViewModels
                         Adet = m.Adet,
                         BirimFiyat = m.BirimFiyat,
                         IndirimliBirimFiyat = m.IndirimliFiyat,
-                        ToplamTutar = m.Toplam
+                        ToplamTutar = m.Toplam,
+                        Tamamlandi = m.Tamamlandi,
+                        UretimNotu = m.UretimNotu
                     });
                 }
 
