@@ -50,6 +50,12 @@ namespace teklif_programi.Models
         public string IlgiliKisiEposta { get; set; } = string.Empty;
         // İlgili kişinin e-posta adresi.
 
+        public string? TeslimatSekli { get; set; }
+        // Teklifte belirtilen teslimat şekli (opsiyonel).
+
+        public string? TeslimatYeri { get; set; }
+        // Teslimatın yapılacağı yer (opsiyonel).
+
 
         public virtual Musteri Musteri { get; set; } = null!;
         // Teklife ait müşteri nesnesi (1-N ilişki).

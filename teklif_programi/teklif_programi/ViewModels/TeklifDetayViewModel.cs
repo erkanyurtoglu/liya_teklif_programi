@@ -25,6 +25,8 @@ namespace teklif_programi.ViewModels
         private string _urunArama = string.Empty;
         private string _satisSozlesmesiMetni = string.Empty;
         private string _selectedLanguage = "TR";
+        private string _teslimatSekli = string.Empty;
+        private string _teslimatYeri = string.Empty;
         public ObservableCollection<Urun> TumUrunler { get; set; } = new();
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
         private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
@@ -80,7 +82,16 @@ namespace teklif_programi.ViewModels
         public Teklif Teklif
         {
             get => _teklif;
-            set { _teklif = value; OnPropertyChanged(); OnPropertyChanged(nameof(PersonelAdiSoyadi)); OnPropertyChanged(nameof(SelectedCurrency)); RecalculateAll(); }
+            set
+            {
+                _teklif = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PersonelAdiSoyadi));
+                OnPropertyChanged(nameof(SelectedCurrency));
+                TeslimatSekli = value?.TeslimatSekli ?? string.Empty;
+                TeslimatYeri = value?.TeslimatYeri ?? string.Empty;
+                RecalculateAll();
+            }
         }
 
         public ObservableCollection<TeklifUrunModel> TeklifUrunler
@@ -164,6 +175,29 @@ namespace teklif_programi.ViewModels
             get => _satisSozlesmesiMetni;
             set { _satisSozlesmesiMetni = value; OnPropertyChanged(); }
         }
+
+        public string TeslimatSekli
+        {
+            get => _teslimatSekli;
+            set
+            {
+                _teslimatSekli = value;
+                if (Teklif != null) Teklif.TeslimatSekli = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string TeslimatYeri
+        {
+            get => _teslimatYeri;
+            set
+            {
+                _teslimatYeri = value;
+                if (Teklif != null) Teklif.TeslimatYeri = value;
+                OnPropertyChanged();
+            }
+        }
+
 
 
         public decimal GenelIndirimOrani
@@ -554,6 +588,8 @@ namespace teklif_programi.ViewModels
                     dbT.IlgiliKisi = Teklif.IlgiliKisi;
                     dbT.IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu;
                     dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;
+                    dbT.TeslimatSekli = Teklif.TeslimatSekli;
+                    dbT.TeslimatYeri = Teklif.TeslimatYeri;
                 }
 
                 if (_silinecekUrunIdSet.Count > 0)
@@ -645,7 +681,10 @@ namespace teklif_programi.ViewModels
                     MusteriNotu = Teklif.MusteriNotu,
                     IlgiliKisi = Teklif.IlgiliKisi,
                     IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu,
-                    IlgiliKisiEposta = Teklif.IlgiliKisiEposta
+                    IlgiliKisiEposta = Teklif.IlgiliKisiEposta,
+                    TeslimatSekli = TeslimatSekli,
+                    TeslimatYeri = TeslimatYeri
+
                 };
                 _context.Teklifler.Add(yeni);
                 _context.SaveChanges();

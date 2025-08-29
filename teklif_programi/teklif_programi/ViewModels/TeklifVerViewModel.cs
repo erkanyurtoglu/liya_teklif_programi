@@ -27,6 +27,8 @@ namespace teklif_programi.ViewModels
         private string _ilgiliKisiNumarasi = string.Empty;
         private string _ilgiliKisiEposta = string.Empty;
         private string _satisSozlesmesiMetni = string.Empty;
+        private string _teslimatSekli = string.Empty;
+        private string _teslimatYeri = string.Empty;
 
         private const string SatisSozlesmesiTr = @"1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
         2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
@@ -130,6 +132,19 @@ namespace teklif_programi.ViewModels
             get => _ilgiliKisiEposta;
             set { _ilgiliKisiEposta = value; OnPropertyChanged(); }
         }
+
+        public string TeslimatSekli
+        {
+            get => _teslimatSekli;
+            set { _teslimatSekli = value; OnPropertyChanged(); }
+        }
+
+        public string TeslimatYeri
+        {
+            get => _teslimatYeri;
+            set { _teslimatYeri = value; OnPropertyChanged(); }
+        }
+
 
         public ObservableCollection<Urun> TumUrunler { get; set; } = [];
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = [];
@@ -467,6 +482,8 @@ namespace teklif_programi.ViewModels
                                               PaketlemeUcret,
                                               TasimaUcret,
                                               SelectedCurrency,
+                                              TeslimatSekli,
+                                              TeslimatYeri,
                                               IlgiliKisi,
                                               IlgiliKisiNumarasi,
                                               IlgiliKisiEposta,

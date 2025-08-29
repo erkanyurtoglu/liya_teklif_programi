@@ -47,6 +47,8 @@ namespace teklif_programi.Services
                                      decimal paketlemeUcreti,
                                      decimal tasimaUcreti,
                                      string currency,
+                                     string teslimatSekli,
+                                     string teslimatYeri,
                                      string ilgiliKisi,
                                      string ilgiliKisiTelefonu,
                                      string ilgiliKisiEposta,
@@ -70,6 +72,8 @@ namespace teklif_programi.Services
                 IlgiliKisi = ilgiliKisi,
                 IlgiliKisiTelefonu = ilgiliKisiTelefonu,
                 IlgiliKisiEposta = ilgiliKisiEposta,
+                TeslimatSekli = teslimatSekli,
+                TeslimatYeri = teslimatYeri,
                 Dil = selectedLanguage
             };
 
@@ -329,7 +333,40 @@ namespace teklif_programi.Services
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
                     }
 
-                    // Paketleme varsa ekle 
+                    // Teslimat bilgileri
+                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
+                    {
+                        bool first = true;
+                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
+                            cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                            first = false;
+                        }
+                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
+                            if (first)
+                            {
+                                cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                                cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            }
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                    }
+
+
+                    // Paketleme
                     if (paketlemeUcreti > 0)
                     {
                         toplamTable.AddCell(CreateRightAlignedHeaderCell(
@@ -414,6 +451,8 @@ namespace teklif_programi.Services
             var genelIndirimOrani = teklif.GenelIndirimOrani;
             var kdvOrani = teklif.KdvOrani;
             var currency = teklif.ParaBirimi;
+            var teslimatSekli = teklif.TeslimatSekli ?? string.Empty;
+            var teslimatYeri = teklif.TeslimatYeri ?? string.Empty;
             var ilgiliKisi = teklif.IlgiliKisi;
             var ilgiliKisiTelefonu = teklif.IlgiliKisiTelefonu;
             var ilgiliKisiEposta = teklif.IlgiliKisiEposta;
@@ -640,6 +679,38 @@ namespace teklif_programi.Services
                             boldFont));
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
                     }
+
+                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
+                    {
+                        bool first = true;
+                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
+                            cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                            first = false;
+                        }
+                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
+                            if (first)
+                            {
+                                cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                                cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
+                            }
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                    }
+
 
                     if (paketlemeUcreti > 0)
                     {
