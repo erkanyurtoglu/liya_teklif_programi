@@ -314,11 +314,29 @@
                     <TextBox Grid.Row="1" Style="{StaticResource ModernTextBox}" Margin="0,0,0,10"
                  Text="{Binding UrunArama, UpdateSourceTrigger=PropertyChanged}"/>
 
-                    <DataGrid Grid.Row="2" x:Name="dataGridUrunler" Style="{StaticResource ModernDataGrid}" 
+                    <DataGrid Grid.Row="2" x:Name="dataGridUrunler" Style="{StaticResource ModernDataGrid}"
                   ItemsSource="{Binding FiltrelenmisUrunler}" SelectionMode="Single"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   EnableRowVirtualization="True" EnableColumnVirtualization="True">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="Padding" Value="8,0,8,0"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Transparent"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="Transparent"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="Black"/>
+                        </DataGrid.Resources>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
                             <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="2*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
@@ -326,7 +344,7 @@
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <Button Content="Seç" Style="{StaticResource ModernButtonStyle}" Width="80" Height="36" Background="#1874CD"
-                                    Command="{Binding DataContext.SepeteEkleCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                    Command="{Binding DataContext.SepeteEkleCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
                                     CommandParameter="{Binding}"/>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>

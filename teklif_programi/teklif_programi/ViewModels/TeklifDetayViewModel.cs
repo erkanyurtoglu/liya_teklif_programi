@@ -42,19 +42,19 @@ namespace teklif_programi.ViewModels
         6. Nakliye: Satıcı firmaya aittir.
         7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
         8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
-           İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
-           HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
+        İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
+        HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
 
-        private const string SatisSozlesmesiEn = @"Our price is quoted in USD and includes VAT. The effective selling exchange rate of the Central Bank of the Republic of Turkey (CBRT) valid on the invoice date will be applied.
-        Device payment terms: 30% is payable in advance at the time of order, and the remaining amount upon delivery.
-        The devices are covered by a warranty of 1 year for mechanical parts and 2 years for electronic parts. Technical service and training services will be provided for a period of 10 years on a paid basis.
-        Delivery of the devices: Within 1 week following the order.
-        Offer validity: The offer is valid for 3 days from the quotation date.
-        Transportation: To be borne by the seller.
-        Alternative device prices are not included in the total quotation amount.
-        Bank Account Information: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
-        İş Bankası: TR16 0006 4000 0014 1520 1653 38
-        Halk Bankası: TR51 0001 2009 4140 0010 2645 69";
+        private const string SatisSozlesmesiEn = @"1.Our price is quoted in USD and includes VAT. The effective selling exchange rate of the Central Bank of the Republic of Turkey (CBRT) valid on the invoice date will be applied.
+        2.Device payment terms: 30% is payable in advance at the time of order, and the remaining amount upon delivery.
+        3.The devices are covered by a warranty of 1 year for mechanical parts and 2 years for electronic parts. Technical service and training services will be provided for a period of 10 years on a paid basis.
+        4.Delivery of the devices: Within 1 week following the order.
+        5.Offer validity: The offer is valid for 3 days from the quotation date.
+        6.Transportation: To be borne by the seller.
+        7.Alternative device prices are not included in the total quotation amount.
+        8.Bank Account Information: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
+        İŞ BANK: TR16 0006 4000 0014 1520 1653 38
+        HALK BANK: TR51 0001 2009 4140 0010 2645 69";
 
 
         public TeklifDetayViewModel(Teklif teklif)
