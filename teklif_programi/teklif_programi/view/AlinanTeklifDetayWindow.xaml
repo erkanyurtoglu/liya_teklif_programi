@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:teklif_programi"
         mc:Ignorable="d"
-        Title="Teklif Detay / Güncelle"
+        Title="Alınan Teklif Detayları"
         Width="1500" Height="800"
         MinWidth="1400" MinHeight="700"
         WindowStyle="SingleBorderWindow"
@@ -72,6 +72,7 @@
             <Setter Property="Background" Value="White"/>
             <Setter Property="Foreground" Value="Black"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="IsReadOnly" Value="True"/>
         </Style>
 
         <!-- Modern DataGrid -->
@@ -89,7 +90,8 @@
             <Setter Property="ColumnHeaderHeight" Value="45"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
-        </Style>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>    
 
         <Style x:Key="DataGridColumnHeader" TargetType="DataGridColumnHeader">
             <Setter Property="Background" Value="#13183E"/>
@@ -203,21 +205,24 @@
                             <TextBlock Text="Durum" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding Durumlar}"
                                       SelectedItem="{Binding Teklif.Durum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                      IsEnabled="False"/>
                         </StackPanel>
 
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="Dil" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding DilListe}"
                                       SelectedItem="{Binding SelectedLanguage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                      IsEnabled="False"/>
                         </StackPanel>
 
                         <StackPanel Width="121">
                             <TextBlock Text="Para Birimi" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding ParaBirimiListe}"
                                       SelectedItem="{Binding SelectedCurrency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                                      Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                                      IsEnabled="False"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -353,9 +358,11 @@
                 </Grid>
             </Border>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10,0,0,0">
+
                 <Button Content="Satış Sözleşmesi" Style="{StaticResource ModernButtonStyle}" Width="150" Margin="0,0,10,0" Click="SatisSozlesmesi_Click"/>
-                <Button Content="PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding PdfIndirCommand}"/>
+                <Button Content="PDF İndir" Style="{StaticResource ModernButtonStyle}" Width="120" Margin="0,0,10,0" Command="{Binding PdfIndirCommand}"/>
+
             </StackPanel>
         </Grid>
     </Grid>
