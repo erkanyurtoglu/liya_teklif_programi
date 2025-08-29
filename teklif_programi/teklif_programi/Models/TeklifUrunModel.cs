@@ -66,7 +66,7 @@ namespace teklif_programi.Models
                 {
                     _adet = value;
                     OnPropertyChanged();
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // Adet değiştiğinde tetikle
+                    OnBirimFiyatDegisti?.Invoke(this, nameof(Adet)); // Adet değiştiğinde tetikle
                 }
             }
         }
@@ -80,7 +80,7 @@ namespace teklif_programi.Models
                 {
                     _birimFiyat = value;
                     OnPropertyChanged();
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // BirimFiyat değiştiğinde tetikle
+                    OnBirimFiyatDegisti?.Invoke(this, nameof(BirimFiyat)); // BirimFiyat değiştiğinde tetikle
                 }
             }
         }
@@ -94,7 +94,7 @@ namespace teklif_programi.Models
                 {
                     _indirimliFiyat = value;
                     OnPropertyChanged();
-                    OnBirimFiyatDegisti?.Invoke(this, EventArgs.Empty); // IndirimliFiyat değiştiğinde tetikle
+                    OnBirimFiyatDegisti?.Invoke(this, nameof(IndirimliFiyat)); // IndirimliFiyat değiştiğinde tetikle
                 }
             }
         }
@@ -102,7 +102,45 @@ namespace teklif_programi.Models
         public string BirimFiyatText
         {
             get => _birimFiyatText;
-            set { _birimFiyatText = value; OnPropertyChanged(); }
+            set
+            {
+                if (_birimFiyatText != value)
+                {
+                    _birimFiyatText = value;
+                    OnPropertyChanged();
+
+                    var raw = value
+                        .Replace("₺", string.Empty)
+                        .Replace("$", string.Empty)
+                        .Replace("€", string.Empty)
+                        .Replace(" ", string.Empty)
+                        .Trim();
+
+                    if (string.IsNullOrWhiteSpace(raw)) return;
+
+                    var lastComma = raw.LastIndexOf(',');
+                    var lastDot = raw.LastIndexOf('.');
+
+                    if (lastComma > lastDot)
+                    {
+                        raw = raw.Replace(".", string.Empty);
+                        raw = raw.Replace(",", ".");
+                    }
+                    else if (lastDot > lastComma)
+                    {
+                        raw = raw.Replace(",", string.Empty);
+                    }
+                    else
+                    {
+                        raw = raw.Replace(",", string.Empty).Replace(".", string.Empty);
+                    }
+
+                    if (decimal.TryParse(raw, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue))
+                    {
+                        BirimFiyat = parsedValue;
+                    }
+                }
+            }
         }
 
         public string IndirimliFiyatText
@@ -201,7 +239,7 @@ namespace teklif_programi.Models
         // Toplam tutar hesaplaması TeklifHesaplayici üzerinden yapılır
         public decimal Toplam => TeklifHesaplayici.HesaplaToplam(Adet, IndirimliFiyat);
 
-        public event EventHandler? OnBirimFiyatDegisti;
+        public event EventHandler<string>? OnBirimFiyatDegisti;
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)

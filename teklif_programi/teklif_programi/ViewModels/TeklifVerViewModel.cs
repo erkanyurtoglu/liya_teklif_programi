@@ -165,7 +165,7 @@ namespace teklif_programi.ViewModels
         public string SelectedCurrency
         {
             get => _selectedCurrency;
-            set { _selectedCurrency = value; OnPropertyChanged(); RecalculateAll(); }
+            set { _selectedCurrency = value; OnPropertyChanged(); UpdatePricesByCurrency(); }
         }
 
         public string SelectedLanguage
@@ -223,10 +223,13 @@ namespace teklif_programi.ViewModels
             SatisSozlesmesiMetni = SelectedLanguage == "EN" ? SatisSozlesmesiEn : SatisSozlesmesiTr;
         }
 
-        private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
+        private void Model_OnBirimFiyatDegisti(object? sender, string propertyName)
         {
             if (sender is TeklifUrunModel model)
             {
+                if (propertyName == nameof(TeklifUrunModel.BirimFiyat))
+                    HesaplaIndirimliFiyat(model);
+
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
@@ -420,31 +423,17 @@ namespace teklif_programi.ViewModels
 
 
 
+
+
         private void RecalculateAll()
         {
             foreach (var urun in SecilenUrunler)
             {
-                var matchedUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
-                if (matchedUrun != null)
-                {
-                    urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
-                    urun.MaliyetFiyati = ConvertTlToSelectedCurrency(matchedUrun.MaliyetFiyati);
-                    HesaplaIndirimliFiyat(urun);
-                    urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
-                    urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
-                    urun.ToplamText = FormatPrice(urun.Toplam);
-                    urun.MaliyetFiyatText = FormatPrice(urun.MaliyetFiyati);
-                }
-                else
-                {
-                    urun.BirimFiyat = 0;
-                    urun.MaliyetFiyati = 0;
-                    HesaplaIndirimliFiyat(urun);
-                    urun.BirimFiyatText = FormatPrice(0);
-                    urun.IndirimliFiyatText = FormatPrice(0);
-                    urun.ToplamText = FormatPrice(0);
-                    urun.MaliyetFiyatText = FormatPrice(0);
-                }
+                HesaplaIndirimliFiyat(urun);
+                urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
+                urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
+                urun.ToplamText = FormatPrice(urun.Toplam);
+                urun.MaliyetFiyatText = FormatPrice(urun.MaliyetFiyati);
             }
 
             OnPropertyChanged(nameof(ToplamFiyat));
@@ -455,6 +444,25 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(KarOrani));
             UpdateTotalsText();
             UpdateDescriptions();
+        }
+
+        private void UpdatePricesByCurrency()
+        {
+            foreach (var urun in SecilenUrunler)
+            {
+                var matchedUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
+                if (matchedUrun != null)
+                {
+                    urun.BirimFiyat = GetFiyatByCurrency(matchedUrun, SelectedCurrency);
+                    urun.MaliyetFiyati = ConvertTlToSelectedCurrency(matchedUrun.MaliyetFiyati);
+                }
+                else
+                {
+                    urun.BirimFiyat = 0;
+                    urun.MaliyetFiyati = 0;
+                }
+            }
+            RecalculateAll();
         }
 
         // Toplam ve KDV hesaplamaları merkezi hesaba devredildi

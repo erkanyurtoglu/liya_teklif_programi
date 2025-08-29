@@ -150,7 +150,7 @@ namespace teklif_programi.ViewModels
                 {
                     Teklif.ParaBirimi = value;
                     OnPropertyChanged();
-                    RecalculateAll();
+                    UpdatePricesByCurrency();
                 }
             }
         }
@@ -473,11 +473,7 @@ namespace teklif_programi.ViewModels
         {
             foreach (var urun in TeklifUrunler)
             {
-                urun.BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency);
                 urun.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(urun.BirimFiyat, Teklif.GenelIndirimOrani);
-                var dbUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
-                urun.MaliyetFiyati = ConvertTlToSelectedCurrency(dbUrun?.MaliyetFiyati ?? 0);
-
                 urun.BirimFiyatText = FormatPrice(urun.BirimFiyat);
                 urun.IndirimliFiyatText = FormatPrice(urun.IndirimliFiyat);
                 urun.ToplamText = FormatPrice(urun.Toplam);
@@ -485,6 +481,18 @@ namespace teklif_programi.ViewModels
             }
             UpdateToplamlarText();
         }
+
+        private void UpdatePricesByCurrency()
+        {
+            foreach (var urun in TeklifUrunler)
+            {
+                urun.BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency);
+                var dbUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
+                urun.MaliyetFiyati = ConvertTlToSelectedCurrency(dbUrun?.MaliyetFiyati ?? 0);
+            }
+            RecalculateAll();
+        }
+
 
         private void UpdateToplamlarText()
         {
@@ -518,10 +526,13 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(KarOraniText));
         }
 
-        private void Model_OnBirimFiyatDegisti(object? sender, EventArgs e)
+        private void Model_OnBirimFiyatDegisti(object? sender, string propertyName)
         {
             if (sender is TeklifUrunModel m)
             {
+                if (propertyName == nameof(TeklifUrunModel.BirimFiyat))
+                    m.IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(m.BirimFiyat, Teklif.GenelIndirimOrani);
+
                 m.BirimFiyatText = FormatPrice(m.BirimFiyat);
                 m.IndirimliFiyatText = FormatPrice(m.IndirimliFiyat);
                 m.ToplamText = FormatPrice(m.Toplam);
