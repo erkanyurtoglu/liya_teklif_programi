@@ -27,6 +27,8 @@ namespace teklif_programi.ViewModels
         private string _selectedLanguage = "TR";
         private string _teslimatSekli = string.Empty;
         private string _teslimatYeri = string.Empty;
+        private DateTime? _teslimatTarihi;
+        private DateTime? _teslimTarihi;
         public ObservableCollection<Urun> TumUrunler { get; set; } = new();
         public ObservableCollection<Urun> FiltrelenmisUrunler { get; set; } = new();
         private ObservableCollection<TeklifUrunModel> _teklifUrunler = new();
@@ -91,6 +93,8 @@ namespace teklif_programi.ViewModels
                 OnPropertyChanged(nameof(SelectedCurrency));
                 TeslimatSekli = value?.TeslimatSekli ?? string.Empty;
                 TeslimatYeri = value?.TeslimatYeri ?? string.Empty;
+                TeslimatTarihi = value?.TeslimatTarihi;
+                TeslimTarihi = value?.TeslimTarihi;
                 RecalculateAll();
             }
         }
@@ -195,6 +199,28 @@ namespace teklif_programi.ViewModels
             {
                 _teslimatYeri = value;
                 if (Teklif != null) Teklif.TeslimatYeri = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime? TeslimatTarihi
+        {
+            get => _teslimatTarihi;
+            set
+            {
+                _teslimatTarihi = value;
+                if (Teklif != null) Teklif.TeslimatTarihi = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime? TeslimTarihi
+        {
+            get => _teslimTarihi;
+            set
+            {
+                _teslimTarihi = value;
+                if (Teklif != null) Teklif.TeslimTarihi = value;
                 OnPropertyChanged();
             }
         }
@@ -607,6 +633,8 @@ namespace teklif_programi.ViewModels
                     dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;
                     dbT.TeslimatSekli = Teklif.TeslimatSekli;
                     dbT.TeslimatYeri = Teklif.TeslimatYeri;
+                    dbT.TeslimatTarihi = Teklif.TeslimatTarihi;
+                    dbT.TeslimTarihi = Teklif.TeslimTarihi;
                 }
 
                 if (_silinecekUrunIdSet.Count > 0)
@@ -704,7 +732,9 @@ namespace teklif_programi.ViewModels
                     IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu,
                     IlgiliKisiEposta = Teklif.IlgiliKisiEposta,
                     TeslimatSekli = TeslimatSekli,
-                    TeslimatYeri = TeslimatYeri
+                    TeslimatYeri = TeslimatYeri,
+                    TeslimatTarihi = TeslimatTarihi,
+                    TeslimTarihi = TeslimTarihi
 
                 };
                 _context.Teklifler.Add(yeni);

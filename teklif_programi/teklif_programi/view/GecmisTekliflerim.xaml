@@ -184,6 +184,9 @@
                 <DataGridTextColumn Header="Tarih" Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
+                <DataGridTextColumn Header="Planlanan Teslim Tarihi" Binding="{Binding TeslimatTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
+
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 

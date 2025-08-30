@@ -126,11 +126,13 @@
                 <DataGridTextColumn Header="Teklif No" Binding="{Binding TeklifId}" Width="0.7*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
-                <!-- SADECE BU SOLA -->
                 <DataGridTextColumn Header="Firma Adı" Binding="{Binding Musteri.FirmaAdi}" Width="2*"
                                     ElementStyle="{StaticResource CellTextLeft}" />
 
                 <DataGridTextColumn Header="Tarih" Binding="{Binding OlusturmaTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
+
+                <DataGridTextColumn Header="Planlanan Teslim Tarihi" Binding="{Binding TeslimatTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="1*"

@@ -56,6 +56,12 @@ namespace teklif_programi.Models
         public string? TeslimatYeri { get; set; }
         // Teslimatın yapılacağı yer (opsiyonel).
 
+        public DateTime? TeslimatTarihi { get; set; }
+        // Teklifte belirtilen teslimat tarihi (opsiyonel).
+
+        public DateTime? TeslimTarihi { get; set; }
+        // Gerçekleşen teslim tarihi (opsiyonel).
+
 
         public virtual Musteri Musteri { get; set; } = null!;
         // Teklife ait müşteri nesnesi (1-N ilişki).

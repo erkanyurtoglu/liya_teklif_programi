@@ -86,6 +86,7 @@ namespace teklif_programi.ViewModels
                     u.Tamamlandi = true;
 
                 entity.Durum = "Tamamlandı";
+                entity.TeslimTarihi = DateTime.Now;
                 _context.SaveChanges();
 
                 EventHub.RaiseTeklifGuncellendi(entity.TeklifId);

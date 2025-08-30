@@ -227,27 +227,48 @@
             <!-- Teslimat Bilgisi -->
             <Border Grid.Column="2" Background="White" CornerRadius="4" Padding="10" Margin="9,0,0,20" BorderBrush="#ededed" BorderThickness="1">
                 <StackPanel>
+                    <!-- Üst satır: Şekil + Tarih yan yana -->
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="64*"/>
+                            <!-- Teslimat Şekli (daha dar) -->
+                            <ColumnDefinition Width="55*"/>
+                            <!-- Teslimat Tarihi -->
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Teslimat Şekli -->
-                    <StackPanel Margin="0,0,0,10">
-                        <TextBlock Text="Teslimat Şekli:" 
+                        <!-- Teslimat Şekli -->
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <TextBlock Text="Teslimat Şekli:" 
+                           FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
+                            <TextBox Style="{StaticResource ModernTextBox}"
+                         Text="{Binding TeslimatSekli, UpdateSourceTrigger=PropertyChanged}"
+                         Height="35"
+                         HorizontalAlignment="Left"
+                         MaxWidth="260" Width="117" />
+                        </StackPanel>
+
+                        <!-- Teslimat Tarihi -->
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Teslimat Tarihi:" 
                        FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
-                        <TextBox Style="{StaticResource ModernTextBox}"
-                     Text="{Binding TeslimatSekli, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True" TextWrapping="Wrap" Height="35"
-                     ToolTip="Örn: Kara yolu, Hava yolu, Deniz yolu"/>
-                    </StackPanel>
+                            <DatePicker SelectedDate="{Binding TeslimatTarihi, UpdateSourceTrigger=PropertyChanged}"
+                        Height="35"
+                        HorizontalAlignment="Left"
+                        Width="107"/>
+                        </StackPanel>
+                    </Grid>
 
-                    <!-- Teslimat Yeri -->
+                    <!-- Alt satır: Teslimat Yeri tam genişlik -->
                     <StackPanel>
-                        <TextBlock Text="Teslimat Yeri:" 
-                       FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
+                        <TextBlock Text="Teslimat Yeri:"
+                   FontWeight="SemiBold" FontSize="13" Foreground="#13183E" Margin="0,0,0,5"/>
                         <TextBox Style="{StaticResource ModernTextBox}"
-                     Text="{Binding TeslimatYeri, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True" TextWrapping="Wrap" Height="39"
-                     ToolTip="Örn: Demirexport fabrikasına teslimat"/>
+                 Text="{Binding TeslimatYeri, UpdateSourceTrigger=PropertyChanged}"
+                 AcceptsReturn="True" TextWrapping="Wrap" Height="39"
+                 ToolTip="Örn: Demirexport fabrikasına teslimat"/>
                     </StackPanel>
                 </StackPanel>
+
             </Border>
 
             <Border Grid.Column="3" Background="White" CornerRadius="4" Padding="15"
