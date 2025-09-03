@@ -170,13 +170,16 @@
 
 
                 <!-- İŞLEMLER -->
-                <DataGridTemplateColumn Header="İşlemler" Width="170">
+                <DataGridTemplateColumn Header="İşlemler" Width="250">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Detay" Style="{StaticResource ModernButtonStyle}"
                                         Width="70" Height="30" Margin="4,0"
                                         Click="BtnDetay_Click" Background="#1874CD"/>
+                                <Button Content="Maliyet" Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Background="#27AE60" Click="BtnMaliyet_Click"/>
                                 <Button Content="Sil" Style="{StaticResource ModernButtonStyle}"
                                         Width="70" Height="30" Margin="4,0"
                                         Background="#C0392B" Click="BtnUrunSil_Click"/>

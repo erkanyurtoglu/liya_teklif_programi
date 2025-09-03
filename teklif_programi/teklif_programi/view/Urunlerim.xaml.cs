@@ -58,6 +58,27 @@ namespace teklif_programi.view
         }
 
         /// <summary>
+        /// "Maliyet" butonuna basıldığında ilgili ürünün maliyet penceresini açar.
+        /// </summary>
+        private void BtnMaliyet_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            var secilenUrun = button?.DataContext as Urun;
+
+            if (secilenUrun != null)
+            {
+                var maliyetPencere = new UrunMaliyetWindow(secilenUrun);
+                maliyetPencere.Owner = Window.GetWindow(this);
+                bool? sonuc = maliyetPencere.ShowDialog();
+                if (sonuc == true)
+                {
+                    UrunListele(txtArama.Text.Trim());
+                }
+            }
+        }
+
+
+        /// <summary>
         /// "Detay" butonuna basıldığında seçilen ürünün detay penceresini açar.
         /// </summary>
         private void BtnDetay_Click(object sender, RoutedEventArgs e)

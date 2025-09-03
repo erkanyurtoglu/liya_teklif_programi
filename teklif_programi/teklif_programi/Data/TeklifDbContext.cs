@@ -31,6 +31,9 @@ namespace teklif_programi.Data
         public DbSet<TeklifToplam> TeklifToplamlari { get; set; }
         // Teklif toplamları tablosunu temsil eder.
 
+        public DbSet<UrunMaliyet> UrunMaliyetleri { get; set; }
+        // Ürün maliyet satırlarını temsil eder.
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         // Veritabanı bağlantısını yapılandırır.
         {
