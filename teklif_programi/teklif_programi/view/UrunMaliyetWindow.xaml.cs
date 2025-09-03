@@ -7,6 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using teklif_programi.Data;
 using teklif_programi.Models;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
+
 
 namespace teklif_programi.view
 {
@@ -68,8 +71,9 @@ namespace teklif_programi.view
         private void UpdateTotal()
         {
             var toplam = _masraflar.Sum(m => m.Tutar);
-            txtToplamMaliyet.Text = toplam.ToString("N2");
+            txtToplamMaliyet.Text = $"{toplam:N2} ₺";
         }
+
 
         private void BtnKaydet_Click(object sender, RoutedEventArgs e)
         {
@@ -105,5 +109,43 @@ namespace teklif_programi.view
         {
             Close();
         }
+
+        // 0–2 ondalık, tek ayraç (.,) izinli
+        private static readonly Regex DecimalRegex = new(@"^\d*(?:[.,]\d{0,2})?$");
+
+        private static bool IsValidDecimal(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return true;   // boş alan serbest
+            text = text.Replace(',', '.');                 // ayraç normalize
+            return DecimalRegex.IsMatch(text);
+        }
+
+        // XAML: PreviewTextInput="OnlyAllowNumbers"
+        private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is not TextBox tb) { e.Handled = true; return; }
+
+            var current = tb.Text ?? string.Empty;
+            var proposed = current.Remove(tb.SelectionStart, tb.SelectionLength)
+                                  .Insert(tb.SelectionStart, e.Text);
+
+            e.Handled = !IsValidDecimal(proposed);
+        }
+
+        // XAML: DataObject.Pasting="Currency_Pasting"
+        private void Currency_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (sender is not TextBox tb) { e.CancelCommand(); return; }
+            if (!e.DataObject.GetDataPresent(DataFormats.Text)) { e.CancelCommand(); return; }
+
+            var pasteText = (string)e.DataObject.GetData(DataFormats.Text);
+            var proposed = (tb.Text ?? string.Empty)
+                           .Remove(tb.SelectionStart, tb.SelectionLength)
+                           .Insert(tb.SelectionStart, pasteText);
+
+            if (!IsValidDecimal(proposed))
+                e.CancelCommand();
+        }
+
     }
 }
