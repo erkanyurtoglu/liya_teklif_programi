@@ -334,38 +334,6 @@ namespace teklif_programi.Services
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
                     }
 
-                    // Teslimat bilgileri
-                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
-                    {
-                        bool first = true;
-                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
-                        {
-                            var cell1 = CreateRightAlignedHeaderCell(
-                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
-                                boldFont);
-                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
-                            cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            toplamTable.AddCell(cell1);
-                            toplamTable.AddCell(cell2);
-                            first = false;
-                        }
-                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
-                        {
-                            var cell1 = CreateRightAlignedHeaderCell(
-                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
-                                boldFont);
-                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
-                            if (first)
-                            {
-                                cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                                cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            }
-                            toplamTable.AddCell(cell1);
-                            toplamTable.AddCell(cell2);
-                        }
-                    }
-
 
                     // Paketleme
                     if (paketlemeUcreti > 0)
@@ -386,7 +354,6 @@ namespace teklif_programi.Services
                     }
 
 
-
                     // GENEL TOPLAM (SADECE burada üst çizgi var)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
@@ -395,6 +362,31 @@ namespace teklif_programi.Services
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(
                             FormatPrice(genelToplam, currency), regularFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
+
+                    // Teslimat bilgileri (Genel Toplamın altında)
+                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
+                    {
+                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                    }
+
 
                     doc.Add(toplamTable);
 
@@ -681,37 +673,6 @@ namespace teklif_programi.Services
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(kdvTutari, currency), regularFont));
                     }
 
-                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
-                    {
-                        bool first = true;
-                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
-                        {
-                            var cell1 = CreateRightAlignedHeaderCell(
-                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
-                                boldFont);
-                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
-                            cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            toplamTable.AddCell(cell1);
-                            toplamTable.AddCell(cell2);
-                            first = false;
-                        }
-                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
-                        {
-                            var cell1 = CreateRightAlignedHeaderCell(
-                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
-                                boldFont);
-                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
-                            if (first)
-                            {
-                                cell1.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                                cell2.SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f));
-                            }
-                            toplamTable.AddCell(cell1);
-                            toplamTable.AddCell(cell2);
-                        }
-                    }
-
 
                     if (paketlemeUcreti > 0)
                     {
@@ -730,7 +691,6 @@ namespace teklif_programi.Services
                     }
 
 
-
                     // GENEL TOPLAM (SADECE burada üst çizgi var)
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
@@ -739,6 +699,31 @@ namespace teklif_programi.Services
                     toplamTable.AddCell(CreateLeftAlignedBodyCell(
                             FormatPrice(genelToplam, currency), regularFont)
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
+
+
+                    // Teslimat bilgileri (Genel Toplamın altında)
+                    if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
+                    {
+                        if (!string.IsNullOrWhiteSpace(teslimatSekli))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Method:" : "Teslimat Şekli:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatSekli, regularFont);
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                        if (!string.IsNullOrWhiteSpace(teslimatYeri))
+                        {
+                            var cell1 = CreateRightAlignedHeaderCell(
+                                isEnglish ? "Delivery Place:" : "Teslimat Yeri:",
+                                boldFont);
+                            var cell2 = CreateLeftAlignedBodyCell(teslimatYeri, regularFont);
+                            toplamTable.AddCell(cell1);
+                            toplamTable.AddCell(cell2);
+                        }
+                    }
+
 
                     doc.Add(toplamTable);
 
