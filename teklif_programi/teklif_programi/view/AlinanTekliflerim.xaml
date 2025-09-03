@@ -5,10 +5,38 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:local="clr-namespace:teklif_programi"
              mc:Ignorable="d"
-             d:DesignHeight="900" d:DesignWidth="1350">
+              d:DesignHeight="900" d:DesignWidth="1350">
+
+    <UserControl.Resources>
+        <!-- Modern TextBox Style -->
+        <Style x:Key="ModernTextBox" TargetType="TextBox">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#ccc"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Modern DatePicker Style -->
+        <Style x:Key="ModernDatePicker" TargetType="DatePicker">
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#ccc"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
 
     <Grid Background="#ededed" Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -29,8 +57,29 @@
                     CornerRadius="1"/>
         </StackPanel>
 
+        <!-- Arama ve Filtreleme -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center"
+                    Margin="0,0,0,20" VerticalAlignment="Center">
+            <TextBox x:Name="txtArama" Width="400" Margin="0,0,10,0"
+                     Style="{StaticResource ModernTextBox}"
+                     Text="{Binding TeklifArama, UpdateSourceTrigger=PropertyChanged}" />
+            <ComboBox Width="150" Margin="0,0,10,0" Height="38" FontSize="14"
+                      VerticalContentAlignment="Center"
+                      ItemsSource="{Binding TarihFiltreSecenekleri}"
+                      SelectedItem="{Binding SecilenTarihFiltresi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <DatePicker Width="150" Margin="0,0,10,0"
+                        Style="{StaticResource ModernDatePicker}"
+                        SelectedDate="{Binding BaslangicTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding BaslangicTarihiVisibility}" />
+            <DatePicker Width="150"
+                        Style="{StaticResource ModernDatePicker}"
+                        SelectedDate="{Binding BitisTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="{Binding BitisTarihiVisibility}" />
+        </StackPanel>
+
+
         <!-- Teklif Listesi -->
-        <DataGrid Grid.Row="1"
+        <DataGrid Grid.Row="2"
                   AutoGenerateColumns="False"
                   HeadersVisibility="Column"
                   IsReadOnly="True"
@@ -44,7 +93,7 @@
                   GridLinesVisibility="None"
                   BorderBrush="#ededed"
                   BorderThickness="1"
-                  ItemsSource="{Binding AlinanTeklifler}"
+                  ItemsSource="{Binding FiltrelenmisTeklifler}"
                   SelectionMode="Single">
 
             <DataGrid.Resources>
