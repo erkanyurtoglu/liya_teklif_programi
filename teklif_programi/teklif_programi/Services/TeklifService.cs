@@ -62,10 +62,12 @@ namespace teklif_programi.Services
 
             using var transaction = _context.Database.BeginTransaction();
 
+            var personel = SessionManager.CurrentPersonel;
+
             var teklif = new Teklif
             {
                 MusteriId = firma.MusteriId,
-                PersonelId = 2,
+                PersonelId = personel?.PersonelId,
                 OlusturmaTarihi = DateTime.Now,
                 GenelIndirimOrani = genelIndirimOrani,
                 KdvOrani = kdvOrani,
@@ -110,7 +112,6 @@ namespace teklif_programi.Services
 
             _context.SaveChanges();
 
-            var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
 
             SaveFileDialog saveFileDialog = new()
             {

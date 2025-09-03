@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using teklif_programi.Data;
+using teklif_programi.Helpers;
 
 namespace teklif_programi.view
 {
@@ -45,13 +46,16 @@ namespace teklif_programi.view
 
                 if (cmbGirisTipi.SelectedIndex == 0)
                 {
-                    girisBasarili = await context.Personeller
-                        .AnyAsync(p => p.Telefon == kullanici && p.Sifre == sifre);
+                    var personel = await context.Personeller
+                        .FirstOrDefaultAsync(p => p.Telefon == kullanici && p.Sifre == sifre);
+                    girisBasarili = personel != null;
+                    SessionManager.CurrentPersonel = personel;
                 }
                 else
                 {
                     girisBasarili = await context.Adminler
                         .AnyAsync(a => a.KullaniciAdi == kullanici && a.Sifre == sifre);
+                    SessionManager.CurrentPersonel = null;
                 }
 
                 if (girisBasarili)
