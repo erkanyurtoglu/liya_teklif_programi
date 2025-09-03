@@ -691,7 +691,7 @@ namespace teklif_programi.Services
                     }
 
 
-                    // GENEL TOPLAM (SADECE burada üst çizgi var)
+                    // GENEL TOPLAM 
                     toplamTable.AddCell(CreateRightAlignedHeaderCell(
                             isEnglish ? "Grand Total:" : "Genel Toplam:",
                             boldFont)
@@ -701,7 +701,7 @@ namespace teklif_programi.Services
                         .SetBorderTop(new SolidBorder(ColorConstants.BLACK, 0.5f)));
 
 
-                    // Teslimat bilgileri (Genel Toplamın altında)
+                    // Teslimat bilgileri 
                     if (!string.IsNullOrWhiteSpace(teslimatSekli) || !string.IsNullOrWhiteSpace(teslimatYeri))
                     {
                         if (!string.IsNullOrWhiteSpace(teslimatSekli))
