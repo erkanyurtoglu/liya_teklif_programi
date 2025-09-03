@@ -22,6 +22,10 @@ namespace teklif_programi.Data
         public DbSet<Personel> Personeller { get; set; }
         // Personeller tablosunu temsil eder.
 
+        public DbSet<Admin> Adminler { get; set; }
+        // Adminler tablosunu temsil eder.
+
+
         public DbSet<Teklif> Teklifler { get; set; }
         // Teklifler tablosunu temsil eder.
 

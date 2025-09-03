@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Microsoft.EntityFrameworkCore;
+using teklif_programi.Data;
 
 namespace teklif_programi.view
 {
@@ -19,23 +11,65 @@ namespace teklif_programi.view
     /// </summary>
     public partial class girisEkrani : Window
     {
+        private TextBlock? _kullaniciPlaceholder;
+
         public girisEkrani()
         {
             InitializeComponent();
+
+            txtKullanici.Loaded += (_, __) =>
+            {
+                _kullaniciPlaceholder = (TextBlock)txtKullanici.Template.FindName("PlaceholderText", txtKullanici);
+                UpdatePlaceholder();
+            };
+
+            cmbGirisTipi.SelectionChanged += (_, __) => UpdatePlaceholder();
         }
 
-        private void btnGirisYap_Click_1(object sender, RoutedEventArgs e)
+        private void UpdatePlaceholder()
         {
+            if (_kullaniciPlaceholder == null) return;
+            _kullaniciPlaceholder.Text = cmbGirisTipi.SelectedIndex == 0 ? "Telefon" : "Kullanıcı Adı";
+        }
+
+        private async void btnGirisYap_Click_1(object sender, RoutedEventArgs e)
+        {
+            txtErrorMessage.Visibility = Visibility.Collapsed;
             try
             {
-                var anaEkran = new anaEkran();
-                anaEkran.Show();
-                Close();
+                using var context = new TeklifDbContext();
+                var kullanici = txtKullanici.Text;
+                var sifre = txtSifre.Text;
+
+                bool girisBasarili;
+
+                if (cmbGirisTipi.SelectedIndex == 0)
+                {
+                    girisBasarili = await context.Personeller
+                        .AnyAsync(p => p.Telefon == kullanici && p.Sifre == sifre);
+                }
+                else
+                {
+                    girisBasarili = await context.Adminler
+                        .AnyAsync(a => a.KullaniciAdi == kullanici && a.Sifre == sifre);
+                }
+
+                if (girisBasarili)
+                {
+                    var anaEkran = new anaEkran();
+                    anaEkran.Show();
+                    Close();
+                }
+                else
+                {
+                    txtErrorMessage.Text = "Giriş bilgileri hatalı.";
+                    txtErrorMessage.Visibility = Visibility.Visible;
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    $"Uygulama başlatılırken bir hata oluştu: {ex.Message}",
+                    $"Giriş sırasında bir hata oluştu: {ex.Message}",
                     "Hata",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
