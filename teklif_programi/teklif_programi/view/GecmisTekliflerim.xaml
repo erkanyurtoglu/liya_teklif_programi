@@ -200,6 +200,12 @@
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DetayGosterCommand}"
                                         CommandParameter="{Binding}"
                                         Background="#1874CD"/>
+                                <Button Content="Sil"
+                                        Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Background="#C0392B"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.SilCommand}"
+                                        CommandParameter="{Binding}"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

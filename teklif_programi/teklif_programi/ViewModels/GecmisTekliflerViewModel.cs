@@ -10,6 +10,7 @@ using System.Windows.Controls;
 using teklif_programi.Data;
 using teklif_programi.Models;
 using teklif_programi.view;
+using teklif_programi.Services;
 
 namespace teklif_programi.ViewModels
 {
@@ -90,12 +91,14 @@ namespace teklif_programi.ViewModels
         public Visibility BitisTarihiVisibility => SecilenTarihFiltresi == "Özel Tarih" ? Visibility.Visible : Visibility.Collapsed;
 
         public RelayCommand<Teklif> DetayGosterCommand { get; }
+        public RelayCommand<Teklif> SilCommand { get; }
 
         public GecmisTekliflerViewModel()
         {
             _context = new TeklifDbContext();
             _secilenTarihFiltresi = "1 Hafta";
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
+            SilCommand = new RelayCommand<Teklif>(TeklifiSil);
             TeklifleriYukle();
 
             EventHub.TeklifGuncellendi += OnTeklifGuncellendi;
@@ -247,6 +250,54 @@ namespace teklif_programi.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Detay penceresi açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void TeklifiSil(Teklif? teklif)
+        {
+            if (teklif == null)
+            {
+                MessageBox.Show("Silinecek teklif bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            var pwdDialog = new PasswordDialog
+            {
+                Owner = Application.Current?.Windows
+                    .OfType<Window>()
+                    .FirstOrDefault(w => w.IsActive && w.IsVisible)
+                    ?? Application.Current?.MainWindow
+            };
+
+            bool? result = pwdDialog.ShowDialog();
+            if (result == true)
+            {
+                if (PasswordService.Verify(pwdDialog.EnteredPassword))
+                {
+                    if (MessageBox.Show("Bu teklifi kalıcı olarak silmek istediğinizden emin misiniz?", "Onay", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                    {
+                        try
+                        {
+                            var silinecek = _context.Teklifler.FirstOrDefault(t => t.TeklifId == teklif.TeklifId);
+                            if (silinecek != null)
+                            {
+                                _context.Teklifler.Remove(silinecek);
+                                _context.SaveChanges();
+                            }
+
+                            TumTeklifler.Remove(teklif);
+                            FiltrelenmisTeklifler.Remove(teklif);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Teklif silinirken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 
