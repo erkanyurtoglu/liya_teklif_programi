@@ -39,7 +39,7 @@ namespace teklif_programi.view
             {
                 using var context = new TeklifDbContext();
                 var kullanici = txtKullanici.Text;
-                var sifre = txtSifre.Text;
+                var sifre = pwdSifre.Visibility == Visibility.Visible ? pwdSifre.Password : txtSifre.Text;
 
                 bool girisBasarili;
 
@@ -74,6 +74,34 @@ namespace teklif_programi.view
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+        private void TogglePasswordVisibility(object sender, RoutedEventArgs e)
+        {
+            if (pwdSifre.Visibility == Visibility.Visible)
+            {
+                txtSifre.Text = pwdSifre.Password;
+                pwdSifre.Visibility = Visibility.Collapsed;
+                txtSifre.Visibility = Visibility.Visible;
+                btnTogglePassword.Content = "🔓";
+                pwdPlaceholder.Visibility = Visibility.Collapsed;
+                txtSifre.Focus();
+                txtSifre.CaretIndex = txtSifre.Text.Length;
+            }
+            else
+            {
+                pwdSifre.Password = txtSifre.Text;
+                txtSifre.Visibility = Visibility.Collapsed;
+                pwdSifre.Visibility = Visibility.Visible;
+                btnTogglePassword.Content = "🔐";
+                pwdPlaceholder.Visibility = string.IsNullOrEmpty(pwdSifre.Password) ? Visibility.Visible : Visibility.Collapsed;
+                pwdSifre.Focus();
+            }
+        }
+
+        private void pwdSifre_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            pwdPlaceholder.Visibility = string.IsNullOrEmpty(pwdSifre.Password) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void chkBeniHatirla_Checked(object sender, RoutedEventArgs e)

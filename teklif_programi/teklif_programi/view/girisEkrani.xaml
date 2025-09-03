@@ -58,6 +58,7 @@
                                                                Margin="10,0,40,0" FontFamily="Source Sans Pro"/>
                                                 </Grid>
                                             </Border>
+
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="Text" Value="">
                                                     <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
@@ -83,9 +84,44 @@
 
                 <!-- Şifre -->
                 <Grid Margin="0,5,0,10">
+                    <PasswordBox x:Name="pwdSifre" FontSize="14" Height="38" Background="White"
+                                 Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
+                                 VerticalContentAlignment="Center" FontFamily="Source Sans Pro"
+                                 PasswordChanged="pwdSifre_PasswordChanged">
+                        <PasswordBox.Style>
+                            <Style TargetType="PasswordBox">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="PasswordBox">
+                                            <Border Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="2">
+                                                <Grid>
+                                                    <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
+                                                </Grid>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsFocused" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#13183E"/>
+                                                    <Setter Property="Effect">
+                                                        <Setter.Value>
+                                                            <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </PasswordBox.Style>
+                    </PasswordBox>
+                    <TextBlock x:Name="pwdPlaceholder" Text="Şifre" Foreground="Gray" IsHitTestVisible="False"
+                               Margin="10,0,40,0" VerticalAlignment="Center" FontFamily="Source Sans Pro"/>
                     <TextBox x:Name="txtSifre" FontSize="14" Height="38" Background="White"
                              Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
-                             VerticalContentAlignment="Center" FontFamily="Source Sans Pro">
+                             VerticalContentAlignment="Center" FontFamily="Source Sans Pro" Visibility="Collapsed">
                         <TextBox.Style>
                             <Style TargetType="TextBox">
                                 <Setter Property="Template">
@@ -122,8 +158,10 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <TextBlock Text="🔐" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
-                               VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                    <Button x:Name="btnTogglePassword" Content="🔐" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
+                            Background="Transparent" BorderThickness="0" Cursor="Hand"
+                            VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"
+                            Click="TogglePasswordVisibility"/>
                 </Grid>
 
                 <!-- Giriş Tipi ve Giriş Yap -->
