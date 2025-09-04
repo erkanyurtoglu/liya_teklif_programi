@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using teklif_programi.Helpers;
 
 namespace teklif_programi.view
 {
@@ -22,6 +23,12 @@ namespace teklif_programi.view
         public anaEkran()
         {
             InitializeComponent();
+
+            if (SessionManager.CurrentPersonel != null)
+            {
+                btnPersonel.Visibility = Visibility.Collapsed;
+                homeButtons.Columns = 3;
+            }
         }
 
         private void ShowNav(StackPanel activeNav)
