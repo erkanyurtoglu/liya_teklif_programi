@@ -775,79 +775,103 @@ namespace teklif_programi.Services
                 FileName = $"UretimListesi_{teklif.TeklifId}_{DateTime.Now:yyyyMMdd}.pdf"
             };
 
-            if (saveFileDialog.ShowDialog() == true)
-            {
-                try
-                {
-                    using var pdf = new PdfDocument(new PdfReader(UretimListesiTemplatePath),
-                                                    new PdfWriter(saveFileDialog.FileName));
-                    using var doc = new Document(pdf);
-                    doc.SetMargins(100f, 20f, 20f, 20f);
-
-                    PdfFont regularFont = PdfFontFactory.CreateFont(
-                        @"C:\\Windows\\Fonts\\arial.ttf",
-                        PdfEncodings.IDENTITY_H,
-                        PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
-                    );
-
-                    PdfFont boldFont = PdfFontFactory.CreateFont(
-                        @"C:\\Windows\\Fonts\\arialbd.ttf",
-                        PdfEncodings.IDENTITY_H,
-                        PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
-                    );
-
-                    doc.SetFont(regularFont);
-
-                    Table table = new Table(new float[] { 2f, 4f, 1f, 5f }) 
-                        .UseAllAvailableWidth();
-
-                    Cell CreateHeader(string text) => new Cell()
-                        .Add(new Paragraph(text).SetFont(boldFont).SetFontSize(9))
-                        .SetBackgroundColor(new DeviceRgb(240, 240, 240))
-                        .SetTextAlignment(TextAlignment.CENTER)
-                        .SetVerticalAlignment(VerticalAlignment.MIDDLE)
-                        .SetPadding(5)
-                        .SetBorder(Border.NO_BORDER);
-
-                    Cell CreateBody(string text) => new Cell()
-                        .Add(new Paragraph(text).SetFont(regularFont).SetFontSize(9))
-                        .SetBackgroundColor(ColorConstants.WHITE)
-                        .SetTextAlignment(TextAlignment.LEFT)
-                        .SetVerticalAlignment(VerticalAlignment.MIDDLE)
-                        .SetPadding(5)
-                        .SetBorder(Border.NO_BORDER);
-
-                    table.AddHeaderCell(CreateHeader("Ürün Kodu"));
-                    table.AddHeaderCell(CreateHeader("Açıklama"));
-                    table.AddHeaderCell(CreateHeader("Tamamlandı"));
-                    table.AddHeaderCell(CreateHeader("Not"));
-
-                    foreach (var u in urunler)
-                    {
-                        table.AddCell(CreateBody(u.UrunKodu));
-                        table.AddCell(CreateBody(u.UrunAciklamasi));
-                        var tamamlandiCell = CreateBody(u.Tamamlandi ? "☑" : "☐");
-                        tamamlandiCell.SetTextAlignment(TextAlignment.CENTER);
-                        table.AddCell(tamamlandiCell);
-                        table.AddCell(CreateBody(u.UretimNotu));
-                    }
-
-                    doc.Add(table);
-                    doc.Close();
-
-                    MessageBox.Show("Üretim listesi PDF oluşturuldu!",
-                                    "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Üretim listesi oluşturulurken bir hata oluştu: {ex.Message}",
-                                    "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
+            if (saveFileDialog.ShowDialog() != true)
             {
                 MessageBox.Show("İşlem iptal edildi, PDF kaydedilmedi.",
                                 "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                using var pdf = new PdfDocument(new PdfReader(UretimListesiTemplatePath),
+                                                new PdfWriter(saveFileDialog.FileName));
+                using var doc = new Document(pdf);
+
+                // Üst marj şablon başlığına, sağ-sol neredeyse sıfır boşluk
+                doc.SetMargins(100f, 10f, 20f, 10f);
+
+                PdfFont regularFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arial.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+                PdfFont boldFont = PdfFontFactory.CreateFont(
+                    @"C:\Windows\Fonts\arialbd.ttf",
+                    PdfEncodings.IDENTITY_H,
+                    PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                );
+                doc.SetFont(regularFont);
+
+                // Sütunlar: No | Ürün Kodu | Açıklama | Adet | Durum | Not
+                var colWidths = new float[] { 0.8f, 1.8f, 7.2f, 1.2f, 1.4f, 5.6f };
+
+                Table table = new Table(colWidths)
+                    .SetFixedLayout()
+                    .SetWidth(UnitValue.CreatePercentValue(100))   // sağ-sol tam yaslı
+                    .SetMarginLeft(0).SetMarginRight(0);
+
+                Cell Header(string t) => new Cell()
+                    .Add(new Paragraph(t).SetFont(boldFont).SetFontSize(9))
+                    .SetBackgroundColor(new DeviceRgb(240, 240, 240))
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetPadding(5)
+                    .SetBorder(Border.NO_BORDER);
+
+                Cell Body(string t, float fs, Color bg, TextAlignment align = TextAlignment.LEFT) => new Cell()
+                    .Add(new Paragraph(t ?? string.Empty).SetFont(regularFont).SetFontSize(fs))
+                    .SetBackgroundColor(bg)
+                    .SetTextAlignment(align)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetPadding(5)
+                    .SetBorder(Border.NO_BORDER);
+
+                Cell Check(Color bg) => new Cell()
+                    .Add(new Paragraph("□").SetFont(boldFont).SetFontSize(14))
+                    .SetBackgroundColor(bg)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetMinHeight(20)
+                    .SetPadding(0)
+                    .SetBorder(Border.NO_BORDER);
+
+                // Başlıklar
+                table.AddHeaderCell(Header("No"));
+                table.AddHeaderCell(Header("Ürün Kodu"));
+                table.AddHeaderCell(Header("Açıklama"));
+                table.AddHeaderCell(Header("Adet"));
+                table.AddHeaderCell(Header("Durum"));
+                table.AddHeaderCell(Header("Not"));
+
+                var white = ColorConstants.WHITE;
+                var light = new DeviceRgb(245, 245, 245);
+
+                int no = 1;
+                foreach (var u in urunler)
+                {
+                    var bg = (no % 2 == 1) ? white : light;
+
+                    table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER)); // No (orta)
+                    table.AddCell(Body(u.UrunKodu, 9, bg));                          // Ürün Kodu
+                    table.AddCell(Body(u.UrunAciklamasi, 8, bg));                    // Açıklama (küçük)
+                    table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER)); // Adet (orta)
+                    table.AddCell(Check(bg));                                        // Durum (kutucuk)
+                    table.AddCell(Body(u.UretimNotu, 9, bg));                        // Not (geniş)
+
+                    no++;
+                }
+
+                doc.Add(table);
+                doc.Close();
+
+                MessageBox.Show("Üretim listesi PDF oluşturuldu!",
+                                "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Üretim listesi oluşturulurken bir hata oluştu: {ex.Message}",
+                                "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
