@@ -215,3 +215,5 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\BitenTekliflerim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\UrunMaliyetWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\UrunMaliyetWindow.g.cs
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Istatistikler.baml
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Istatistikler.g.cs

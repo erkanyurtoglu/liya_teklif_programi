@@ -27,7 +27,12 @@ namespace teklif_programi.view
             if (SessionManager.CurrentPersonel != null)
             {
                 btnPersonel.Visibility = Visibility.Collapsed;
+                btnIstatistik.Visibility = Visibility.Collapsed;
                 homeButtons.Columns = 3;
+            }
+            else
+            {
+                homeButtons.Columns = 5;
             }
         }
 
@@ -65,6 +70,17 @@ namespace teklif_programi.view
             ShowNav(teklifNav);
             contentArea.Content = new TeklifVer();
         }
+
+        private void HomeIstatistik_Click(object sender, RoutedEventArgs e)
+        {
+            navBorder.Visibility = Visibility.Visible;
+            customerNav.Visibility = Visibility.Collapsed;
+            productNav.Visibility = Visibility.Collapsed;
+            personNav.Visibility = Visibility.Collapsed;
+            teklifNav.Visibility = Visibility.Collapsed;
+            contentArea.Content = new Istatistikler();
+        }
+
 
         private void btnAnaSayfa_Click(object sender, RoutedEventArgs e)
         {

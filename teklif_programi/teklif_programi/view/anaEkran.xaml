@@ -175,6 +175,12 @@
                             <TextBlock Text="Teklif İşlemleri" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Button>
+                    <Button x:Name="btnIstatistik" Style="{StaticResource CardButtonStyle}" Click="HomeIstatistik_Click">
+                        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="📊" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                            <TextBlock Text="İstatistikler" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </UniformGrid>
             </Grid>
         </ContentControl>
