@@ -730,7 +730,7 @@ namespace teklif_programi.Services
                     doc.Add(toplamTable);
 
 
-                    doc.SetMargins(0f, 30f, 40f, 30f);
+                    doc.SetMargins(80f, 30f, 40f, 30f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage sozlesmePage = pdf.GetLastPage();
                     if (sozlesmeBackground != null)
@@ -788,8 +788,8 @@ namespace teklif_programi.Services
                                                 new PdfWriter(saveFileDialog.FileName));
                 using var doc = new Document(pdf);
 
-                // Şablon başlığına göre marjlar (sağ-sol minimum)
-                doc.SetMargins(45f, 10f, 20f, 10f);
+                // Üst marj şablon başlığına, sağ-sol neredeyse sıfır boşluk
+                doc.SetMargins(100f, 10f, 20f, 10f);
 
                 PdfFont regularFont = PdfFontFactory.CreateFont(
                     @"C:\Windows\Fonts\arial.ttf",
@@ -803,57 +803,12 @@ namespace teklif_programi.Services
                 );
                 doc.SetFont(regularFont);
 
-                // --- ÜST BİLGİ BLOĞU ---
-                var firma = teklif.Musteri ?? _context.Musteriler.First(m => m.MusteriId == teklif.MusteriId);
-                var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
-
-                Table infoTable = new Table(new float[] { 3.5f, 1f })
-                    .SetWidth(UnitValue.CreatePercentValue(80))
-                    .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
-                    .SetMarginTop(15f);
-
-                Cell InfoCell(string label, string value) =>
-                    new Cell().Add(
-                            new Paragraph()
-                                .SetFontSize(9)
-                                .Add(new Text(label).SetFont(boldFont))
-                                .Add(" ")
-                                .Add(new Text(value ?? string.Empty).SetFont(regularFont))
-                        )
-                        .SetBorder(Border.NO_BORDER)
-                        .SetTextAlignment(TextAlignment.LEFT);
-
-                infoTable.AddCell(InfoCell("Firma Adı:", firma.FirmaAdi));
-                infoTable.AddCell(InfoCell("Teklif Tarihi:", teklif.OlusturmaTarihi.ToString("dd.MM.yyyy")));
-                infoTable.AddCell(InfoCell("Teklifi Yapan:", personel?.AdSoyad ?? string.Empty));
-                infoTable.AddCell(InfoCell("Teslim Tarihi:", teklif.TeslimatTarihi?.ToString("dd.MM.yyyy") ?? string.Empty));
-                infoTable.AddCell(InfoCell("Teklif No:", teklif.TeklifId.ToString()));
-
-                doc.Add(infoTable);
-
-                // --- ÜST ÇİZGİ + BAŞLIK + ALT ÇİZGİ (Tek çizgi üstte, tek çizgi altta) ---
-                var topSeparator = new LineSeparator(new SolidLine(0.5f))
-                    .SetWidth(UnitValue.CreatePercentValue(100));
-                doc.Add(topSeparator);
-
-                doc.Add(new Paragraph("Ürünler")
-                    .SetTextAlignment(TextAlignment.CENTER)
-                    .SetFont(boldFont)
-                    .SetFontSize(11));
-
-                var bottomSeparator = new LineSeparator(new SolidLine(0.5f))
-                    .SetWidth(UnitValue.CreatePercentValue(100))
-                    .SetMarginBottom(8f);   // altına 8pt boşluk
-                doc.Add(bottomSeparator);
-
-
-                // --- ÜRETİM LİSTESİ TABLOSU ---
                 // Sütunlar: No | Ürün Kodu | Açıklama | Adet | Durum | Not
                 var colWidths = new float[] { 0.8f, 1.8f, 7.2f, 1.2f, 1.4f, 5.6f };
 
                 Table table = new Table(colWidths)
                     .SetFixedLayout()
-                    .SetWidth(UnitValue.CreatePercentValue(100))
+                    .SetWidth(UnitValue.CreatePercentValue(100))   // sağ-sol tam yaslı
                     .SetMarginLeft(0).SetMarginRight(0);
 
                 Cell Header(string t) => new Cell()
@@ -897,12 +852,12 @@ namespace teklif_programi.Services
                 {
                     var bg = (no % 2 == 1) ? white : light;
 
-                    table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER));            // No
-                    table.AddCell(Body(u.UrunKodu, 9, bg));                                     // Ürün Kodu
-                    table.AddCell(Body(u.UrunAciklamasi, 8, bg));                               // Açıklama (küçük)
-                    table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER));        // Adet
-                    table.AddCell(Check(bg));                                                   // Durum (kutucuk)
-                    table.AddCell(Body(u.UretimNotu, 9, bg));                                   // Not
+                    table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER)); // No (orta)
+                    table.AddCell(Body(u.UrunKodu, 9, bg));                          // Ürün Kodu
+                    table.AddCell(Body(u.UrunAciklamasi, 8, bg));                    // Açıklama (küçük)
+                    table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER)); // Adet (orta)
+                    table.AddCell(Check(bg));                                        // Durum (kutucuk)
+                    table.AddCell(Body(u.UretimNotu, 9, bg));                        // Not (geniş)
 
                     no++;
                 }
