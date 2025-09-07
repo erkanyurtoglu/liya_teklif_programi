@@ -16,6 +16,11 @@ namespace teklif_programi.ViewModels
         public int ToplamKabulEdilen { get; }
         public int ToplamReddedilen { get; }
         public int ToplamBeklemede { get; }
+        public double KabulOrani { get; }
+        public double ReddedilmeOrani { get; }
+        public string TopPerformerAd { get; } = string.Empty;
+        public int TopPerformerGonderilen { get; }
+        public int TopPerformerKabulEdilen { get; }
         public ObservableCollection<PersonelPerformans> PersonelPerformanslari { get; }
 
         public IstatistikViewModel()
@@ -27,6 +32,15 @@ namespace teklif_programi.ViewModels
             ToplamKabulEdilen = list.Sum(p => p.KabulEdilen);
             ToplamReddedilen = list.Sum(p => p.Reddedilen);
             ToplamBeklemede = list.Sum(p => p.Beklemede);
+            KabulOrani = ToplamGonderilen == 0 ? 0 : (double)ToplamKabulEdilen / ToplamGonderilen * 100;
+            ReddedilmeOrani = ToplamGonderilen == 0 ? 0 : (double)ToplamReddedilen / ToplamGonderilen * 100;
+            var topGonderen = list.OrderByDescending(p => p.Gonderilen).FirstOrDefault();
+            if (topGonderen != null)
+            {
+                TopPerformerAd = topGonderen.Personel;
+                TopPerformerGonderilen = topGonderen.Gonderilen;
+                TopPerformerKabulEdilen = topGonderen.KabulEdilen;
+            }
             PersonelPerformanslari = new ObservableCollection<PersonelPerformans>(list);
         }
     }

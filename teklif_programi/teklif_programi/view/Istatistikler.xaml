@@ -146,6 +146,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="8"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -158,8 +159,49 @@
                        Foreground="{StaticResource Muted}" Text="Genel görünüm • Teklif aktivitesi"/>
         </StackPanel>
 
+        <!-- Başarı Oranları ve Top Performer -->
+        <UniformGrid Grid.Row="1" Columns="3">
+            <!-- Kabul Oranı -->
+            <Border Style="{StaticResource StatCard}">
+                <StackPanel>
+                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE10B;"
+                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Style="{StaticResource KpiLabel}" Text="Kabul Oranı"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding KabulOrani, StringFormat={}{0:F1}%}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Reddedilme Oranı -->
+            <Border Style="{StaticResource StatCard}">
+                <StackPanel>
+                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;"
+                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Style="{StaticResource KpiLabel}" Text="Reddedilme Oranı"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ReddedilmeOrani, StringFormat={}{0:F1}%}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Top Performer -->
+            <Border Style="{StaticResource StatCard}">
+                <StackPanel>
+                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE734;"
+                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Style="{StaticResource KpiLabel}" Text="Öne Çıkan Personel"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding TopPerformerAd}"/>
+                    <TextBlock Style="{StaticResource KpiLabel}" Text="{Binding TopPerformerGonderilen, StringFormat={}{0} gönderilen}"/>
+                    <TextBlock Style="{StaticResource KpiLabel}" Text="{Binding TopPerformerKabulEdilen, StringFormat={}{0} kabul}"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+
         <!-- KPI Kartları -->
-        <UniformGrid Grid.Row="1" Rows="2" Columns="4">
+        <UniformGrid Grid.Row="2" Rows="2" Columns="4">
             <Border Style="{StaticResource StatCard}">
                 <StackPanel>
                     <StackPanel Style="{StaticResource CardTitleWithIcon}">
@@ -254,11 +296,12 @@
             </Border>
         </UniformGrid>
 
+
         <!-- İnce ayraç -->
-        <Rectangle Grid.Row="2" Height="1" Fill="{StaticResource Divider}" Margin="4,8"/>
+        <Rectangle Grid.Row="3" Height="1" Fill="{StaticResource Divider}" Margin="4,8"/>
 
         <!-- Personel Performansları -->
-        <Border Grid.Row="3" Style="{StaticResource StatCardStatic}" Padding="0" Margin="0,8,0,0">
+        <Border Grid.Row="4" Style="{StaticResource StatCardStatic}" Padding="0" Margin="0,8,0,0">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
