@@ -64,6 +64,26 @@ namespace teklif_programi.Services
             using var transaction = _context.Database.BeginTransaction();
 
             var personel = SessionManager.CurrentPersonel;
+            var admin = SessionManager.CurrentAdmin;
+
+            if (personel == null && admin != null)
+            {
+                personel = _context.Personeller
+                    .FirstOrDefault(p => p.AdSoyad == admin.KullaniciAdi && p.Pozisyon == "Admin");
+                if (personel == null)
+                {
+                    personel = new Personel
+                    {
+                        AdSoyad = admin.KullaniciAdi,
+                        Telefon = string.Empty,
+                        Pozisyon = "Admin",
+                        Sifre = admin.Sifre ?? string.Empty,
+                        EklenmeTarihi = DateTime.Now
+                    };
+                    _context.Personeller.Add(personel);
+                    _context.SaveChanges();
+                }
+            }
 
             var teklif = new Teklif
             {
@@ -231,7 +251,7 @@ namespace teklif_programi.Services
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Prepared By:" : "Teklifi Yapan:",
-                        personel?.AdSoyad ?? string.Empty,
+                        personel?.AdSoyad ?? admin?.KullaniciAdi ?? string.Empty,
                         boldFont,
                         regularFont));
 
@@ -442,6 +462,7 @@ namespace teklif_programi.Services
 
             var firma = teklif.Musteri ?? _context.Musteriler.First(m => m.MusteriId == teklif.MusteriId);
             var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
+            var admin = SessionManager.CurrentAdmin;
 
             var genelIndirimOrani = teklif.GenelIndirimOrani;
             var kdvOrani = teklif.KdvOrani;
@@ -573,7 +594,7 @@ namespace teklif_programi.Services
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Prepared By:" : "Teklifi Yapan:",
-                        personel?.AdSoyad ?? string.Empty,
+                        personel?.AdSoyad ?? admin?.KullaniciAdi ?? string.Empty,
                         boldFont,
                         regularFont));
 

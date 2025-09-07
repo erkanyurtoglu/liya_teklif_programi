@@ -50,11 +50,14 @@ namespace teklif_programi.view
                         .FirstOrDefaultAsync(p => p.Telefon == kullanici && p.Sifre == sifre);
                     girisBasarili = personel != null;
                     SessionManager.CurrentPersonel = personel;
+                    SessionManager.CurrentAdmin = null;
                 }
                 else
                 {
-                    girisBasarili = await context.Adminler
-                        .AnyAsync(a => a.KullaniciAdi == kullanici && a.Sifre == sifre);
+                    var admin = await context.Adminler
+                        .FirstOrDefaultAsync(a => a.KullaniciAdi == kullanici && a.Sifre == sifre);
+                    girisBasarili = admin != null;
+                    SessionManager.CurrentAdmin = admin;
                     SessionManager.CurrentPersonel = null;
                 }
 

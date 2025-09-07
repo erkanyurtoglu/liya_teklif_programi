@@ -5,5 +5,6 @@ namespace teklif_programi.Helpers
     public static class SessionManager
     {
         public static Personel? CurrentPersonel { get; set; }
+        public static Admin? CurrentAdmin { get; set; }
     }
 }
