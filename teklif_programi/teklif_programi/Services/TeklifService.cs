@@ -22,6 +22,8 @@ using teklif_programi.Models;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
+using IoPath = System.IO.Path;
+
 
 namespace teklif_programi.Services
 {
@@ -33,13 +35,15 @@ namespace teklif_programi.Services
         private static readonly float[] TotalColumnWidths = { 3f, 2f };
         private static readonly float[] InfoColumnWidths = { 1f, 1f }; // Sol ve sağ sütunlar için hizalamayı düzenlemek
 
-        private static readonly string GirisSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfa.pdf";
-        private static readonly string TeklifSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfa.pdf";
-        private static readonly string SozlesmeSayfaTrPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfa.pdf";
-        private static readonly string GirisSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\girisSayfaEnglish.pdf";
-        private static readonly string TeklifSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklifSayfaEnglish.pdf";
-        private static readonly string SozlesmeSayfaEnPath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\sozlesmeSayfaEnglish.pdf";
-        private static readonly string UretimListesiTemplatePath = @"C:\Users\yurto\Documents\GitHub\liya_teklif_programi\uretimListesi.pdf";
+        private static readonly string PdfFolder = IoPath.Combine(AppDomain.CurrentDomain.BaseDirectory, "pdf_templates");
+        private static readonly string GirisSayfaTrPath = IoPath.Combine(PdfFolder, "girisSayfa.pdf");
+        private static readonly string TeklifSayfaTrPath = IoPath.Combine(PdfFolder, "teklifSayfa.pdf");
+        private static readonly string SozlesmeSayfaTrPath = IoPath.Combine(PdfFolder, "sozlesmeSayfa.pdf");
+        private static readonly string GirisSayfaEnPath = IoPath.Combine(PdfFolder, "girisSayfaEnglish.pdf");
+        private static readonly string TeklifSayfaEnPath = IoPath.Combine(PdfFolder, "teklifSayfaEnglish.pdf");
+        private static readonly string SozlesmeSayfaEnPath = IoPath.Combine(PdfFolder, "sozlesmeSayfaEnglish.pdf");
+        private static readonly string UretimListesiTemplatePath = IoPath.Combine(PdfFolder, "uretimListesi.pdf");
+
 
 
         public void KaydetVePdfIndir(Musteri firma,

@@ -47,4 +47,11 @@
     </Resource>
   </ItemGroup>
 
+  <ItemGroup>
+	 <None Include="pdf_templates\*.pdf">
+       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	 </None>
+  </ItemGroup>
+
+
 </Project>
