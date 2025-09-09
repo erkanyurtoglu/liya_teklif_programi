@@ -185,7 +185,7 @@
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTextColumn Header="Teklifi Yapan" Binding="{Binding Personel.KullaniciAdi}" Width="1.5*"
-                                    ElementStyle="{StaticResource CellTextLeft}" />
+                                    ElementStyle="{StaticResource CellTextCenter}" />
                 
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="0.8*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
