@@ -224,3 +224,4 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Debug\net8.0-windows\pdf_templates\teklifSayfa.pdf
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Debug\net8.0-windows\pdf_templates\teklifSayfaEnglish.pdf
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Debug\net8.0-windows\pdf_templates\uretimListesi.pdf
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_programi_Content.g.cs

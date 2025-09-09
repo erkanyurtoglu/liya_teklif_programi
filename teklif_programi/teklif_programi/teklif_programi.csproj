@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>bin\Debug\net8.0-windows\resimler\Teklif-Belgesi.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -51,6 +52,10 @@
 	 <None Include="pdf_templates\*.pdf">
        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	 </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bin\Debug\net8.0-windows\resimler\Teklif-Belgesi.ico" />
   </ItemGroup>
 
 
