@@ -109,6 +109,15 @@ namespace teklif_programi.view
 
         private void Logout()
         {
+            var result = MessageBox.Show(
+                "Oturumu kapatmak istediğinize emin misiniz?",
+                "Çıkış Onayı",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
             SessionManager.CurrentPersonel = null;
             SessionManager.CurrentAdmin = null;
             var login = new girisEkrani();
