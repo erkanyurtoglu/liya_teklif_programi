@@ -28,11 +28,11 @@ namespace teklif_programi.view
             {
                 btnPersonel.Visibility = Visibility.Collapsed;
                 btnIstatistik.Visibility = Visibility.Collapsed;
-                homeButtons.Columns = 3;
+                homeButtons.Columns = 2;
             }
             else
             {
-                homeButtons.Columns = 5;
+                homeButtons.Columns = 3;
             }
         }
 
@@ -105,5 +105,19 @@ namespace teklif_programi.view
         private void btnGecmisTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new GecmisTekliflerim();
         private void btnAlinanTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new AlinanTekliflerim();
         private void btnBitenTekliflerim_Click(object sender, RoutedEventArgs e) => contentArea.Content = new BitenTekliflerim();
+
+
+        private void Logout()
+        {
+            SessionManager.CurrentPersonel = null;
+            SessionManager.CurrentAdmin = null;
+            var login = new girisEkrani();
+            login.Show();
+            Close();
+        }
+
+        private void HomeCikis_Click(object sender, RoutedEventArgs e) => Logout();
+
+        private void btnCikis_Click(object sender, RoutedEventArgs e) => Logout();
     }
 }
