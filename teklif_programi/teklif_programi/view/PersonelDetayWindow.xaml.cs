@@ -33,6 +33,7 @@ namespace teklif_programi.view
         {
             txtPersonelKodu.Text = _personel.PersonelId.ToString(); // Personel ID
             txtAdSoyad.Text = _personel.AdSoyad; // Ad soyad
+            txtKullaniciAdi.Text = _personel.KullaniciAdi; // Kullanıcı adı
             txtPozisyon.Text = _personel.Pozisyon; // Pozisyon
             txtTelefon.Text = _personel.Telefon; // Telefon
             txtSifre.Text = _personel.Sifre ?? string.Empty; // Şifre (boşsa varsayılan boş string)
@@ -55,6 +56,7 @@ namespace teklif_programi.view
                 {
                     // TextBox'lardan personel bilgilerini günceller
                     _personel.AdSoyad = txtAdSoyad.Text;
+                    _personel.KullaniciAdi = txtKullaniciAdi.Text;
                     _personel.Pozisyon = txtPozisyon.Text;
                     _personel.Telefon = txtTelefon.Text;
                     if (!string.IsNullOrWhiteSpace(txtSifre.Text))

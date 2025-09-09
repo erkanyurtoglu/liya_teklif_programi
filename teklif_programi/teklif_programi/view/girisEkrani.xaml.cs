@@ -30,7 +30,7 @@ namespace teklif_programi.view
         private void UpdatePlaceholder()
         {
             if (_kullaniciPlaceholder == null) return;
-            _kullaniciPlaceholder.Text = cmbGirisTipi.SelectedIndex == 0 ? "Telefon" : "Kullanıcı Adı";
+            _kullaniciPlaceholder.Text = "Kullanıcı Adı";
         }
 
         private async void btnGirisYap_Click_1(object sender, RoutedEventArgs e)
@@ -47,7 +47,7 @@ namespace teklif_programi.view
                 if (cmbGirisTipi.SelectedIndex == 0)
                 {
                     var personel = await context.Personeller
-                        .FirstOrDefaultAsync(p => p.Telefon == kullanici && p.Sifre == sifre);
+                        .FirstOrDefaultAsync(p => p.KullaniciAdi == kullanici && p.Sifre == sifre);
                     girisBasarili = personel != null;
                     SessionManager.CurrentPersonel = personel;
                     SessionManager.CurrentAdmin = null;

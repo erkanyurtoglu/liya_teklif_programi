@@ -20,6 +20,10 @@ namespace teklif_programi.Models
         public string Pozisyon { get; set; } = string.Empty;
         // Personelin pozisyonu, varsayılan olarak boş string.
 
+        public string KullaniciAdi { get; set; } = string.Empty;
+        // Personelin sisteme girişte kullanacağı kullanıcı adı.
+
+
         public string Sifre { get; set; } = string.Empty;
         // Personelin şifresi (hashlenmiş), varsayılan olarak boş string.
 

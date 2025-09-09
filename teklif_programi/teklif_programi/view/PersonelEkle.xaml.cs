@@ -40,6 +40,7 @@ namespace teklif_programi.view
             // Tüm alanların dolu olup olmadığını kontrol eder
             if (string.IsNullOrWhiteSpace(txtAdSoyad.Text) ||
                 string.IsNullOrWhiteSpace(txtPozisyon.Text) ||
+                string.IsNullOrWhiteSpace(txtKullaniciAdi.Text) ||
                 string.IsNullOrWhiteSpace(txtTelefon.Text) ||
                 string.IsNullOrWhiteSpace(txtSifre.Text))
             {
@@ -52,6 +53,7 @@ namespace teklif_programi.view
             {
                 AdSoyad = txtAdSoyad.Text,
                 Pozisyon = txtPozisyon.Text,
+                KullaniciAdi = txtKullaniciAdi.Text,
                 Telefon = txtTelefon.Text,
                 Sifre = txtSifre.Text,
             };
@@ -64,6 +66,7 @@ namespace teklif_programi.view
             // TextBox'ları temizler
             txtAdSoyad.Clear();
             txtPozisyon.Clear();
+            txtKullaniciAdi.Clear();
             txtTelefon.Clear();
             txtSifre.Clear();
         }

@@ -292,7 +292,7 @@ namespace teklif_programi.ViewModels
         }
 
 
-        public string PersonelAdiSoyadi => Teklif?.Personel != null ? Teklif.Personel.AdSoyad : "Personel bilgisi yok";
+        public string PersonelAdiSoyadi => Teklif?.Personel != null ? Teklif.Personel.KullaniciAdi : "Personel bilgisi yok";
 
         public string IndirimliToplamText { get; private set; } = "₺0,00";
         public string KdvTutariText { get; private set; } = "₺0,00";

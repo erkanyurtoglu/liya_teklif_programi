@@ -190,7 +190,7 @@
                 <DataGridTextColumn Header="Teslim Tarihi" Binding="{Binding TeslimTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Teklifi Yapan" Binding="{Binding Personel.AdSoyad}" Width="1.5*"
+                <DataGridTextColumn Header="Teklifi Yapan" Binding="{Binding Personel.KullaniciAdi}" Width="1.5*"
                                     ElementStyle="{StaticResource CellTextLeft}" />
 
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="0.8*"

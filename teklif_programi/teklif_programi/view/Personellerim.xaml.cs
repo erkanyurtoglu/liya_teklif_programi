@@ -47,7 +47,7 @@ namespace teklif_programi.view
                 var personeller = string.IsNullOrWhiteSpace(arama)
                     ? db.Personeller.ToList() // Arama yoksa tüm personeller
                     : db.Personeller
-                          .Where(f => f.AdSoyad.Contains(arama) || f.Telefon.Contains(arama) ||f.Pozisyon.Contains(arama)) // Filtreleme
+                          .Where(f => f.AdSoyad.Contains(arama) || f.KullaniciAdi.Contains(arama) || f.Telefon.Contains(arama) || f.Pozisyon.Contains(arama)) // Filtreleme
                           .ToList();
 
                 // DataGrid'e veriyi bağla

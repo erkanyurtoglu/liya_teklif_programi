@@ -26,6 +26,13 @@ namespace teklif_programi.Data.Configurations
                 .HasMaxLength(150);
             // AdSoyad zorunlu bir alan, maksimum 150 karakter.
 
+            builder.Property(p => p.KullaniciAdi)
+                .IsRequired()
+                .HasMaxLength(50);
+            builder.HasIndex(p => p.KullaniciAdi).IsUnique();
+            // Kullanıcı adı zorunlu ve benzersizdir, maksimum 50 karakter.
+
+
             builder.Property(p => p.Telefon)
                 .IsRequired()
                 .HasMaxLength(20);

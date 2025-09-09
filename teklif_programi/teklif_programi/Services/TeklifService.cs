@@ -73,12 +73,13 @@ namespace teklif_programi.Services
             if (personel == null && admin != null)
             {
                 personel = _context.Personeller
-                    .FirstOrDefault(p => p.AdSoyad == admin.KullaniciAdi && p.Pozisyon == "Admin");
+                    .FirstOrDefault(p => p.KullaniciAdi == admin.KullaniciAdi && p.Pozisyon == "Admin");
                 if (personel == null)
                 {
                     personel = new Personel
                     {
                         AdSoyad = admin.KullaniciAdi,
+                        KullaniciAdi = admin.KullaniciAdi,
                         Telefon = string.Empty,
                         Pozisyon = "Admin",
                         Sifre = admin.Sifre ?? string.Empty,
@@ -255,7 +256,7 @@ namespace teklif_programi.Services
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Prepared By:" : "Teklifi Yapan:",
-                        personel?.AdSoyad ?? admin?.KullaniciAdi ?? string.Empty,
+                        personel?.KullaniciAdi ?? admin?.KullaniciAdi ?? string.Empty,
                         boldFont,
                         regularFont));
 
@@ -598,7 +599,7 @@ namespace teklif_programi.Services
                         regularFont));
                     infoTable.AddCell(CreateInfoCell(
                         isEnglish ? "Prepared By:" : "Teklifi Yapan:",
-                        personel?.AdSoyad ?? admin?.KullaniciAdi ?? string.Empty,
+                        personel?.KullaniciAdi ?? admin?.KullaniciAdi ?? string.Empty,
                         boldFont,
                         regularFont));
 
@@ -850,7 +851,7 @@ namespace teklif_programi.Services
 
                 infoTable.AddCell(InfoCell("Firma Adı:", firma.FirmaAdi));
                 infoTable.AddCell(InfoCell("Teklif Tarihi:", teklif.OlusturmaTarihi.ToString("dd.MM.yyyy")));
-                infoTable.AddCell(InfoCell("Teklifi Yapan:", personel?.AdSoyad ?? string.Empty));
+                infoTable.AddCell(InfoCell("Teklifi Yapan:", personel?.KullaniciAdi ?? string.Empty));
                 infoTable.AddCell(InfoCell("Teslim Tarihi:", teklif.TeslimatTarihi?.ToString("dd.MM.yyyy") ?? string.Empty));
                 infoTable.AddCell(InfoCell("Teklif No:", teklif.TeklifId.ToString()));
 

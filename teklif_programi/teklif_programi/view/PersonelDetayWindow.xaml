@@ -146,6 +146,9 @@
                             <TextBlock Text="Telefon" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="txtTelefon" Style="{StaticResource InputStyle}"/>
 
+                            <TextBlock Text="Kullanıcı Adı" Style="{StaticResource LabelStyle}"/>
+                            <TextBox x:Name="txtKullaniciAdi" Style="{StaticResource InputStyle}"/>
+
                             <TextBlock Text="Şifre" Style="{StaticResource LabelStyle}"/>
                             <TextBox x:Name="txtSifre" Style="{StaticResource InputStyle}"/>
                         </StackPanel>
