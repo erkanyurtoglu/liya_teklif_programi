@@ -1,12 +1,36 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\teklif_programi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\teklif_programi.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "teklif_programi",
+              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\teklif_programi.csproj",
+              "RelativeDocumentMoniker": "teklif_programi\\teklif_programi.csproj",
+              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\teklif_programi.csproj",
+              "RelativeToolTip": "teklif_programi\\teklif_programi.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-09-10T05:56:52.846Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }
