@@ -1,5 +1,5 @@
 ﻿teklif_programi
-1.0.0.0
+1.0.0.1
 
 winexe
 C#
@@ -16,5 +16,5 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 258-198869406
 styles\navigationButtonStyles.xaml;view\AlinanTeklifDetayWindow.xaml;view\AlinanTekliflerim.xaml;view\anaEkran.xaml;view\BitenTekliflerim.xaml;view\FirmaDetayWindow.xaml;view\FirmaEkle.xaml;view\Firmalarim.xaml;view\GecmisTekliflerim.xaml;view\girisEkrani.xaml;view\Istatistikler.xaml;view\PasswordDialog.xaml;view\PersonelDetayWindow.xaml;view\PersonelEkle.xaml;view\Personellerim.xaml;view\SatisSozlesmesiWindow.xaml;view\TeklifDetayWindow.xaml;view\TeklifVer.xaml;view\UrunDetayWindow.xaml;view\UrunEkle.xaml;view\Urunlerim.xaml;view\UrunMaliyetWindow.xaml;view\UrunSecimWindow.xaml;
 
-True
+False
 

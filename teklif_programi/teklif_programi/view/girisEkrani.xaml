@@ -5,204 +5,243 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:teklif_programi.view"
         mc:Ignorable="d"
-        Title="Liya Laboratuvar A.Ş. Teklif Sistemi" Height="900" Width="1600"
-        WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Maximized">
+        Title="Liya Laboratuvar A.Ş. Teklif Sistemi"
+        Height="900" Width="1600"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize" WindowState="Maximized">
 
     <Grid>
-        <!-- Arkaplan resmi -->
-        <Border>
-            <Border.Background>
-                <ImageBrush ImageSource="/resimler/arkaplan.png" Stretch="Fill"/>
-            </Border.Background>
-        </Border>
+        <!-- Arkaplan -->
+        <Grid>
+            <Grid.Background>
+                <!-- Deforme olmaması için UniformToFill + ortalama -->
+                <ImageBrush ImageSource="/resimler/arkaplan.png"
+                            Stretch="UniformToFill"
+                            AlignmentX="Center" AlignmentY="Center"/>
+            </Grid.Background>
 
-        <!-- Giriş paneli -->
-        <Border Width="400" Background="#80FFFFFF" CornerRadius="8" Margin="0,150,0,200">
-            <Border.Effect>
-                <DropShadowEffect BlurRadius="8" ShadowDepth="4" Opacity="0.2" Color="Black"/>
-            </Border.Effect>
+            <!-- Hafif beyaz cam efekti için yarı saydam örtü (opsiyonel) -->
+            <!--<Rectangle Fill="#10FFFFFF"/>-->
 
-            <StackPanel Orientation="Vertical" Margin="20">
-                <!-- Logo -->
-                <Image Source="/resimler/liya_logo.png" Width="200" Height="120" HorizontalAlignment="Center"/>
+            <!-- Merkezde Login Kartı -->
+            <Border Background="#80FFFFFF"
+                    CornerRadius="10"
+                    Padding="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    MaxWidth="480"
+                    MinWidth="320" Height="426" Width="389">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="4" Opacity="0.22" Color="Black"/>
+                </Border.Effect>
 
-                <!-- Başlık -->
-                <TextBlock Text="Liya Laboratuvar A.Ş. Teklif Sistemi" FontSize="16" FontWeight="Bold"
-                           Foreground="#13183E" HorizontalAlignment="Center" Margin="0,20,0,20"
-                           FontFamily="Source Sans Pro"/>
+                <StackPanel Orientation="Vertical" Margin="8">
+                    <!-- Logo -->
+                    <Image Source="/resimler/liya_logo.png"
+                           Width="220" Height="120"
+                           Stretch="Uniform"
+                           HorizontalAlignment="Center"/>
 
-                <!-- Hata mesajı -->
-                <TextBlock x:Name="txtErrorMessage" Visibility="Collapsed" FontSize="12" Foreground="#721C24"
-                           Background="#F8D7DA" Padding="8" Margin="0,0,0,10" TextWrapping="Wrap"
-                           HorizontalAlignment="Center" FontFamily="Source Sans Pro"/>
+                    <!-- Başlık -->
+                    <TextBlock Text="Liya Laboratuvar A.Ş. Teklif Sistemi"
+                               FontSize="16" FontWeight="Bold"
+                               Foreground="#13183E"
+                               HorizontalAlignment="Center"
+                               Margin="0,16,0,16"
+                               FontFamily="Source Sans Pro"/>
 
-                <!-- Kullanıcı (Kullanıcı Adı) -->
-                <Grid Margin="0,20,0,10">
-                    <TextBox x:Name="txtKullanici" FontSize="14" Height="38" Background="White"
-                             Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
-                             VerticalContentAlignment="Center" FontFamily="Source Sans Pro">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="2">
-                                                <Grid>
-                                                    <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-                                                    <TextBlock x:Name="PlaceholderText" Text="Kullanıcı Adı"
-                                                               Foreground="Gray" IsHitTestVisible="False"
-                                                               Visibility="Collapsed" VerticalAlignment="Center"
-                                                               Margin="10,0,40,0" FontFamily="Source Sans Pro"/>
-                                                </Grid>
-                                            </Border>
+                    <!-- Hata mesajı -->
+                    <TextBlock x:Name="txtErrorMessage"
+                               Visibility="Collapsed"
+                               FontSize="12" Foreground="#721C24"
+                               Background="#F8D7DA"
+                               Padding="8" Margin="0,0,0,10"
+                               TextWrapping="Wrap"
+                               HorizontalAlignment="Center"
+                               FontFamily="Source Sans Pro"/>
 
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="Text" Value="">
-                                                    <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                                </Trigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="#13183E"/>
-                                                    <Setter Property="Effect">
-                                                        <Setter.Value>
-                                                            <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                    <TextBlock Text="👤" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
-                               VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"/>
-                </Grid>
+                    <!-- Kullanıcı -->
+                    <Grid Margin="0,6,0,8">
+                        <TextBox x:Name="txtKullanici"
+                                 FontSize="14" Height="38"
+                                 Background="White"
+                                 Foreground="#13183E"
+                                 BorderBrush="#13183E" BorderThickness="1"
+                                 Padding="10,0"
+                                 VerticalContentAlignment="Center"
+                                 FontFamily="Source Sans Pro">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="TextBox">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                    <Grid>
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                        <TextBlock x:Name="PlaceholderText"
+                                                                   Text="Kullanıcı Adı"
+                                                                   Foreground="Gray"
+                                                                   IsHitTestVisible="False"
+                                                                   Visibility="Collapsed"
+                                                                   VerticalAlignment="Center"
+                                                                   Margin="10,0,40,0"
+                                                                   FontFamily="Source Sans Pro"/>
+                                                    </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="Text" Value="">
+                                                        <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#13183E"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
 
-                <!-- Şifre -->
-                <Grid Margin="0,5,0,10">
-                    <PasswordBox x:Name="pwdSifre" FontSize="14" Height="38" Background="White"
-                                 Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
-                                 VerticalContentAlignment="Center" FontFamily="Source Sans Pro"
-                                 PasswordChanged="pwdSifre_PasswordChanged">
-                        <PasswordBox.Style>
-                            <Style TargetType="PasswordBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="PasswordBox">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="2">
-                                                <Grid>
-                                                    <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-                                                </Grid>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="#13183E"/>
-                                                    <Setter Property="Effect">
-                                                        <Setter.Value>
-                                                            <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </PasswordBox.Style>
-                    </PasswordBox>
-                    <TextBlock x:Name="pwdPlaceholder" Text="Şifre" Foreground="Gray" IsHitTestVisible="False"
-                               Margin="10,0,40,0" VerticalAlignment="Center" FontFamily="Source Sans Pro"/>
-                    <TextBox x:Name="txtSifre" FontSize="14" Height="38" Background="White"
-                             Foreground="#13183E" BorderBrush="#13183E" BorderThickness="1" Padding="10,0"
-                             VerticalContentAlignment="Center" FontFamily="Source Sans Pro" Visibility="Collapsed">
-                        <TextBox.Style>
-                            <Style TargetType="TextBox">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="TextBox">
-                                            <Border Background="{TemplateBinding Background}"
-                                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                                    CornerRadius="2">
-                                                <Grid>
-                                                    <ScrollViewer x:Name="PART_ContentHost" Margin="0"/>
-                                                    <TextBlock x:Name="PlaceholderText" Text="Şifre"
-                                                               Foreground="Gray" IsHitTestVisible="False"
-                                                               Visibility="Collapsed" VerticalAlignment="Center"
-                                                               Margin="10,0,40,0" FontFamily="Source Sans Pro"/>
-                                                </Grid>
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="Text" Value="">
-                                                    <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
-                                                </Trigger>
-                                                <Trigger Property="IsFocused" Value="True">
-                                                    <Setter Property="BorderBrush" Value="#13183E"/>
-                                                    <Setter Property="Effect">
-                                                        <Setter.Value>
-                                                            <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>
-                    <Button x:Name="btnTogglePassword" Content="🔐" FontFamily="FontAwesome" FontSize="14" Foreground="#13183E"
-                            Background="Transparent" BorderThickness="0" Cursor="Hand"
-                            VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0"
-                            Click="TogglePasswordVisibility"/>
-                </Grid>
+                        <TextBlock Text="👤"
+                                   FontFamily="FontAwesome"
+                                   FontSize="14" Foreground="#13183E"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,10,0"/>
+                    </Grid>
 
-                <!-- Giriş Tipi ve Giriş Yap -->
-                <Grid Margin="0,15,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <!-- Şifre -->
+                    <Grid Margin="0,0,0,2">
+                        <PasswordBox x:Name="pwdSifre"
+                                     FontSize="14" Height="38"
+                                     Background="White"
+                                     Foreground="#13183E"
+                                     BorderBrush="#13183E" BorderThickness="1"
+                                     Padding="10,0"
+                                     VerticalContentAlignment="Center"
+                                     FontFamily="Source Sans Pro"
+                                     PasswordChanged="pwdSifre_PasswordChanged">
+                            <PasswordBox.Style>
+                                <Style TargetType="PasswordBox">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="PasswordBox">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        CornerRadius="4">
+                                                    <Grid>
+                                                        <ScrollViewer x:Name="PART_ContentHost"/>
+                                                    </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsFocused" Value="True">
+                                                        <Setter Property="BorderBrush" Value="#13183E"/>
+                                                        <Setter Property="Effect">
+                                                            <Setter.Value>
+                                                                <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.1" Color="#13183E"/>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </PasswordBox.Style>
+                        </PasswordBox>
 
-                    <!-- Giriş Tipi Seçimi (alta taşındı) -->
-                    <ComboBox x:Name="cmbGirisTipi" SelectedIndex="0" Height="38" Margin="0,0,95,0"
-                              VerticalAlignment="Center" FontFamily="Source Sans Pro" Grid.Column="0"
-                              VerticalContentAlignment="Center">
-                        <ComboBoxItem Content="Personel"/>
-                        <ComboBoxItem Content="Admin"/>
-                    </ComboBox>
+                        <!-- Placeholder ve TextBox (şifre göster) -->
+                        <TextBlock x:Name="pwdPlaceholder"
+                                   Text="Şifre"
+                                   Foreground="Gray"
+                                   IsHitTestVisible="False"
+                                   Margin="10,0,40,0"
+                                   VerticalAlignment="Center"
+                                   FontFamily="Source Sans Pro"/>
+                        <TextBox x:Name="txtSifre"
+                                 FontSize="14" Height="38"
+                                 Background="White"
+                                 Foreground="#13183E"
+                                 BorderBrush="#13183E" BorderThickness="1"
+                                 Padding="10,0"
+                                 VerticalContentAlignment="Center"
+                                 FontFamily="Source Sans Pro"
+                                 Visibility="Collapsed"/>
+                        <Button x:Name="btnTogglePassword"
+                                Content="🔐"
+                                FontFamily="FontAwesome" FontSize="14"
+                                Foreground="#13183E"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Margin="0,0,10,0"
+                                Click="TogglePasswordVisibility"/>
+                    </Grid>
 
-                    <!-- Giriş Yap Butonu -->
-                    <Button x:Name="btnGirisYap" Grid.Column="1" Content="Giriş Yap" FontSize="14"
-                            Background="#13183E" Foreground="White" Height="38" BorderThickness="0"
-                            FontFamily="Source Sans Pro" Cursor="Hand" VerticalAlignment="Center"
-                            Click="btnGirisYap_Click_1" Margin="10,0,0,0">
-                        <Button.Template>
-                            <ControlTemplate TargetType="Button">
-                                <Border x:Name="border"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        CornerRadius="4">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Button.Template>
-                    </Button>
-                </Grid>
-            </StackPanel>
-        </Border>
+                    <!-- Giriş Tipi & Giriş Yap -->
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Giriş Tipi -->
+                        <ComboBox x:Name="cmbGirisTipi"
+                                  SelectedIndex="0"
+                                  Height="38"
+                                  VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  FontFamily="Source Sans Pro"
+                                  Margin="0,0,248,0">
+                            <ComboBoxItem Content="Personel"/>
+                            <ComboBoxItem Content="Admin"/>
+                        </ComboBox>
+
+                        <!-- Giriş Yap -->
+                        <Button x:Name="btnGirisYap"
+                                Content="Giriş Yap"
+                                FontSize="14"
+                                Background="#13183E"
+                                Foreground="White"
+                                Height="38"
+                                Padding="22,0"
+                                BorderThickness="0"
+                                FontFamily="Source Sans Pro"
+                                Cursor="Hand"
+                                VerticalAlignment="Center"
+                                Click="btnGirisYap_Click_1" Grid.ColumnSpan="2" Margin="166,0,0,0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border x:Name="border"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="6">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="#4B4B4B"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </Window>

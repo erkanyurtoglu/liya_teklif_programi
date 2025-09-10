@@ -5,11 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:teklif_programi.view"
         mc:Ignorable="d"
-        Title="Liya Laboratuvar A.Ş. Teklif Sistemi" Height="900" Width="1600"
-        WindowStartupLocation="CenterScreen" ResizeMode="CanResize" WindowState="Maximized"
+        Title="Liya Laboratuvar A.Ş. Teklif Sistemi"
+        Width="1600" Height="900"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize"
+        WindowState="Maximized"
         Background="#ededed">
 
     <Window.Resources>
+        <!-- Kart buton stili -->
         <Style x:Key="CardButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="White"/>
             <Setter Property="Margin" Value="15"/>
@@ -17,6 +21,8 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Stretch"/>
             <Setter Property="Effect">
                 <Setter.Value>
                     <DropShadowEffect BlurRadius="10" ShadowDepth="2" Color="#888" Opacity="0.5"/>
@@ -25,9 +31,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
-                            CornerRadius="12"
-                            SnapsToDevicePixels="True">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="12"
+                                SnapsToDevicePixels="True">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -42,23 +48,31 @@
         </Style>
     </Window.Resources>
 
-
     <Grid>
+        <!-- Sol kolon Auto: nav kapalıyken 0px olur -->
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Navigation Menu -->
-        <Border x:Name="navBorder" Grid.Column="0" Background="#13183E" Visibility="Collapsed">
+        <Border x:Name="navBorder"
+                Grid.Column="0"
+                Background="#13183E"
+                Visibility="Collapsed"
+                MinWidth="250">
+            <!-- Görününce 250px, gizliyken 0 -->
             <StackPanel>
-                <Image Source="/resimler/liya_logo.png" Width="200" Height="150" HorizontalAlignment="Center" Margin="15"/>
+                <Image Source="/resimler/liya_logo.png"
+                       Width="200" Height="150"
+                       HorizontalAlignment="Center" Margin="15"/>
                 <Button Click="btnAnaSayfa_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="🏠" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,45,0"/>
                         <TextBlock Text="Ana Sayfa" Margin="5,0"/>
                     </StackPanel>
                 </Button>
+
                 <StackPanel x:Name="customerNav" Visibility="Collapsed">
                     <Button Click="btnFirmalarim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                         <StackPanel Orientation="Horizontal">
@@ -73,6 +87,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+
                 <StackPanel x:Name="productNav" Visibility="Collapsed">
                     <Button Click="btnUrunlerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                         <StackPanel Orientation="Horizontal">
@@ -87,6 +102,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+
                 <StackPanel x:Name="personNav" Visibility="Collapsed">
                     <Button Click="btnPersonellerim_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                         <StackPanel Orientation="Horizontal">
@@ -101,6 +117,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+
                 <StackPanel x:Name="teklifNav" Visibility="Collapsed">
                     <Button Click="btnTeklifVer_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                         <StackPanel Orientation="Horizontal">
@@ -127,6 +144,7 @@
                         </StackPanel>
                     </Button>
                 </StackPanel>
+
                 <Button Click="btnCikis_Click" Style="{StaticResource NavigationButtonBaseStyle}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="➡️" FontFamily="{StaticResource FontAwesome}" FontSize="18" Margin="10,0,15,0"/>
@@ -137,26 +155,37 @@
         </Border>
 
         <!-- Content Area -->
-        <!-- Content Area -->
         <ContentControl x:Name="contentArea" Grid.Column="1" Background="#f5f6fa">
-            <Grid x:Name="homeGrid" HorizontalAlignment="Left" VerticalAlignment="Center" Width="1106" Height="710">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1087*"/>
-                </Grid.ColumnDefinitions>
+            <!-- Merkezde esnek düzen; sabit Width/Height yok -->
+            <Grid x:Name="homeGrid"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Center"
+                  Margin="24"
+                  MaxWidth="1200">
                 <Grid.RowDefinitions>
-                    <!-- Logo kısmı -->
-                    <RowDefinition Height="309"/>
-                    <!-- Butonlar kısmı -->
-                    <RowDefinition/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Üst Logo -->
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Margin="285,0,0,0" Height="246" Width="450">
-                    <Image Source="/resimler/liya_logo.png" Width="358" Height="181" Stretch="Uniform"/>
+                <!-- Üst Logo: ortalı -->
+                <StackPanel Orientation="Vertical"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Grid.Row="0"
+                            Margin="0,0,0,24">
+                    <Image Source="/resimler/liya_logo.png"
+                           Width="360" Height="180"
+                           Stretch="Uniform"/>
                 </StackPanel>
 
-                <!-- Modern Butonlar -->
-                <UniformGrid x:Name="homeButtons" Grid.Row="1" Columns="3" Rows="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="354" Width="1006" Margin="7,0,0,0" >
+                <!-- Modern Butonlar: ortalı ve esnek -->
+                <!-- İstersen UniformGrid yerine WrapPanel kullanıp responsive yapabilirsin (aşağıdaki UniformGrid iyi çalışır) -->
+                <UniformGrid x:Name="homeButtons"
+                             Grid.Row="1"
+                             Columns="3"
+                             Rows="2"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Center" Height="482" Width="769">
                     <Button Style="{StaticResource CardButtonStyle}" Click="HomeMusteri_Click">
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock Text="🏢" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,10"/>
@@ -196,6 +225,5 @@
                 </UniformGrid>
             </Grid>
         </ContentControl>
-
     </Grid>
 </Window>
