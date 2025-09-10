@@ -117,7 +117,7 @@ namespace teklif_programi.view {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/teklif_programi;component/view/firmadetaywindow.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/teklif_programi;V1.0.0.1;component/view/firmadetaywindow.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\view\FirmaDetayWindow.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
