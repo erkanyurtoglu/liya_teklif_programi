@@ -31,12 +31,12 @@ namespace teklif_programi.view
             _teklifVerViewModel = teklifVerViewModel;
             DataContext = _viewModel; // Binding için ViewModel'i bağlar
 
-            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
-
             if (!string.IsNullOrWhiteSpace(_teklifVerViewModel.SatisSozlesmesiMetni))
             {
                 _viewModel.SozlesmeMetni = _teklifVerViewModel.SatisSozlesmesiMetni;
             }
+
+            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
 
             LoadSozlesmeMetniToRichTextBox();
         }
@@ -49,12 +49,12 @@ namespace teklif_programi.view
             _teklifDetayViewModel = teklifDetayViewModel;
             DataContext = _viewModel;
 
-            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
-
             if (!string.IsNullOrWhiteSpace(_teklifDetayViewModel.SatisSozlesmesiMetni))
             {
                 _viewModel.SozlesmeMetni = _teklifDetayViewModel.SatisSozlesmesiMetni;
             }
+
+            _varsayilanSozlesmeMetni = _viewModel.SozlesmeMetni;
 
             LoadSozlesmeMetniToRichTextBox();
         }
