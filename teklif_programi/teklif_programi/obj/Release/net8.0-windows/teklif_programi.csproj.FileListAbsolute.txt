@@ -1,3 +1,4 @@
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.pdfa.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\teklif_programi.exe
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\pdf_templates\girisSayfa.pdf
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\pdf_templates\girisSayfaEnglish.pdf
@@ -24,7 +25,6 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.io.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.kernel.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.layout.dll
-C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.pdfa.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.pdfua.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.sign.dll
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\bin\Release\net8.0-windows\itext.styledxmlparser.dll
