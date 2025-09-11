@@ -17,6 +17,7 @@ namespace teklif_programi.ViewModels
         public int ToplamReddedilen { get; }
         public int ToplamBeklemede { get; }
         public double KabulOrani { get; }
+        public int ToplamTamamlanan { get; }
         public double ReddedilmeOrani { get; }
         public string TopPerformerAd { get; } = string.Empty;
         public int TopPerformerGonderilen { get; }
@@ -32,6 +33,7 @@ namespace teklif_programi.ViewModels
             ToplamKabulEdilen = list.Sum(p => p.KabulEdilen);
             ToplamReddedilen = list.Sum(p => p.Reddedilen);
             ToplamBeklemede = list.Sum(p => p.Beklemede);
+            ToplamTamamlanan = ToplamKabulEdilen + ToplamReddedilen;
             KabulOrani = ToplamGonderilen == 0 ? 0 : (double)ToplamKabulEdilen / ToplamGonderilen * 100;
             ReddedilmeOrani = ToplamGonderilen == 0 ? 0 : (double)ToplamReddedilen / ToplamGonderilen * 100;
             var topGonderen = list.OrderByDescending(p => p.Gonderilen).FirstOrDefault();
