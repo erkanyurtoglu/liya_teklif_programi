@@ -51,25 +51,24 @@ namespace teklif_programi.ViewModels
 
         private const string SatisSozlesmesiEn =
         @"
-        1. PRICES ARE GIVEN IN USD.
-        2. MODE OF PAYMENT:  100% BANK TRANSFER IN ADVANCE AS ORDER CONFIRMATION.
-        3. WARRANTY: 1 YEAR
-        4. DELIVERY: EX-WORKS ANKARA TURKEY IN 2-3 WEEKS AFTER PAYMENT DATE.
-        5. QUOTATION VALID UNTIL 31/02/2019
-        6. FREIGHT COSTS ARE GIVEN AS EX-WORKS.
-        7. CALIBRATION WILL CHARGE SEPERATELY.
-        8. INSTALLATION OF EQUIPMENT AND TRAINING WILL CHARGE SEPERATELY. THE AIR FREIGHT AND ACCOMMODATION  BELONGS TO BUYER.  
-        150 USD SUBSITENCE SHOULD BE PAID FOR A TECHNICAL PERSONNEL PER DAY.
-        9. BANK DETAILS:
-           - BANK NAME: TÜRKİYE HALKBANKASI  A.Ş.
-           - BANK ADDRESS: İVEDİK MAH. 1368. CAD. DAİRE:61/C YENİMAHALLE/ ANKARA / TURKEY
-           - BRANCH NAME: İVEDİK ORGANİZE SANAYİ
-           - BRANCH CODE: 0414
-           - ACCOUNT NAME: 
-           - LİYA TEST LABORATUVAR CIH. IMLT DIS TIC. LTD.ŞTI
-           - SWIFT CODE: TRHBTR2A
-           - IBAN NUMBER: TR68 0001 2009 4140 0053 0008 14 (USD)
-           - IBAN NUMBER: TR74 0001 2009 4140 0058 0006 68 (EURO)";
+        1. Prices are given in USD.  
+        2. Mode of payment: 100% bank transfer in advance as order confirmation.  
+        3. Warranty: 1 year.  
+        4. Delivery: Ex-Works Ankara, Turkey in 2–3 weeks after payment date.  
+        5. Quotation valid until 31/02/2019.  
+        6. Freight costs are given as Ex-Works.  
+        7. Calibration will be charged separately.  
+        8. Installation of equipment and training will be charged separately. The air freight and accommodation belong to buyer.  
+           150 USD subsistence should be paid for a technical personnel per day.  
+        9. Bank details:  
+           - Bank name: Türkiye Halkbankası A.Ş.  
+           - Bank address: İvedik Mah. 1368. Cad. Daire:61/C Yenimahalle/Ankara/Turkey  
+           - Branch name: İvedik Organize Sanayi  
+           - Branch code: 0414  
+           - Account name: Liya Test Laboratuvar Cih. İmlt Dış Tic. Ltd. Şti.  
+           - Swift code: TRHBTR2A  
+           - IBAN number: TR68 0001 2009 4140 0053 0008 14 (USD)  
+           - IBAN number: TR74 0001 2009 4140 0058 0006 68 (EUR)";
 
 
         public TeklifDetayViewModel(Teklif teklif)
