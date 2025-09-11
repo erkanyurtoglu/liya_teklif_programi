@@ -30,27 +30,41 @@ namespace teklif_programi.ViewModels
         private string _teslimatSekli = string.Empty;
         private string _teslimatYeri = string.Empty;
 
-        private const string SatisSozlesmesiTr = @"1.Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
+        private const string SatisSozlesmesiTr = 
+        @"
+        1. Fiyatımız DOLAR cinsinden belirtilmiş olup, KDV dahildir. Fatura kesim tarihinde geçerli olan TCMB efektif satış kuru esas alınacaktır.
         2. Cihaz ücreti: %30’u sipariş sırasında peşin, kalan tutar teslimatta ödenecektir.
         3. Cihazlar; 1 yıl mekanik, 2 yıl elektronik parça olarak ücretsiz servis garantilidir. 10 yıl süreyle ücreti karşılığı teknik servis ve eğitim hizmeti verilecektir.
-        4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim
+        4. Cihaz Teslimatı: Siparişe istinaden 1 hafta içinde teslim.
         5. Teklif Opsiyonu: Teklif tarihinden itibaren 3 gündür.
         6. Nakliye: Satıcı firmaya aittir.
         7. Alternatif olarak sunulan cihaz bedelleri, toplam teklif tutarına dahil edilmemiştir.
         8. Banka Bilgilerimiz: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
-        İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
-        HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
+            - İŞ BANKASI TR16 0006 4000 0014 1520 1653 38
+            - HALK BANKASI TR51 0001 2009 4140 0010 2645 69";
 
-        private const string SatisSozlesmesiEn = @"1.Our price is quoted in USD and includes VAT. The effective selling exchange rate of the Central Bank of the Republic of Turkey (CBRT) valid on the invoice date will be applied.
-        2.Device payment terms: 30% is payable in advance at the time of order, and the remaining amount upon delivery.
-        3.The devices are covered by a warranty of 1 year for mechanical parts and 2 years for electronic parts. Technical service and training services will be provided for a period of 10 years on a paid basis.
-        4.Delivery of the devices: Within 1 week following the order.
-        5.Offer validity: The offer is valid for 3 days from the quotation date.
-        6.Transportation: To be borne by the seller.
-        7.Alternative device prices are not included in the total quotation amount.
-        8.Bank Account Information: Liya Laboratuvar Test Cihazları İmalat ve Dış Ticaret A.Ş.
-        İŞ BANK: TR16 0006 4000 0014 1520 1653 38
-        HALK BANK: TR51 0001 2009 4140 0010 2645 69";
+        private const string SatisSozlesmesiEn =
+        @"
+        1. PRICES ARE GIVEN IN USD.
+        2. MODE OF PAYMENT:  100% BANK TRANSFER IN ADVANCE AS ORDER CONFIRMATION.
+        3. WARRANTY: 1 YEAR
+        4. DELIVERY: EX-WORKS ANKARA TURKEY IN 2-3 WEEKS AFTER PAYMENT DATE.
+        5. QUOTATION VALID UNTIL 31/02/2019
+        6. FREIGHT COSTS ARE GIVEN AS EX-WORKS.
+        7. CALIBRATION WILL CHARGE SEPERATELY.
+        8. INSTALLATION OF EQUIPMENT AND TRAINING WILL CHARGE SEPERATELY. THE AIR FREIGHT AND ACCOMMODATION  BELONGS TO BUYER.  
+        150 USD SUBSITENCE SHOULD BE PAID FOR A TECHNICAL PERSONNEL PER DAY.
+        9. BANK DETAILS:
+           - BANK NAME: TÜRKİYE HALKBANKASI  A.Ş.
+           - BANK ADDRESS: İVEDİK MAH. 1368. CAD. DAİRE:61/C YENİMAHALLE/ ANKARA / TURKEY
+           - BRANCH NAME: İVEDİK ORGANİZE SANAYİ
+           - BRANCH CODE: 0414
+           - ACCOUNT NAME: 
+           - LİYA TEST LABORATUVAR CIH. IMLT DIS TIC. LTD.ŞTI
+           - SWIFT CODE: TRHBTR2A
+           - IBAN NUMBER: TR68 0001 2009 4140 0053 0008 14 (USD)
+           - IBAN NUMBER: TR74 0001 2009 4140 0058 0006 68 (EURO)";
+
 
 
         public ObservableCollection<DovizKuru> DovizKurlari { get; set; }
