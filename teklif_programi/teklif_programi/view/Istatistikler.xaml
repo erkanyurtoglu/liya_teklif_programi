@@ -160,7 +160,7 @@
         </StackPanel>
 
         <!-- Başarı Oranları ve Top Performer -->
-        <UniformGrid Grid.Row="1" Columns="3">
+        <UniformGrid Grid.Row="1" Columns="4">
             <!-- Kabul Oranı -->
             <Border Style="{StaticResource StatCard}">
                 <StackPanel>
@@ -185,6 +185,19 @@
                 </StackPanel>
             </Border>
 
+            <!-- Tamamlanma Oranı -->
+            <Border Style="{StaticResource StatCard}">
+                <StackPanel>
+                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE930;"
+                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                        <TextBlock Style="{StaticResource KpiLabel}" Text="Tamamlanma Oranı"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding TamamlanmaOrani, StringFormat={}{0:F1}%}"/>
+                </StackPanel>
+            </Border>
+
+
             <!-- Top Performer -->
             <Border Style="{StaticResource StatCard}">
                 <StackPanel>
@@ -200,125 +213,126 @@
             </Border>
         </UniformGrid>
 
+
         <!-- KPI Kartları -->
-        <!-- KPI Kartları -->
-        <Grid Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="2">
 
-            <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE121;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Günlük Teklif"/>
+            <!-- 1. Satır: 4 kart tam genişlik -->
+            <UniformGrid Columns="4">
+                <!-- Günlük Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE121;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Günlük Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding GunlukTeklif}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding GunlukTeklif}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE10C;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Haftalık Teklif"/>
+                <!-- Haftalık Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE10C;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Haftalık Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding HaftalikTeklif}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding HaftalikTeklif}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <Border Grid.Row="0" Grid.Column="2" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE787;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Aylık Teklif"/>
+                <!-- Aylık Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE787;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Aylık Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding AylikTeklif}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding AylikTeklif}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <Border Grid.Row="0" Grid.Column="3" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1D3;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Yıllık Teklif"/>
+                <!-- Yıllık Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE1D3;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Yıllık Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding YillikTeklif}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding YillikTeklif}"/>
-                </StackPanel>
-            </Border>
+                </Border>
+            </UniformGrid>
 
-            <!-- Toplam Gönderilen Teklif -->
-            <Border Grid.Row="1" Grid.Column="0" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE122;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Gönderilen Teklif"/>
+            <!-- 2. Satır: 5 kart tam genişlik -->
+            <UniformGrid Columns="5" Margin="0,8,0,0">
+                <!-- Toplam Gönderilen Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE122;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Gönderilen Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamGonderilen}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamGonderilen}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Toplam Kabul Edilen Teklif -->
-            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE10B;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Kabul Edilen Teklif"/>
+                <!-- Toplam Kabul Edilen Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE10B;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Kabul Edilen Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamKabulEdilen}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamKabulEdilen}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Toplam Reddedilen Teklif -->
-            <Border Grid.Row="1" Grid.Column="2" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Reddedilen Teklif"/>
+                <!-- Toplam Reddedilen Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Reddedilen Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamReddedilen}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamReddedilen}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Toplam Beklemede Teklif -->
-            <Border Grid.Row="1" Grid.Column="3" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE823;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Beklemede Teklif"/>
+                <!-- Toplam Beklemede Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE823;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Beklemede Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamBeklemede}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamBeklemede}"/>
-                </StackPanel>
-            </Border>
+                </Border>
 
-            <!-- Toplam Tamamlanan Teklif -->
-            <Border Grid.Row="1" Grid.Column="4" Style="{StaticResource StatCard}">
-                <StackPanel>
-                    <StackPanel Style="{StaticResource CardTitleWithIcon}">
-                        <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE930;"
-                                   Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
-                        <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Tamamlanan Teklif"/>
+                <!-- Toplam Tamamlanan Teklif -->
+                <Border Style="{StaticResource StatCard}">
+                    <StackPanel>
+                        <StackPanel Style="{StaticResource CardTitleWithIcon}">
+                            <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE930;"
+                               Foreground="{StaticResource PrimaryBrush}" Margin="0,0,8,0"/>
+                            <TextBlock Style="{StaticResource KpiLabel}" Text="Toplam Tamamlanan Teklif"/>
+                        </StackPanel>
+                        <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamTamamlanan}"/>
                     </StackPanel>
-                    <TextBlock Style="{StaticResource KpiValue}" Text="{Binding ToplamTamamlanan}"/>
-                </StackPanel>
-            </Border>
-        </Grid>
+                </Border>
+            </UniformGrid>
+
+        </StackPanel>
+
 
 
         <!-- İnce ayraç -->
