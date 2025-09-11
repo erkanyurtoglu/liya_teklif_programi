@@ -325,7 +325,7 @@ namespace teklif_programi.Services
                         AddCellToBody(table, urunNo.ToString(), regularFont, rowColor);
                         AddCellToBody(table, urun.UrunKodu, regularFont, rowColor);
                         AddCellToBody(table, urun.UrunAciklamasi, regularFont, rowColor);
-                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor, TextAlignment.CENTER);
                         AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), regularFont, rowColor);
 
                         if (showDiscountCol)
@@ -665,7 +665,7 @@ namespace teklif_programi.Services
                         AddCellToBody(table, urunNo.ToString(), regularFont, rowColor);
                         AddCellToBody(table, urun.UrunKodu, regularFont, rowColor);
                         AddCellToBody(table, urun.UrunAciklamasi, regularFont, rowColor);
-                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor);
+                        AddCellToBody(table, urun.Adet.ToString(), regularFont, rowColor, TextAlignment.CENTER);
                         AddCellToBody(table, FormatPrice(urun.BirimFiyat, currency), regularFont, rowColor);
 
                         if (showDiscountCol)
@@ -986,12 +986,17 @@ namespace teklif_programi.Services
                 .SetBorder(Border.NO_BORDER));
         }
 
-        private static void AddCellToBody(Table table, string text, PdfFont font, Color backgroundColor)
+        private static void AddCellToBody(
+            Table table,
+            string text,
+            PdfFont font,
+            Color backgroundColor,
+            TextAlignment alignment = TextAlignment.LEFT)
         {
             table.AddCell(new Cell()
                 .Add(new Paragraph(text).SetFont(font).SetFontSize(9))
                 .SetBackgroundColor(backgroundColor)
-                .SetTextAlignment(TextAlignment.LEFT)
+                .SetTextAlignment(alignment)
                 .SetVerticalAlignment(VerticalAlignment.MIDDLE)
                 .SetPadding(5)
                 .SetBorder(Border.NO_BORDER));
