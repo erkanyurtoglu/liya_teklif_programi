@@ -351,7 +351,7 @@
                                Foreground="{StaticResource PrimaryBrush}" FontSize="16"/>
                     <DockPanel DockPanel.Dock="Right">
                         <Border Background="#F4F6FA" CornerRadius="8" Padding="10,6" Margin="8,0,0,0">
-                            <TextBlock Foreground="{StaticResource Muted}" FontSize="12" Text="Son 30 gün"/>
+                            <TextBlock Foreground="{StaticResource Muted}" FontSize="12" Text="Tüm zamanlar"/>
                         </Border>
                     </DockPanel>
                 </DockPanel>
