@@ -33,11 +33,8 @@ namespace teklif_programi.ViewModels
         private string? _irsaliyeEposta;
         private string? _siparisKdv;
         private string? _faturaSekli;
-        private string? _faturaTipi;
-        private string? _taksit;
         private string? _garanti;
         private string? _teslimat;
-        private string? _faturaEdilecekKisi;
         private string? _ekFaturaNotu;
         private DateTime? _siparisTarihi;
         private string? _aciklamalar;
@@ -165,18 +162,6 @@ namespace teklif_programi.ViewModels
             set => SetProperty(ref _faturaSekli, value, v => _sevkBilgileri.FaturaSekli = v);
         }
 
-        public string? FaturaTipi
-        {
-            get => _faturaTipi;
-            set => SetProperty(ref _faturaTipi, value, v => _sevkBilgileri.FaturaTipi = v);
-        }
-
-        public string? Taksit
-        {
-            get => _taksit;
-            set => SetProperty(ref _taksit, value, v => _sevkBilgileri.Taksit = v);
-        }
-
         public string? Garanti
         {
             get => _garanti;
@@ -187,12 +172,6 @@ namespace teklif_programi.ViewModels
         {
             get => _teslimat;
             set => SetProperty(ref _teslimat, value, v => _sevkBilgileri.Teslimat = v);
-        }
-
-        public string? FaturaEdilecekKisi
-        {
-            get => _faturaEdilecekKisi;
-            set => SetProperty(ref _faturaEdilecekKisi, value, v => _sevkBilgileri.FaturaEdilecekKisi = v);
         }
 
         public string? EkFaturaNotu
@@ -256,11 +235,8 @@ namespace teklif_programi.ViewModels
             _irsaliyeEposta = _sevkBilgileri.IrsaliyeEposta;
             _siparisKdv = _sevkBilgileri.SiparisKdv;
             _faturaSekli = _sevkBilgileri.FaturaSekli;
-            _faturaTipi = _sevkBilgileri.FaturaTipi;
-            _taksit = _sevkBilgileri.Taksit;
             _garanti = _sevkBilgileri.Garanti;
             _teslimat = _sevkBilgileri.Teslimat;
-            _faturaEdilecekKisi = _sevkBilgileri.FaturaEdilecekKisi;
             _ekFaturaNotu = _sevkBilgileri.EkFaturaNotu;
             _siparisTarihi = _sevkBilgileri.SiparisTarihi;
             _aciklamalar = _sevkBilgileri.Aciklamalar;

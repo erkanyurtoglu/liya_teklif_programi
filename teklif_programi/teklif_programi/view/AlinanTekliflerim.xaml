@@ -199,22 +199,22 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Detay"
                                         Style="{StaticResource ModernButtonStyle}"
-                                        Width="70" Height="30" Margin="4,0"
+                                        Width="50" Height="30" Margin="4,0"
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DetayGosterCommand}"
                                         CommandParameter="{Binding}"
                                         Background="#1874CD"/>
-                                <Button Content="Tamamla"
-                                        Style="{StaticResource ModernButtonStyle}"
-                                        Width="90" Height="30" Margin="4,0"
-                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.TamamlaCommand}"
-                                        CommandParameter="{Binding}"
-                                        Background="#28A745"/>
                                 <Button Content="İrsaliye"
                                         Style="{StaticResource ModernButtonStyle}"
-                                        Width="90" Height="30" Margin="4,0"
+                                        Width="70" Height="30" Margin="4,0"
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.SevkBilgileriCommand}"
                                         CommandParameter="{Binding}"
                                         Background="#F39C12"/>
+                                <Button Content="Tamamla"
+                                        Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.TamamlaCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="#28A745"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

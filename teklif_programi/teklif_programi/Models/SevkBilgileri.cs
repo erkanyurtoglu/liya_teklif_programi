@@ -63,20 +63,11 @@ namespace teklif_programi.Models
         [MaxLength(150)]
         public string? FaturaSekli { get; set; }
 
-        [MaxLength(150)]
-        public string? FaturaTipi { get; set; }
-
-        [MaxLength(100)]
-        public string? Taksit { get; set; }
-
         [MaxLength(200)]
         public string? Garanti { get; set; }
 
         [MaxLength(200)]
         public string? Teslimat { get; set; }
-
-        [MaxLength(200)]
-        public string? FaturaEdilecekKisi { get; set; }
 
         [MaxLength(500)]
         public string? EkFaturaNotu { get; set; }

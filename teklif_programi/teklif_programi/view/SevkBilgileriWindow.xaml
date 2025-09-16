@@ -201,37 +201,24 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="KDV" Style="{StaticResource FieldLabel}"/>
                             <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding SiparisKdv, UpdateSourceTrigger=PropertyChanged}"/>
 
                             <TextBlock Grid.Row="1" Grid.Column="0" Text="Fatura Şekli" Style="{StaticResource FieldLabel}"/>
                             <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaSekli, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Fatura Tipi" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaTipi, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Garanti" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding Garanti, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Taksit" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding Taksit, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Teslimat" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding Teslimat, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Garanti" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding Garanti, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="Ek Fatura Notu" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding EkFaturaNotu, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Teslimat" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding Teslimat, UpdateSourceTrigger=PropertyChanged}"/>
-
-                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Fatura Edilecek Kişi" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaEdilecekKisi, UpdateSourceTrigger=PropertyChanged}"/>
-
-                            <TextBlock Grid.Row="7" Grid.Column="0" Text="Ek Fatura Notu" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding EkFaturaNotu, UpdateSourceTrigger=PropertyChanged}"/>
-
-                            <TextBlock Grid.Row="8" Grid.Column="0" Text="Sipariş Tarihi" Style="{StaticResource FieldLabel}"/>
-                            <DatePicker Grid.Row="8" Grid.Column="1" Style="{StaticResource ModernDatePicker}" SelectedDate="{Binding SiparisTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Sipariş Tarihi" Style="{StaticResource FieldLabel}"/>
+                            <DatePicker Grid.Row="5" Grid.Column="1" Style="{StaticResource ModernDatePicker}" SelectedDate="{Binding SiparisTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                     </StackPanel>
                 </Border>
