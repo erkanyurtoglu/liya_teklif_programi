@@ -27,6 +27,8 @@ namespace teklif_programi.ViewModels
         private string? _irsaliyeVergiDairesi;
         private string? _irsaliyeVergiNo;
         private string? _irsaliyeYetkili;
+        private string? _faturaTelefon;
+        private string? _faturaFax;
         private string? _irsaliyeTelefon;
         private string? _irsaliyeEposta;
         private string? _siparisKdv;
@@ -89,6 +91,19 @@ namespace teklif_programi.ViewModels
             get => _faturaYetkili;
             set => SetProperty(ref _faturaYetkili, value, v => _sevkBilgileri.FaturaYetkili = v);
         }
+
+        public string? FaturaTelefon
+        {
+            get => _faturaTelefon;
+            set => SetProperty(ref _faturaTelefon, value, v => _sevkBilgileri.FaturaTelefon = v);
+        }
+
+        public string? FaturaFax
+        {
+            get => _faturaFax;
+            set => SetProperty(ref _faturaFax, value, v => _sevkBilgileri.FaturaFax = v);
+        }
+
 
         public string? FaturaEposta
         {
@@ -229,6 +244,8 @@ namespace teklif_programi.ViewModels
             _faturaVergiDairesi = _sevkBilgileri.FaturaVergiDairesi;
             _faturaVergiNo = _sevkBilgileri.FaturaVergiNo;
             _faturaYetkili = _sevkBilgileri.FaturaYetkili;
+            _faturaTelefon = _sevkBilgileri.FaturaTelefon;
+            _faturaFax = _sevkBilgileri.FaturaFax;
             _faturaEposta = _sevkBilgileri.FaturaEposta;
             _irsaliyeBasligi = _sevkBilgileri.IrsaliyeBasligi;
             _irsaliyeAdresi = _sevkBilgileri.IrsaliyeAdresi;

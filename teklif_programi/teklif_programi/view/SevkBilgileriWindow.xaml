@@ -113,6 +113,8 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
                             <TextBlock Grid.Row="0" Grid.Column="0" Text="Fatura Başlığı" Style="{StaticResource FieldLabel}"/>
@@ -130,8 +132,14 @@
                             <TextBlock Grid.Row="4" Grid.Column="0" Text="Yetkili" Style="{StaticResource FieldLabel}"/>
                             <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaYetkili, UpdateSourceTrigger=PropertyChanged}"/>
 
-                            <TextBlock Grid.Row="5" Grid.Column="0" Text="E-Posta" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaEposta, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Grid.Row="5" Grid.Column="0" Text="Telefon" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaTelefon, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="Fax" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaFax, UpdateSourceTrigger=PropertyChanged}"/>
+
+                            <TextBlock Grid.Row="7" Grid.Column="0" Text="E-Posta" Style="{StaticResource FieldLabel}"/>
+                            <TextBox Grid.Row="7" Grid.Column="1" Style="{StaticResource ModernTextBox}" Text="{Binding FaturaEposta, UpdateSourceTrigger=PropertyChanged}"/>
                         </Grid>
                     </StackPanel>
                 </Border>

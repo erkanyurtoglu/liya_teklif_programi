@@ -25,6 +25,12 @@ namespace teklif_programi.Models
         [MaxLength(150)]
         public string? FaturaYetkili { get; set; }
 
+        [MaxLength(50)]
+        public string? FaturaTelefon { get; set; }
+
+        [MaxLength(50)]
+        public string? FaturaFax { get; set; }
+
         [MaxLength(150)]
         public string? FaturaEposta { get; set; }
 

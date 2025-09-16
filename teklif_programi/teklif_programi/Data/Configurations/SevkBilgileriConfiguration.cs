@@ -23,6 +23,8 @@ namespace teklif_programi.Data.Configurations
             builder.Property(s => s.FaturaVergiDairesi).HasMaxLength(150);
             builder.Property(s => s.FaturaVergiNo).HasMaxLength(50);
             builder.Property(s => s.FaturaYetkili).HasMaxLength(150);
+            builder.Property(s => s.FaturaTelefon).HasMaxLength(50);
+            builder.Property(s => s.FaturaFax).HasMaxLength(50);
             builder.Property(s => s.FaturaEposta).HasMaxLength(150);
 
             builder.Property(s => s.IrsaliyeBasligi).HasMaxLength(200);
