@@ -35,6 +35,9 @@ namespace teklif_programi.Data
         public DbSet<TeklifToplam> TeklifToplamlari { get; set; }
         // Teklif toplamları tablosunu temsil eder.
 
+        public DbSet<SevkBilgileri> SevkBilgileri { get; set; }
+        // Tekliflere ait sevk/irsaliye bilgilerini temsil eder.
+
         public DbSet<UrunMaliyet> UrunMaliyetleri { get; set; }
         // Ürün maliyet satırlarını temsil eder.
 

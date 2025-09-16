@@ -47,6 +47,9 @@
     <Compile Update="view\SatisSozlesmesiWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="view\SevkBilgileriWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="view\TeklifDetayWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

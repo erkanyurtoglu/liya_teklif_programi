@@ -74,5 +74,9 @@ namespace teklif_programi.Models
 
         public virtual TeklifToplam? TeklifToplam { get; set; }
         // Teklife ait toplam bilgileri (1-1 ilişki, opsiyonel).
+
+
+        public virtual SevkBilgileri? SevkBilgileri { get; set; }
+        // Teklife ait sevk ve irsaliye bilgileri (1-1 ilişki, opsiyonel).
     }
 }

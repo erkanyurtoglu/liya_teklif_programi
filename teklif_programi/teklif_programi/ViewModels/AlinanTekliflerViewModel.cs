@@ -91,6 +91,7 @@ namespace teklif_programi.ViewModels
 
         public RelayCommand<Teklif> DetayGosterCommand { get; }
         public RelayCommand<Teklif> TamamlaCommand { get; }
+        public RelayCommand<Teklif> SevkBilgileriCommand { get; }
 
         public AlinanTekliflerViewModel()
         {
@@ -98,6 +99,7 @@ namespace teklif_programi.ViewModels
             _secilenTarihFiltresi = "1 Hafta";
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
             TamamlaCommand = new RelayCommand<Teklif>(TeklifTamamla);
+            SevkBilgileriCommand = new RelayCommand<Teklif>(SevkBilgileriniDuzenle);
             TeklifleriYukle();
 
             EventHub.TeklifGuncellendi += OnTeklifGuncellendi;
@@ -116,6 +118,7 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.Musteri)
                     .Include(t => t.Personel)
                     .Include(t => t.TeklifToplam)
+                    .Include(t => t.SevkBilgileri)
                     .Include(t => t.TeklifUrunleri)
                         .ThenInclude(tu => tu.Urun)
                     .Where(t => t.Durum == "Kabul Edildi")
@@ -212,6 +215,22 @@ namespace teklif_programi.ViewModels
                 MessageBox.Show($"Teklif tamamlanırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void SevkBilgileriniDuzenle(Teklif? teklif)
+        {
+            if (teklif is null) return;
+
+            try
+            {
+                var window = new SevkBilgileriWindow(teklif);
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Sevk bilgileri açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         private void OnTeklifGuncellendi(int teklifId)
         {
