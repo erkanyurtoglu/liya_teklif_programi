@@ -922,10 +922,13 @@ namespace teklif_programi.Services
                 foreach (var u in urunler)
                 {
                     var bg = (no % 2 == 1) ? white : light;
+                    var turkceAciklama = string.IsNullOrWhiteSpace(u.UrunAciklamasiTr)
+                    ? u.UrunAciklamasi
+                    : u.UrunAciklamasiTr;
 
                     table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER));            // No
                     table.AddCell(Body(u.UrunKodu, 9, bg));                                     // Ürün Kodu
-                    table.AddCell(Body(u.UrunAciklamasi, 8, bg));                               // Açıklama (küçük)
+                    table.AddCell(Body(turkceAciklama, 8, bg));                                 // Açıklama (küçük)
                     table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER));        // Adet
                     table.AddCell(Check(bg));                                                   // Durum (kutucuk)
                     table.AddCell(Body(u.UretimNotu, 9, bg));                                   // Not
