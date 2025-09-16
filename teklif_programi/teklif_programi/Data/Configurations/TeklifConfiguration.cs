@@ -50,6 +50,10 @@ namespace teklif_programi.Data.Configurations
                 .HasDefaultValue("TR");
             // Teklifin dili zorunlu bir alan, maksimum 5 karakter ve varsayılan "TR".
 
+            builder.Property(t => t.KabulTarihi)
+                .HasColumnType("datetime2");
+            // Teklifin kabul edildiği tarih (opsiyonel).   
+
 
             builder.Property(t => t.IlgiliKisi)
                  .HasMaxLength(100);

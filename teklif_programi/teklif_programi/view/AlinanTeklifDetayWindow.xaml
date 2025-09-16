@@ -101,6 +101,18 @@
             <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
         </Style>
+
+        <!-- Ortalı görüntü ve edit -->
+        <Style x:Key="CenterTextBlock" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+
+        <Style x:Key="CenterTextBox" TargetType="TextBox">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        </Style>
+
     </Window.Resources>
 
     <Grid Margin="20">
@@ -204,7 +216,7 @@
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="Durum" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <ComboBox ItemsSource="{Binding Durumlar}"
-                                      SelectedItem="{Binding Teklif.Durum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectedItem="{Binding SelectedDurum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       Width="120" Height="35" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
                                       IsEnabled="True"/>
                         </StackPanel>
@@ -297,7 +309,13 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1.1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="1.8*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
-                            <DataGridTextColumn Header="Adet" Binding="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="0.8*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
+                            <DataGridTextColumn Header="Adet"
+                                Binding="{Binding Adet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Width="0.8*"
+                                HeaderStyle="{StaticResource DataGridColumnHeader}"
+                                ElementStyle="{StaticResource CenterTextBlock}"
+                                EditingElementStyle="{StaticResource CenterTextBox}"/>
+
                             <DataGridTextColumn Header="Birim Fiyat" Binding="{Binding BirimFiyatText}" Width="1.1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="İndirimli Fiyat" Binding="{Binding IndirimliFiyatText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="1.1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
                             <DataGridTextColumn Header="Toplam" Binding="{Binding ToplamText}" Width="1.1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>

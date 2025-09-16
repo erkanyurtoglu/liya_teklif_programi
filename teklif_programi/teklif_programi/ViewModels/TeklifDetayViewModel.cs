@@ -103,6 +103,7 @@ namespace teklif_programi.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PersonelAdiSoyadi));
                 OnPropertyChanged(nameof(SelectedCurrency));
+                OnPropertyChanged(nameof(SelectedDurum));
                 TeslimatSekli = value?.TeslimatSekli ?? string.Empty;
                 TeslimatYeri = value?.TeslimatYeri ?? string.Empty;
                 TeslimatTarihi = value?.TeslimatTarihi;
@@ -142,7 +143,17 @@ namespace teklif_programi.ViewModels
                 if (Teklif.Durum != value)
                 {
                     Teklif.Durum = value;
+                    if (value == "Kabul Edildi")
+                    {
+                        Teklif.KabulTarihi ??= DateTime.Now;
+                    }
+                    else if (value == "Beklemede" || value == "Reddedildi")
+                    {
+                        Teklif.KabulTarihi = null;
+                    }
                     OnPropertyChanged();
+                    OnPropertyChanged(nameof(Teklif));
+                    OnPropertyChanged(nameof(Teklif.KabulTarihi));
                     try
                     {
                         _context.SaveChanges();
@@ -155,6 +166,7 @@ namespace teklif_programi.ViewModels
                 }
             }
         }
+
 
         public string SelectedCurrency
         {
@@ -647,6 +659,7 @@ namespace teklif_programi.ViewModels
                     dbT.TeslimatYeri = Teklif.TeslimatYeri;
                     dbT.TeslimatTarihi = Teklif.TeslimatTarihi;
                     dbT.TeslimTarihi = Teklif.TeslimTarihi;
+                    dbT.KabulTarihi = Teklif.KabulTarihi;
                 }
 
                 if (_silinecekUrunIdSet.Count > 0)
