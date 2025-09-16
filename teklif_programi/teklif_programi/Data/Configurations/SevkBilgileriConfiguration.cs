@@ -39,6 +39,11 @@ namespace teklif_programi.Data.Configurations
             builder.Property(s => s.FaturaSekli).HasMaxLength(150);
             builder.Property(s => s.Garanti).HasMaxLength(200);
             builder.Property(s => s.Teslimat).HasMaxLength(200);
+            builder.Property(s => s.Odeme).HasMaxLength(200);
+            builder.Property(s => s.Nakliye).HasMaxLength(200);
+            builder.Property(s => s.Kalibrasyon).HasMaxLength(200);
+            builder.Property(s => s.Egitim).HasMaxLength(200);
+            builder.Property(s => s.ReferansNumarasi).HasMaxLength(200);
             builder.Property(s => s.EkFaturaNotu).HasMaxLength(500);
             builder.Property(s => s.Aciklamalar).HasColumnType("nvarchar(max)");
             builder.Property(s => s.SiparisTarihi).HasColumnType("date");

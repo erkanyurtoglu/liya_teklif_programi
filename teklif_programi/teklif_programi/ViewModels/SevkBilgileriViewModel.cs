@@ -35,6 +35,11 @@ namespace teklif_programi.ViewModels
         private string? _faturaSekli;
         private string? _garanti;
         private string? _teslimat;
+        private string? _odeme;
+        private string? _nakliye;
+        private string? _kalibrasyon;
+        private string? _egitim;
+        private string? _referansNumarasi;
         private string? _ekFaturaNotu;
         private DateTime? _siparisTarihi;
         private string? _aciklamalar;
@@ -174,6 +179,36 @@ namespace teklif_programi.ViewModels
             set => SetProperty(ref _teslimat, value, v => _sevkBilgileri.Teslimat = v);
         }
 
+        public string? Odeme
+        {
+            get => _odeme;
+            set => SetProperty(ref _odeme, value, v => _sevkBilgileri.Odeme = v);
+        }
+
+        public string? Nakliye
+        {
+            get => _nakliye;
+            set => SetProperty(ref _nakliye, value, v => _sevkBilgileri.Nakliye = v);
+        }
+
+        public string? Kalibrasyon
+        {
+            get => _kalibrasyon;
+            set => SetProperty(ref _kalibrasyon, value, v => _sevkBilgileri.Kalibrasyon = v);
+        }
+
+        public string? Egitim
+        {
+            get => _egitim;
+            set => SetProperty(ref _egitim, value, v => _sevkBilgileri.Egitim = v);
+        }
+
+        public string? ReferansNumarasi
+        {
+            get => _referansNumarasi;
+            set => SetProperty(ref _referansNumarasi, value, v => _sevkBilgileri.ReferansNumarasi = v);
+        }
+
         public string? EkFaturaNotu
         {
             get => _ekFaturaNotu;
@@ -237,6 +272,11 @@ namespace teklif_programi.ViewModels
             _faturaSekli = _sevkBilgileri.FaturaSekli;
             _garanti = _sevkBilgileri.Garanti;
             _teslimat = _sevkBilgileri.Teslimat;
+            _odeme = _sevkBilgileri.Odeme;
+            _nakliye = _sevkBilgileri.Nakliye;
+            _kalibrasyon = _sevkBilgileri.Kalibrasyon;
+            _egitim = _sevkBilgileri.Egitim;
+            _referansNumarasi = _sevkBilgileri.ReferansNumarasi;
             _ekFaturaNotu = _sevkBilgileri.EkFaturaNotu;
             _siparisTarihi = _sevkBilgileri.SiparisTarihi;
             _aciklamalar = _sevkBilgileri.Aciklamalar;

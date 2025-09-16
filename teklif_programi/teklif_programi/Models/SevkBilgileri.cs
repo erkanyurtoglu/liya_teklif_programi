@@ -69,6 +69,22 @@ namespace teklif_programi.Models
         [MaxLength(200)]
         public string? Teslimat { get; set; }
 
+        [MaxLength(200)]
+        public string? Odeme { get; set; }
+
+        [MaxLength(200)]
+        public string? Nakliye { get; set; }
+
+        [MaxLength(200)]
+        public string? Kalibrasyon { get; set; }
+
+        [MaxLength(200)]
+        public string? Egitim { get; set; }
+
+        [MaxLength(200)]
+        public string? ReferansNumarasi { get; set; }
+
+
         [MaxLength(500)]
         public string? EkFaturaNotu { get; set; }
 
