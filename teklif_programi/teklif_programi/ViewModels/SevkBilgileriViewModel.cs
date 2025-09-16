@@ -58,6 +58,16 @@ namespace teklif_programi.ViewModels
                 .FirstOrDefault(s => s.TeklifId == teklif.TeklifId)
                 ?? new SevkBilgileri { TeklifId = teklif.TeklifId };
 
+            var musteri = teklif.Musteri;
+            if (musteri is null)
+            {
+                musteri = _context.Musteriler
+                    .AsNoTracking()
+                    .FirstOrDefault(m => m.MusteriId == teklif.MusteriId);
+            }
+
+            ApplyDefaultBillingInformation(musteri);
+
             InitializeFields();
 
             KaydetCommand = new RelayCommand<Window>(Kaydet);
@@ -281,6 +291,26 @@ namespace teklif_programi.ViewModels
             _siparisTarihi = _sevkBilgileri.SiparisTarihi;
             _aciklamalar = _sevkBilgileri.Aciklamalar;
         }
+
+        private void ApplyDefaultBillingInformation(Musteri? musteri)
+        {
+            if (musteri is null)
+                return;
+
+            _sevkBilgileri.FaturaBasligi = UseDefaultIfEmpty(_sevkBilgileri.FaturaBasligi, musteri.FirmaAdi);
+            _sevkBilgileri.FaturaAdresi = UseDefaultIfEmpty(_sevkBilgileri.FaturaAdresi, musteri.FirmaAdresi);
+            _sevkBilgileri.FaturaVergiDairesi = UseDefaultIfEmpty(_sevkBilgileri.FaturaVergiDairesi, musteri.VergiDairesi);
+            _sevkBilgileri.FaturaVergiNo = UseDefaultIfEmpty(_sevkBilgileri.FaturaVergiNo, musteri.VergiNumarasi);
+        }
+
+        private static string? UseDefaultIfEmpty(string? currentValue, string? defaultValue)
+        {
+            if (!string.IsNullOrWhiteSpace(currentValue))
+                return currentValue;
+
+            return string.IsNullOrWhiteSpace(defaultValue) ? currentValue : defaultValue;
+        }
+
 
         private bool SetProperty<T>(ref T field, T value, Action<T> updateAction, [CallerMemberName] string propertyName = "")
         {
