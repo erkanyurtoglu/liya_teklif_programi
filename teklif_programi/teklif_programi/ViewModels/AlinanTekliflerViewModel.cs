@@ -48,8 +48,15 @@ namespace teklif_programi.ViewModels
             }
         }
 
-        public ObservableCollection<string> TarihFiltreSecenekleri { get; } =
-            new() { "1 Gün", "1 Hafta", "15 Gün", "30 Gün", "Özel Tarih" };
+        public ObservableCollection<string> TarihFiltreSecenekleri { get; } = new()
+        {
+            "Hepsi",
+            "1 Gün",
+            "1 Hafta",
+            "15 Gün",
+            "30 Gün",
+            "Özel Tarih"
+        };
 
         public string SecilenTarihFiltresi
         {
@@ -96,7 +103,7 @@ namespace teklif_programi.ViewModels
         public AlinanTekliflerViewModel()
         {
             _context = new TeklifDbContext();
-            _secilenTarihFiltresi = "1 Hafta";
+            _secilenTarihFiltresi = "Hepsi";
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
             TamamlaCommand = new RelayCommand<Teklif>(TeklifTamamla);
             SevkBilgileriCommand = new RelayCommand<Teklif>(SevkBilgileriniDuzenle);
@@ -144,6 +151,8 @@ namespace teklif_programi.ViewModels
 
             switch (SecilenTarihFiltresi)
             {
+                case "Hepsi":
+                    break;
                 case "1 Gün":
                     filtreliTeklifler = filtreliTeklifler.Where(t => t.OlusturmaTarihi.Date >= bugun.AddDays(-1)).ToList();
                     break;

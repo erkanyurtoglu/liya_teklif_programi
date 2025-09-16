@@ -263,12 +263,12 @@
                     Background="#7f8c8d"
                     Margin="0,0,10,0"
                     Command="{Binding IptalCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Width="71"/>
             <Button Content="Kaydet"
                     Style="{StaticResource ModernButtonStyle}"
                     Background="#27ae60"
                     Command="{Binding KaydetCommand}"
-                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Width="72"/>
         </StackPanel>
     </Grid>
 </Window>
