@@ -23,6 +23,7 @@ using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
 using IoPath = System.IO.Path;
+using System.Text; // üstlere ekleyebilirsin
 
 
 namespace teklif_programi.Services
@@ -138,12 +139,16 @@ namespace teklif_programi.Services
 
             _context.SaveChanges();
 
+            // ... yukarıda teklif oluşturulduktan ve _context.SaveChanges() yapıldıktan sonra
+
+            var firmaSafe = ToSafeFilePart(firma.FirmaAdi);   // <-- initializer DIŞINDA
 
             SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                FileName = $"Teklif_{firma.FirmaAdi}_{DateTime.Now:yyyyMMdd}.pdf"
+                FileName = $"{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
             };
+
 
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -485,11 +490,16 @@ namespace teklif_programi.Services
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);
             var genelToplam = TeklifHesaplayici.HesaplaGenelToplam(toplamFiyat, kdvOrani, paketlemeUcreti, tasimaUcreti);
 
+            // ... firma, personel, hesaplamalar vs. hazır
+
+            var firmaSafe = ToSafeFilePart(firma.FirmaAdi);   // <-- initializer DIŞINDA
+
             SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                FileName = $"Teklif_{firma.FirmaAdi}_{DateTime.Now:yyyyMMdd}.pdf"
+                FileName = $"{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
             };
+
 
             if (saveFileDialog.ShowDialog() == true)
             {
@@ -795,11 +805,21 @@ namespace teklif_programi.Services
             ArgumentNullException.ThrowIfNull(urunler);
             if (!urunler.Any()) throw new ArgumentException("En az bir ürün seçilmelidir.");
 
+            // Firma & personel: TEK tanım + guard
+            var firma = teklif.Musteri ?? _context.Musteriler.FirstOrDefault(m => m.MusteriId == teklif.MusteriId);
+            if (firma is null)
+                throw new InvalidOperationException($"Teklif {teklif.TeklifId} için firma bulunamadı.");
+
+            var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
+
+            var firmaSafe = ToSafeFilePart(firma.FirmaAdi);
+
             SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                FileName = $"UretimListesi_{teklif.TeklifId}_{DateTime.Now:yyyyMMdd}.pdf"
+                FileName = $"UretimListesi_{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
             };
+
 
             if (saveFileDialog.ShowDialog() != true)
             {
@@ -830,9 +850,6 @@ namespace teklif_programi.Services
                 doc.SetFont(regularFont);
 
                 // --- ÜST BİLGİ BLOĞU ---
-                var firma = teklif.Musteri ?? _context.Musteriler.First(m => m.MusteriId == teklif.MusteriId);
-                var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
-
                 Table infoTable = new Table(new float[] { 3.5f, 1f })
                     .SetWidth(UnitValue.CreatePercentValue(80))
                     .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
@@ -857,7 +874,7 @@ namespace teklif_programi.Services
 
                 doc.Add(infoTable);
 
-                // --- ÜST ÇİZGİ + BAŞLIK + ALT ÇİZGİ (Tek çizgi üstte, tek çizgi altta) ---
+                // --- ÜST ÇİZGİ + BAŞLIK + ALT ÇİZGİ ---
                 var topSeparator = new LineSeparator(new SolidLine(0.5f))
                     .SetWidth(UnitValue.CreatePercentValue(100));
                 doc.Add(topSeparator);
@@ -869,12 +886,10 @@ namespace teklif_programi.Services
 
                 var bottomSeparator = new LineSeparator(new SolidLine(0.5f))
                     .SetWidth(UnitValue.CreatePercentValue(100))
-                    .SetMarginBottom(8f);   // altına 8pt boşluk
+                    .SetMarginBottom(8f);
                 doc.Add(bottomSeparator);
 
-
                 // --- ÜRETİM LİSTESİ TABLOSU ---
-                // Sütunlar: No | Ürün Kodu | Açıklama | Adet | Durum | Not
                 var colWidths = new float[] { 0.8f, 1.8f, 7.2f, 1.2f, 1.4f, 5.6f };
 
                 Table table = new Table(colWidths)
@@ -907,7 +922,6 @@ namespace teklif_programi.Services
                     .SetPadding(0)
                     .SetBorder(Border.NO_BORDER);
 
-                // Başlıklar
                 table.AddHeaderCell(Header("No"));
                 table.AddHeaderCell(Header("Ürün Kodu"));
                 table.AddHeaderCell(Header("Açıklama"));
@@ -923,16 +937,15 @@ namespace teklif_programi.Services
                 {
                     var bg = (no % 2 == 1) ? white : light;
                     var turkceAciklama = string.IsNullOrWhiteSpace(u.UrunAciklamasiTr)
-                    ? u.UrunAciklamasi
-                    : u.UrunAciklamasiTr;
+                        ? u.UrunAciklamasi
+                        : u.UrunAciklamasiTr;
 
-                    table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER));            // No
-                    table.AddCell(Body(u.UrunKodu, 9, bg));                                     // Ürün Kodu
-                    table.AddCell(Body(turkceAciklama, 8, bg));                                 // Açıklama (küçük)
-                    table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER));        // Adet
-                    table.AddCell(Check(bg));                                                   // Durum (kutucuk)
-                    table.AddCell(Body(u.UretimNotu, 9, bg));                                   // Not
-
+                    table.AddCell(Body(no.ToString(), 9, bg, TextAlignment.CENTER));       // No
+                    table.AddCell(Body(u.UrunKodu, 9, bg));                                // Ürün Kodu
+                    table.AddCell(Body(turkceAciklama, 8, bg));                            // Açıklama
+                    table.AddCell(Body(u.Adet.ToString(), 9, bg, TextAlignment.CENTER));   // Adet
+                    table.AddCell(Check(bg));                                              // Durum
+                    table.AddCell(Body(u.UretimNotu, 9, bg));                              // Not
                     no++;
                 }
 
@@ -948,6 +961,8 @@ namespace teklif_programi.Services
                                 "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
 
 
         private static Cell CreateInfoCell(string label, string value, PdfFont boldFont, PdfFont regularFont)
@@ -1018,6 +1033,18 @@ namespace teklif_programi.Services
             return new Cell().Add(new Paragraph(text).SetFont(font).SetFontSize(10))
                 .SetTextAlignment(TextAlignment.LEFT)
                 .SetBorder(Border.NO_BORDER);
+        }
+
+        private static string ToSafeFilePart(string? text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return "NA";
+            var invalid = System.IO.Path.GetInvalidFileNameChars();
+            var sb = new StringBuilder(text.Trim().Replace('\t', ' '));
+            for (int i = 0; i < sb.Length; i++)
+                if (invalid.Contains(sb[i])) sb[i] = '_';
+
+            var s = string.Join(" ", sb.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            return s.Replace(' ', '_');
         }
     }
 }
