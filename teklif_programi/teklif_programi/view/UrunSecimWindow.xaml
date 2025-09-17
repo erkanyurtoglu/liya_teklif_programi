@@ -91,6 +91,11 @@
         <!-- Ürün Listesi -->
         <Border Grid.Row="1" Background="White" CornerRadius="4" Padding="10" BorderBrush="#ededed" BorderThickness="1">
             <DataGrid Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding FiltrelenmisUrunler}" SelectedItem="{Binding SecilenUrun, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,10">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ToolTip" Value="{Binding UrunAciklamasi}"/>
+                    </Style>
+                </DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Ürün Kodu" Binding="{Binding UrunKodu}" Width="1.5*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True">
                         <DataGridTextColumn.ElementStyle>

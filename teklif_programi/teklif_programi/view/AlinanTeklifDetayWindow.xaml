@@ -306,6 +306,11 @@
                     <TextBlock Grid.Row="0" Text="Teklif Listem" FontWeight="SemiBold" FontSize="14" Foreground="#13183E" Margin="0,0,0,10"/>
 
                     <DataGrid Grid.Row="1" Style="{StaticResource ModernDataGrid}" ItemsSource="{Binding TeklifUrunler}">
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="ToolTip" Value="{Binding UrunAciklamasi}"/>
+                            </Style>
+                        </DataGrid.RowStyle>
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1.1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi}" Width="1.8*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>

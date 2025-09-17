@@ -104,7 +104,11 @@
                   CanUserAddRows="False" FontFamily="Segoe UI" FontSize="13"
                   AlternatingRowBackground="#ededed" GridLinesVisibility="None"
                   BorderBrush="#ededed" BorderThickness="1">
-
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ToolTip" Value="{Binding UrunAciklamasi}"/>
+                </Style>
+            </DataGrid.RowStyle>
             <DataGrid.Resources>
                 <!-- Başlıklar -->
                 <Style TargetType="DataGridColumnHeader">
