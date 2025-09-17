@@ -348,8 +348,16 @@ namespace teklif_programi.Services
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .SetMarginTop(40f);
 
+                    //    Adet × BirimFiyat toplamı
+                    var hamToplam = urunler.Sum(u => u.Adet * u.BirimFiyat);
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                        isEnglish ? "Total Price:" : "Toplam Fiyat:",
+                        boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(hamToplam, currency), regularFont));
+
                     // İndirimli Toplam 
-                    if(genelIndirimOrani > 0)
+                    if (genelIndirimOrani > 0)
                     {
                         toplamTable.AddCell(CreateRightAlignedHeaderCell(
                                 isEnglish ? $"Discounted Total(%{genelIndirimOrani}):" : $"İndirimli Toplam(%{genelIndirimOrani}):",
@@ -692,6 +700,14 @@ namespace teklif_programi.Services
                     Table toplamTable = new Table(TotalColumnWidths)
                         .SetHorizontalAlignment(HorizontalAlignment.RIGHT)
                         .SetMarginTop(40f);
+
+                    //    Adet × BirimFiyat toplamı
+                    var hamToplam = urunler.Sum(u => u.Adet * u.BirimFiyat);
+
+                    toplamTable.AddCell(CreateRightAlignedHeaderCell(
+                        isEnglish ? "Total Price:" : "Toplam Fiyat:",
+                        boldFont));
+                    toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(hamToplam, currency), regularFont));
 
                     // İndirimli Toplam 
                     if (genelIndirimOrani > 0)
@@ -1037,7 +1053,7 @@ namespace teklif_programi.Services
 
         private static string ToSafeFilePart(string? text)
         {
-            if (string.IsNullOrWhiteSpace(text)) return "NA";
+            if (string.IsNullOrWhiteSpace(text)) return "NA";   
             var invalid = System.IO.Path.GetInvalidFileNameChars();
             var sb = new StringBuilder(text.Trim().Replace('\t', ' '));
             for (int i = 0; i < sb.Length; i++)
