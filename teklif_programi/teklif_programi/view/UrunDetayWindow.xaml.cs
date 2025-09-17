@@ -62,7 +62,16 @@ namespace teklif_programi.view
                 // TextBox’lardaki değerler ürüne aktarılır
                 _urun.Kategori = txtKategori.Text;
                 _urun.UrunAciklamasi = txtAciklama.Text;
-                _urun.BirimFiyat = decimal.Parse(txt2025BirimSatisFiyati.Text);
+
+                // Kullanıcının girdiği birim fiyatlarını ilgili alanlara aktar
+                var tlBirimFiyati = decimal.Parse(txt2025BirimSatisFiyati.Text);
+                var usdBirimFiyati = decimal.Parse(txtDolarBirimSatisFiyati.Text);
+                var eurBirimFiyati = decimal.Parse(txtEuroBirimSatisFiyati.Text);
+
+                _urun.BirimFiyat = tlBirimFiyati;
+                _urun.FiyatTL = tlBirimFiyati;
+                _urun.FiyatUSD = usdBirimFiyati;
+                _urun.FiyatEUR = eurBirimFiyati;
                 _urun.MaliyetFiyati = decimal.Parse(txtYurticiMaliyetBirimFiyati.Text);
 
                 // Veritabanında güncelleme yapılır
