@@ -380,7 +380,7 @@ namespace teklif_programi.Services
                     if (tasimaUcreti > 0)
                     {
                         toplamTable.AddCell(CreateRightAlignedHeaderCell(
-                                isEnglish ? "Transport Fee:" : "Taşıma Ücreti:",
+                                isEnglish ? "Transportation Fee:" : "Taşıma Ücreti:",
                                 boldFont));
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(tasimaUcreti, currency), regularFont));
                     }
@@ -723,7 +723,7 @@ namespace teklif_programi.Services
                     if (tasimaUcreti > 0)
                     {
                         toplamTable.AddCell(CreateRightAlignedHeaderCell(
-                            isEnglish ? "Transport Fee:" : "Taşıma Ücreti:",
+                            isEnglish ? "Transportation Fee:" : "Taşıma Ücreti:",
                             boldFont));
                         toplamTable.AddCell(CreateLeftAlignedBodyCell(FormatPrice(tasimaUcreti, currency), regularFont));
                     }
