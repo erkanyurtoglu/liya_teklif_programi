@@ -84,7 +84,6 @@ namespace teklif_programi.ViewModels
             KaydetCommand = new RelayCommand(Kaydet, CanKaydet);
             PdfIndirCommand = new RelayCommand(PdfIndir, CanPdfIndir);
             UretimListesiIndirCommand = new RelayCommand(UretimListesiIndir, CanPdfIndir);
-            FarkliKaydetCommand = new RelayCommand(FarkliKaydet, CanFarkliKaydet);
             SepeteEkleCommand = new RelayCommand<Urun>(SepeteEkle, u => u != null);
             SepettenCikarCommand = new RelayCommand<TeklifUrunModel>(SepettenCikar, u => u != null);
 
@@ -342,7 +341,6 @@ namespace teklif_programi.ViewModels
         public RelayCommand KaydetCommand { get; }
         public RelayCommand PdfIndirCommand { get; }
         public RelayCommand UretimListesiIndirCommand { get; }
-        public RelayCommand FarkliKaydetCommand { get; }
         public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
 
@@ -730,81 +728,6 @@ namespace teklif_programi.ViewModels
             catch (Exception ex)
             {
                 MessageBox.Show($"Kaydederken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private bool CanFarkliKaydet() => Teklif != null;
-        private void FarkliKaydet()
-        {
-            if (Teklif == null) return;
-
-            try
-            {
-                using var tr = _context.Database.BeginTransaction();
-
-                var yeni = new Teklif
-                {
-                    MusteriId = Teklif.MusteriId,
-                    PersonelId = Teklif.PersonelId,
-                    OlusturmaTarihi = DateTime.Now,
-                    Durum = "Beklemede",
-                    ParaBirimi = Teklif.ParaBirimi,
-                    GenelIndirimOrani = Teklif.GenelIndirimOrani,
-                    KdvOrani = Teklif.KdvOrani,
-                    Dil = Teklif.Dil,
-                    MusteriNotu = Teklif.MusteriNotu,
-                    IlgiliKisi = Teklif.IlgiliKisi,
-                    IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu,
-                    IlgiliKisiEposta = Teklif.IlgiliKisiEposta,
-                    TeslimatSekli = TeslimatSekli,
-                    TeslimatYeri = TeslimatYeri,
-                    TeslimatTarihi = TeslimatTarihi,
-                    TeslimTarihi = TeslimTarihi
-
-                };
-                _context.Teklifler.Add(yeni);
-                _context.SaveChanges();
-
-                foreach (var m in TeklifUrunler)
-                {
-                    _context.TeklifUrunleri.Add(new TeklifUrun
-                    {
-                        TeklifId = yeni.TeklifId,
-                        UrunId = m.UrunId,
-                        Adet = m.Adet,
-                        BirimFiyat = m.BirimFiyat,
-                        IndirimliBirimFiyat = m.IndirimliFiyat,
-                        ToplamTutar = m.Toplam,
-                        Tamamlandi = m.Tamamlandi,
-                        UretimNotu = m.UretimNotu
-                    });
-                }
-
-                var indTop = TeklifUrunler.Sum(u => u.Toplam);
-                var kdv = indTop * (yeni.KdvOrani / 100m);
-                var genTop = indTop + kdv + (TeklifToplam?.PaketlemeUcreti ?? 0) + (TeklifToplam?.TasimaUcreti ?? 0);
-
-                _context.TeklifToplamlari.Add(new TeklifToplam
-                {
-                    TeklifId = yeni.TeklifId,
-                    IndirimliToplam = indTop,
-                    KdvTutari = kdv,
-                    PaketlemeUcreti = TeklifToplam?.PaketlemeUcreti ?? 0,
-                    TasimaUcreti = TeklifToplam?.TasimaUcreti ?? 0,
-                    GenelToplam = genTop
-                });
-
-                _context.SaveChanges();
-                tr.Commit();
-
-                EventHub.RaiseTeklifGuncellendi(yeni.TeklifId);
-                MessageBox.Show($"Yeni teklif oluşturuldu. Teklif No: {yeni.TeklifId}",
-                    "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Farklı kaydederken hata: {ex.Message}", "Hata",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
