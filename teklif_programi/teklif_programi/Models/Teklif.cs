@@ -40,6 +40,8 @@ namespace teklif_programi.Models
         public string Dil { get; set; } = "TR";
         // Teklifin dili (varsayılan: "TR").
 
+        public string? SatisSozlesmesiMetni { get; set; }
+        // Teklife ait satış sözleşmesi metni (opsiyonel).
 
         public string IlgiliKisi { get; set; } = string.Empty;
         // Teklifte belirtilen ilgili kişi adı.

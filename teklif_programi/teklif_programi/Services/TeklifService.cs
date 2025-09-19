@@ -104,7 +104,8 @@ namespace teklif_programi.Services
                 IlgiliKisiEposta = ilgiliKisiEposta,
                 TeslimatSekli = teslimatSekli,
                 TeslimatYeri = teslimatYeri,
-                Dil = selectedLanguage
+                Dil = selectedLanguage,
+                SatisSozlesmesiMetni = sozlesmeMetni
             };
 
             _context.Teklifler.Add(teklif);
@@ -782,7 +783,7 @@ namespace teklif_programi.Services
                     doc.Add(toplamTable);
 
 
-                    doc.SetMargins(0f, 30f, 40f, 30f);
+                    doc.SetMargins(80f, 30f, 40f, 30f);
                     doc.Add(new AreaBreak(AreaBreakType.NEXT_PAGE));
                     PdfPage sozlesmePage = pdf.GetLastPage();
                     if (sozlesmeBackground != null)

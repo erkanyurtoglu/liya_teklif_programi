@@ -189,11 +189,12 @@ namespace teklif_programi.ViewModels
             {
                 if (_selectedLanguage != value)
                 {
+                    var previousLanguage = _selectedLanguage;
                     _selectedLanguage = value;
                     if (Teklif != null) Teklif.Dil = value;
                     OnPropertyChanged();
                     UpdateDescriptions();
-                    UpdateContractText();
+                    UpdateContractTextAfterLanguageChange(previousLanguage);
                 }
             }
         }
@@ -201,7 +202,17 @@ namespace teklif_programi.ViewModels
         public string SatisSozlesmesiMetni
         {
             get => _satisSozlesmesiMetni;
-            set { _satisSozlesmesiMetni = value; OnPropertyChanged(); }
+            set
+            {
+                var newValue = value ?? string.Empty;
+                if (_satisSozlesmesiMetni != newValue)
+                {
+                    _satisSozlesmesiMetni = newValue;
+                    if (Teklif != null)
+                        Teklif.SatisSozlesmesiMetni = newValue;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public string TeslimatSekli
@@ -611,9 +622,36 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(TeklifUrunler));
         }
 
+        private static string GetDefaultContractTextForLanguage(string language) =>
+         language.Equals("EN", StringComparison.OrdinalIgnoreCase) ? SatisSozlesmesiEn : SatisSozlesmesiTr;
+
+        private string GetDefaultContractText() => GetDefaultContractTextForLanguage(SelectedLanguage);
+
         private void UpdateContractText()
         {
-            SatisSozlesmesiMetni = SelectedLanguage == "EN" ? SatisSozlesmesiEn : SatisSozlesmesiTr;
+            if (!string.IsNullOrWhiteSpace(Teklif?.SatisSozlesmesiMetni))
+            {
+                var storedText = Teklif!.SatisSozlesmesiMetni ?? string.Empty;
+                if (!string.Equals(_satisSozlesmesiMetni, storedText, StringComparison.Ordinal))
+                {
+                    _satisSozlesmesiMetni = storedText;
+                    OnPropertyChanged(nameof(SatisSozlesmesiMetni));
+                }
+            }
+            else
+            {
+                SatisSozlesmesiMetni = GetDefaultContractText();
+            }
+        }
+
+        private void UpdateContractTextAfterLanguageChange(string previousLanguage)
+        {
+            var previousDefault = GetDefaultContractTextForLanguage(previousLanguage);
+            if (string.IsNullOrWhiteSpace(SatisSozlesmesiMetni) ||
+                string.Equals(SatisSozlesmesiMetni, previousDefault, StringComparison.Ordinal))
+            {
+                SatisSozlesmesiMetni = GetDefaultContractText();
+            }
         }
 
 
@@ -650,6 +688,7 @@ namespace teklif_programi.ViewModels
                     dbT.GenelIndirimOrani = Teklif.GenelIndirimOrani;
                     dbT.KdvOrani = Teklif.KdvOrani;
                     dbT.Dil = Teklif.Dil;
+                    dbT.SatisSozlesmesiMetni = Teklif.SatisSozlesmesiMetni;
                     dbT.IlgiliKisi = Teklif.IlgiliKisi;
                     dbT.IlgiliKisiTelefonu = Teklif.IlgiliKisiTelefonu;
                     dbT.IlgiliKisiEposta = Teklif.IlgiliKisiEposta;

@@ -50,9 +50,14 @@ namespace teklif_programi.Data.Configurations
                 .HasDefaultValue("TR");
             // Teklifin dili zorunlu bir alan, maksimum 5 karakter ve varsayılan "TR".
 
+            builder.Property(t => t.SatisSozlesmesiMetni)
+                .HasColumnType("nvarchar(max)");
+            // Teklife ait satış sözleşmesi metni (opsiyonel, uzun metinler için nvarchar(max)).
+
+
             builder.Property(t => t.KabulTarihi)
                 .HasColumnType("datetime2");
-            // Teklifin kabul edildiği tarih (opsiyonel).   
+            // Teklifin kabul edildiği tarih (opsiyonel).
 
 
             builder.Property(t => t.IlgiliKisi)
