@@ -47,6 +47,7 @@ namespace teklif_programi.view
                     UrunKodu = txtUrunKodu.Text.Trim(),               // Ürün kodu
                     Kategori = txtUrunKategori.Text.Trim(),           // Kategori
                     UrunAciklamasi = txtUrunAciklama.Text.Trim(),     // Açıklama
+                    UrunAciklamasiEn = txtUrunAciklamaEn.Text.Trim(), // İngilizce açıklama
                     EklenmeTarihi = DateTime.Now,                     // Eklenme tarihi
                     BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()), // TL satış fiyatı
                     MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()), // Maliyet
@@ -61,6 +62,8 @@ namespace teklif_programi.view
 
                 // Başarılı mesaj
                 MessageBox.Show("Ürün başarıyla kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                Temizle();
             }
             catch (Exception ex)
             {
@@ -75,9 +78,18 @@ namespace teklif_programi.view
         /// </summary>
         private void Iptal_Click(object sender, RoutedEventArgs e)
         {
+            Temizle();
+        }
+
+        /// <summary>
+        /// Form üzerindeki tüm TextBox alanlarını temizler.
+        /// </summary>
+        private void Temizle()
+        {
             txtUrunKodu.Text = "";
             txtUrunKategori.Text = "";
             txtUrunAciklama.Text = "";
+            txtUrunAciklamaEn.Text = "";
             txtBirimSatisFiyati.Text = "";
             txtYurticiMaliyet.Text = "";
             txtDolarBirimFiyati.Text = "";

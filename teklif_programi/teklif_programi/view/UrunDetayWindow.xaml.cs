@@ -42,6 +42,9 @@ namespace teklif_programi.view
             txtUrunKodu.Text = _urun.UrunKodu;
             txtKategori.Text = _urun.Kategori;
             txtAciklama.Text = _urun.UrunAciklamasi;
+            txtAciklamaEn.Text = string.IsNullOrWhiteSpace(_urun.UrunAciklamasiEn)
+            ? _urun.UrunAciklamasi
+            : _urun.UrunAciklamasiEn;
             txt2025BirimSatisFiyati.Text = _urun.BirimFiyat.ToString("F2"); // 2 ondalık format
             txtDolarBirimSatisFiyati.Text = _urun.FiyatUSD.ToString("F2");
             txtEuroBirimSatisFiyati.Text = _urun.FiyatEUR.ToString("F2");
@@ -62,7 +65,13 @@ namespace teklif_programi.view
                 // TextBox’lardaki değerler ürüne aktarılır
                 _urun.UrunKodu = txtUrunKodu.Text.Trim();
                 _urun.Kategori = txtKategori.Text;
-                _urun.UrunAciklamasi = txtAciklama.Text;
+                var turkceAciklama = txtAciklama.Text.Trim();
+                var ingilizceAciklama = txtAciklamaEn.Text.Trim();
+
+                _urun.UrunAciklamasi = turkceAciklama;
+                _urun.UrunAciklamasiEn = string.IsNullOrWhiteSpace(ingilizceAciklama)
+                    ? turkceAciklama
+                    : ingilizceAciklama;
 
                 // Kullanıcının girdiği birim fiyatlarını ilgili alanlara aktar
                 var tlBirimFiyati = decimal.Parse(txt2025BirimSatisFiyati.Text);
