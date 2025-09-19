@@ -1,11 +1,14 @@
 ﻿using teklif_programi.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Runtime.CompilerServices;
 using teklif_programi.Data;
 using teklif_programi.Models;
@@ -670,10 +673,52 @@ namespace teklif_programi.ViewModels
             _ => new CultureInfo("tr-TR"),
         };
 
+        private static string CreateDefaultPdfFileName(Teklif teklif)
+        {
+            var safeFirma = SanitizeFileNamePart(teklif.Musteri?.FirmaAdi);
+            return $"{safeFirma}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf";
+        }
+
+        private static string SanitizeFileNamePart(string? text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return "Teklif";
+
+            var invalidChars = Path.GetInvalidFileNameChars();
+            var builder = new StringBuilder(text.Trim());
+
+            for (var i = 0; i < builder.Length; i++)
+            {
+                if (invalidChars.Contains(builder[i]) || char.IsControl(builder[i]))
+                {
+                    builder[i] = '_';
+                }
+            }
+
+            var normalized = string.Join(" ", builder.ToString().Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            return normalized.Replace(' ', '_');
+        }
+
         private bool CanKaydet() => Teklif != null;
+
         private void Kaydet()
         {
             if (Teklif == null) return;
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "PDF Dosyaları (*.pdf)|*.pdf",
+                FileName = CreateDefaultPdfFileName(Teklif)
+            };
+
+            if (saveFileDialog.ShowDialog() != true)
+            {
+                MessageBox.Show("İşlem iptal edildi, teklif kaydedilmedi.",
+                                "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var outputPath = saveFileDialog.FileName;
+
 
             try
             {
@@ -759,10 +804,28 @@ namespace teklif_programi.ViewModels
                 }
 
                 _context.SaveChanges();
+
+                var pdfOlustu = _teklifService.PdfIndir(
+                    Teklif,
+                    TeklifUrunler,
+                    SatisSozlesmesiMetni,
+                    SelectedLanguage,
+                    outputPath,
+                    showSuccessMessage: false);
+
+                if (!pdfOlustu)
+                {
+                    tr.Rollback();
+                    _context.ChangeTracker.Clear();
+                    YukleTeklifDetaylari();
+                    return;
+                }
+
                 tr.Commit();
 
                 EventHub.RaiseTeklifGuncellendi(Teklif.TeklifId);
-                MessageBox.Show("Değişiklikler kaydedildi.", "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Değişiklikler kaydedildi ve PDF oluşturuldu.",
+                                "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {

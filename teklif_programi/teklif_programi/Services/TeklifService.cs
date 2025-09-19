@@ -470,10 +470,12 @@ namespace teklif_programi.Services
             }
         }
 
-        public void PdfIndir(Teklif teklif,
+        public bool PdfIndir(Teklif teklif,
                              IEnumerable<TeklifUrunModel> urunler,
                              string sozlesmeMetni,
-                             string selectedLanguage)
+                             string selectedLanguage,
+                             string? targetFilePath = null,
+                             bool showSuccessMessage = true)
         {
             ArgumentNullException.ThrowIfNull(teklif);
             ArgumentNullException.ThrowIfNull(urunler);
@@ -503,16 +505,34 @@ namespace teklif_programi.Services
 
             var firmaSafe = ToSafeFilePart(firma.FirmaAdi);   // <-- initializer DIŞINDA
 
-            SaveFileDialog saveFileDialog = new()
+            string? outputPath = targetFilePath;
+
+            if (string.IsNullOrWhiteSpace(outputPath))
             {
-                Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                FileName = $"{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
-            };
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Filter = "PDF Dosyaları (*.pdf)|*.pdf",
+                    FileName = $"{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    outputPath = saveFileDialog.FileName;
+                }
+                else
+                {
+                    MessageBox.Show("İşlem iptal edildi, PDF kaydedilmedi.",
+                                    "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return false;
+                }
+            }
 
 
-            if (saveFileDialog.ShowDialog() == true)
+            ArgumentException.ThrowIfNullOrEmpty(outputPath);
+
+            try
             {
-                using var writer = new PdfWriter(saveFileDialog.FileName);
+                using var writer = new PdfWriter(outputPath);
                 using var pdf = new PdfDocument(writer);
                 using var doc = new Document(pdf, PageSize.A4);
                 doc.SetMargins(20f, 5f, 30f, 5f);
@@ -799,22 +819,29 @@ namespace teklif_programi.Services
 
                     doc.Close();
 
-                    MessageBox.Show("PDF başarıyla oluşturuldu!",
-                                    "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    if (showSuccessMessage)
+                    {
+                        MessageBox.Show("PDF başarıyla oluşturuldu!",
+                                        "Başarılı", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"PDF oluşturulurken bir hata oluştu: {ex.Message}",
                                     "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
                 }
             }
-
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("İşlem iptal edildi, PDF kaydedilmedi.",
-                                "İptal", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show($"PDF oluşturulurken bir hata oluştu: {ex.Message}",
+                                "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
             }
         }
+
 
         public void UretimListesiPdfIndir(Teklif teklif, IEnumerable<TeklifUrunModel> urunler)
         {
