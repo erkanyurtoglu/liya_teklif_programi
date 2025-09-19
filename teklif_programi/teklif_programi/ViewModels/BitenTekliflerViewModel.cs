@@ -97,12 +97,14 @@ namespace teklif_programi.ViewModels
         public Visibility BitisTarihiVisibility => SecilenTarihFiltresi == "Özel Tarih" ? Visibility.Visible : Visibility.Collapsed;
 
         public RelayCommand<Teklif> DetayGosterCommand { get; }
+        public RelayCommand<Teklif> SevkBilgileriCommand { get; }
 
         public BitenTekliflerViewModel()
         {
             _context = new TeklifDbContext();
             _secilenTarihFiltresi = "Hepsi";
             DetayGosterCommand = new RelayCommand<Teklif>(DetayGoster);
+            SevkBilgileriCommand = new RelayCommand<Teklif>(SevkBilgileriniGoster);
             TeklifleriYukle();
 
             EventHub.TeklifGuncellendi += OnTeklifGuncellendi;
@@ -121,6 +123,7 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.Musteri)
                     .Include(t => t.Personel)
                     .Include(t => t.TeklifToplam)
+                    .Include(t => t.SevkBilgileri)
                     .Include(t => t.TeklifUrunleri)
                         .ThenInclude(tu => tu.Urun)
                     .Where(t => t.Durum == "Tamamlandı")
@@ -194,6 +197,22 @@ namespace teklif_programi.ViewModels
             var detay = new AlinanTeklifDetayWindow(teklif);
             detay.ShowDialog();
         }
+
+        private void SevkBilgileriniGoster(Teklif? teklif)
+        {
+            if (teklif is null) return;
+
+            try
+            {
+                var window = new SevkBilgileriWindow(teklif);
+                window.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Sevk bilgileri açılırken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
 
         private void OnTeklifGuncellendi(int teklifId)
         {

@@ -193,7 +193,7 @@
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="0.8*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTemplateColumn Header="İşlemler" Width="170">
+                <DataGridTemplateColumn Header="İşlemler" Width="240">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -203,6 +203,12 @@
                                         Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.DetayGosterCommand}"
                                         CommandParameter="{Binding}"
                                         Background="#1874CD"/>
+                                <Button Content="İrsaliye"
+                                        Style="{StaticResource ModernButtonStyle}"
+                                        Width="70" Height="30" Margin="4,0"
+                                        Command="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=DataContext.SevkBilgileriCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="#F39C12"/>
                             </StackPanel>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
