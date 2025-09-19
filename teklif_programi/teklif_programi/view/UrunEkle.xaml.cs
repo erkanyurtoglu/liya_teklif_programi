@@ -47,6 +47,7 @@ namespace teklif_programi.view
                     UrunKodu = txtUrunKodu.Text.Trim(),               // Ürün kodu
                     Kategori = txtUrunKategori.Text.Trim(),           // Kategori
                     UrunAciklamasi = txtUrunAciklama.Text.Trim(),     // Açıklama
+                    EklenmeTarihi = DateTime.Now,                     // Eklenme tarihi
                     BirimFiyat = decimal.Parse(txtBirimSatisFiyati.Text.Trim()), // TL satış fiyatı
                     MaliyetFiyati = decimal.Parse(txtYurticiMaliyet.Text.Trim()), // Maliyet
                     FiyatTL = decimal.Parse(txtBirimSatisFiyati.Text.Trim()),     // TL fiyat

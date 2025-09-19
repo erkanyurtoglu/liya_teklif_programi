@@ -60,6 +60,7 @@ namespace teklif_programi.view
             if (pwdWindow.ShowDialog() == true && PasswordService.Verify(pwdWindow.EnteredPassword))
             {
                 // TextBox’lardaki değerler ürüne aktarılır
+                _urun.UrunKodu = txtUrunKodu.Text.Trim();
                 _urun.Kategori = txtKategori.Text;
                 _urun.UrunAciklamasi = txtAciklama.Text;
 
