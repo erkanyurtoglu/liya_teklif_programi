@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\teklifver.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\view\\teklifver.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|c:\\users\\yurto\\documents\\github\\liya_teklif_programi\\teklif_programi\\teklif_programi\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{02120FC2-E92D-42A5-AF42-A007C7AE3EEA}|teklif_programi\\teklif_programi.csproj|solutionrelative:teklif_programi\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     }
@@ -23,18 +19,6 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "TeklifVer.xaml",
-              "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\TeklifVer.xaml",
-              "RelativeDocumentMoniker": "teklif_programi\\view\\TeklifVer.xaml",
-              "ToolTip": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\view\\TeklifVer.xaml",
-              "RelativeToolTip": "teklif_programi\\view\\TeklifVer.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-09-29T12:16:21.002Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "App.config",
               "DocumentMoniker": "C:\\Users\\yurto\\Documents\\GitHub\\liya_teklif_programi\\teklif_programi\\teklif_programi\\App.config",
               "RelativeDocumentMoniker": "teklif_programi\\App.config",
