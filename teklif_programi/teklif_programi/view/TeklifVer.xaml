@@ -383,11 +383,12 @@
                     <TextBlock Grid.Row="0" Text="Sepet" FontWeight="SemiBold" FontSize="14"
                    Margin="0,0,0,10" Foreground="#13183E" FontFamily="Segoe UI"/>
 
-                    <DataGrid Grid.Row="1" x:Name="dataGridSepet" Style="{StaticResource ModernDataGrid}" 
+                    <DataGrid Grid.Row="1" x:Name="dataGridSepet" Style="{StaticResource ModernDataGrid}"
                   ItemsSource="{Binding SecilenUrunler}"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  EnableRowVirtualization="True" EnableColumnVirtualization="True">
+                  EnableRowVirtualization="True" EnableColumnVirtualization="True"
+                  CanUserSortColumns="False">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Kod" Binding="{Binding UrunKodu}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}" IsReadOnly="True"/>
                             <DataGridTextColumn Header="Açıklama" Binding="{Binding UrunAciklamasi, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="1*" HeaderStyle="{StaticResource DataGridColumnHeader}"/>
