@@ -1,64 +1,141 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using teklif_programi.ViewModels;
 
 namespace teklif_programi.view
 {
-    /// <summary>
-    /// TeklifVer.xaml kullanıcı kontrolü.
-    /// Kullanıcı teklif oluştururken fiyat girişlerini, sözleşme açma gibi işlemleri yönetir.
-    /// </summary>
     public partial class TeklifVer : UserControl
     {
-        // Constructor: UserControl yüklendiğinde çalışır
         public TeklifVer()
         {
-            InitializeComponent(); // XAML tarafındaki bileşenleri başlatır
-            DataContext = new TeklifVerViewModel(); // ViewModel’i arayüze bağlar
+            InitializeComponent();
+            DataContext = new TeklifVerViewModel();
         }
 
-        /// <summary>
-        /// Sadece sayı ve ondalık nokta (.) girişine izin verir.
-        /// PreviewTextInput olayı ile bağlanır.
-        /// </summary>
-        private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
+        // Seçimi "incoming" ile değiştirip caret'i doğru yere koyar
+        private static void ReplaceSelection(TextBox tb, string incoming)
         {
-            // Girilen karakter sayı değilse ve "." değilse giriş engellenir
-            e.Handled = !decimal.TryParse(e.Text, out _) && e.Text != ".";
+            int start = tb.SelectionStart;
+            int length = tb.SelectionLength;
+            tb.Text = tb.Text.Remove(start, length).Insert(start, incoming);
+            tb.CaretIndex = start + incoming.Length;
         }
 
-        /// <summary>
-        /// Girilen değeri TextBox’un mevcut metniyle birleştirip,
-        /// bunun geçerli bir decimal sayı olup olmadığını kontrol eder.
-        /// Örn: "12" yazılıyken kullanıcı "3" girerse "123" olarak kontrol edilir.
-        /// </summary>
-        private void DecimalValidationTextBox(object sender, TextCompositionEventArgs e)
+        private static string BuildProposed(TextBox tb, string incoming)
         {
-            if (sender is TextBox textBox)
+            int start = tb.SelectionStart;
+            int length = tb.SelectionLength;
+            return tb.Text.Remove(start, length).Insert(start, incoming);
+        }
+
+        private static bool IsValidPartialDecimal(string text)
+        {
+            if (text is null) return false;
+            var sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+            if (text.Length == 0) return true;   // boşken yazmaya izin
+            if (text == sep) return true;        // sadece ayırıcı ("," veya ".")
+
+            // "12," gibi sonda ayırıcıya izin ver
+            if (text.EndsWith(sep))
             {
-                // Kullanıcının mevcut metnine yeni girilen karakteri ekle
-                string newText = textBox.Text + e.Text;
+                var head = text[..^sep.Length];
+                foreach (char c in head) if (!char.IsDigit(c)) return false;
+                return true;
+            }
 
-                // Yeni metin geçerli bir decimal değilse giriş engellenir
-                e.Handled = !decimal.TryParse(newText, out _);
+            // Normal kontrol (mevcut kültürle)
+            return decimal.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out _);
+        }
+
+        // Yazarken kontrol (hem '.' hem ',' kabul, kültüre çevir)
+        private void DecimalInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is not TextBox tb) return;
+
+            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            string incoming = (e.Text == "." || e.Text == ",") ? sep : e.Text;
+
+            string proposed = BuildProposed(tb, incoming);
+            bool valid = IsValidPartialDecimal(proposed);
+
+            // Eğer tuşlanan karakter kültür ayırıcısından farklıysa, manuel yaz (çeviri)
+            bool needsManual = incoming != e.Text;
+
+            if (!valid)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            if (needsManual)
+            {
+                e.Handled = true;        // normal işleyişi iptal et, kendimiz yazalım
+                ReplaceSelection(tb, incoming);
+            }
+            else
+            {
+                e.Handled = false;       // normal akış
             }
         }
 
-        /// <summary>
-        /// "Satış Sözleşmesi" butonuna tıklandığında çalışır.
-        /// TeklifVerViewModel’den mevcut sözleşme verilerini alır
-        /// ve SatisSozlesmesiWindow penceresini modal olarak açar.
-        /// </summary>
-        private void SatisSozlesmesi_Click(object sender, System.Windows.RoutedEventArgs e)
+        // Yapıştırmayı da normalize et ('.' ve ',' -> kültür ayırıcısı)
+        private void DecimalInput_Pasting(object sender, DataObjectPastingEventArgs e)
         {
-            // Mevcut DataContext’i TeklifVerViewModel tipine dönüştür
+            if (sender is not TextBox tb) return;
+
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                string pasted = (string)e.DataObject.GetData(typeof(string));
+                string normalized = pasted.Replace(".", sep).Replace(",", sep);
+
+                string proposed = BuildProposed(tb, normalized);
+
+                if (IsValidPartialDecimal(proposed))
+                {
+                    e.CancelCommand();           // kendi yazımımız
+                    ReplaceSelection(tb, normalized);
+                }
+                else
+                {
+                    e.CancelCommand();           // geçersiz -> iptal
+                }
+            }
+            else
+            {
+                e.CancelCommand();
+            }
+        }
+
+        // >>> YENİ: Canlı güncelleme — stabil olduğunda binding kaynağını güncelle
+        private void DecimalInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is not TextBox tb) return;
+
+            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            string s = (tb.Text ?? string.Empty).Replace(".", sep).Replace(",", sep).Trim();
+
+            // Geçici durumlarda (boş, tek ayıraç, sonda ayıraç) kaynak güncellemeyelim
+            if (string.IsNullOrEmpty(s) || s == sep || s.EndsWith(sep))
+                return;
+
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture, out _))
+            {
+                // Binding'i anında ViewModel'e yaz
+                BindingExpression be = tb.GetBindingExpression(TextBox.TextProperty);
+                be?.UpdateSource();
+            }
+        }
+        // <<< YENİ
+
+        private void SatisSozlesmesi_Click(object sender, RoutedEventArgs e)
+        {
             var viewModel = (TeklifVerViewModel)DataContext;
-
-            // Satış sözleşmesi penceresini oluştur, ViewModel’i aktar
             var satisSozlesmesiWindow = new SatisSozlesmesiWindow(viewModel);
-
-            // Pencereyi modal (diğer işlemleri engelleyerek) aç
             satisSozlesmesiWindow.ShowDialog();
         }
     }

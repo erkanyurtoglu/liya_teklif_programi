@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:teklif_programi"
              mc:Ignorable="d" 
              d:DesignHeight="900" d:DesignWidth="1350"
+             xml:lang="tr-TR"
              Background="#ededed">
 
     <UserControl.Resources>
@@ -220,25 +221,41 @@
                         <Border Background="White" CornerRadius="4" Padding="10" Margin="0,0,10,0" BorderBrush="#ededed" BorderThickness="1">
                             <StackPanel Width="60">
                                 <TextBlock Text="İndirim (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding GenelIndirimOrani, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                     PreviewTextInput="DecimalInput_PreviewTextInput"
+                                     DataObject.Pasting="DecimalInput_Pasting"
+                                     TextChanged="DecimalInput_TextChanged"/>
                             </StackPanel>
                         </Border>
                         <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#ededed" BorderThickness="1">
                             <StackPanel Width="60">
                                 <TextBlock Text="KDV (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding KdvOrani, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding KdvOrani, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                     PreviewTextInput="DecimalInput_PreviewTextInput"
+                                     DataObject.Pasting="DecimalInput_Pasting"
+                                     TextChanged="DecimalInput_TextChanged"/>
                             </StackPanel>
                         </Border>
                         <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#ededed" BorderThickness="1" Margin="10,0">
                             <StackPanel Width="60">
                                 <TextBlock Text="Paketleme" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding PaketlemeUcret, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding PaketlemeUcret, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                     PreviewTextInput="DecimalInput_PreviewTextInput"
+                                     DataObject.Pasting="DecimalInput_Pasting"
+                                     TextChanged="DecimalInput_TextChanged"/>
                             </StackPanel>
                         </Border>
                         <Border Background="White" CornerRadius="4" Padding="10" BorderBrush="#ededed" BorderThickness="1" Margin="0,0">
                             <StackPanel Width="60">
                                 <TextBlock Text="Taşıma" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E" FontFamily="Segoe UI"/>
-                                <TextBox Style="{StaticResource ModernTextBox}" Text="{Binding TasimaUcret, UpdateSourceTrigger=PropertyChanged}" PreviewTextInput="OnlyAllowNumbers"/>
+                                <TextBox Style="{StaticResource ModernTextBox}"
+                                     Text="{Binding TasimaUcret, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                     PreviewTextInput="DecimalInput_PreviewTextInput"
+                                     DataObject.Pasting="DecimalInput_Pasting"
+                                     TextChanged="DecimalInput_TextChanged"/>
                             </StackPanel>
                         </Border>
                     </StackPanel>
