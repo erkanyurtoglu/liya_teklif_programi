@@ -1,6 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using teklif_programi.Models;
 using teklif_programi.ViewModels;
@@ -15,30 +16,100 @@ namespace teklif_programi.view
             DataContext = new TeklifDetayViewModel(teklif);
         }
 
-        // --- Giriş filtreleri ---
+        // --- Yardımcılar (TeklifVer ile aynı mantık) ---
 
-        private static readonly Regex _intRegex = new Regex(@"^\d*$", RegexOptions.Compiled);
-
-        private void OnlyAllowNumbers(object sender, TextCompositionEventArgs e)
+        // Seçimi "incoming" ile değiştirip caret'i doğru yere koyar
+        private static void ReplaceSelection(TextBox tb, string incoming)
         {
-            var tb = (TextBox)sender;
-            var proposed = tb.Text.Remove(tb.SelectionStart, tb.SelectionLength)
-                                  .Insert(tb.SelectionStart, e.Text);
-
-            e.Handled = !_intRegex.IsMatch(proposed);
+            int start = tb.SelectionStart;
+            int length = tb.SelectionLength;
+            tb.Text = tb.Text.Remove(start, length).Insert(start, incoming);
+            tb.CaretIndex = start + incoming.Length;
         }
 
-        private void TextBox_OnPaste(object sender, DataObjectPastingEventArgs e)
+        // Mevcut metne incoming eklenince oluşacak metni önceden kur
+        private static string BuildProposed(TextBox tb, string incoming)
         {
-            if (e.DataObject.GetDataPresent(DataFormats.Text))
-            {
-                var text = (string)e.DataObject.GetData(DataFormats.Text);
-                var tb = (TextBox)sender;
-                var proposed = tb.Text.Remove(tb.SelectionStart, tb.SelectionLength)
-                                      .Insert(tb.SelectionStart, text);
+            int start = tb.SelectionStart;
+            int length = tb.SelectionLength;
+            return tb.Text.Remove(start, length).Insert(start, incoming);
+        }
 
-                if (!_intRegex.IsMatch(proposed))
-                    e.CancelCommand();
+        // Yazım sırasında geçici durumları da geçerli say (boş, tek ayıraç, sonda ayıraç)
+        private static bool IsValidPartialDecimal(string text)
+        {
+            if (text is null) return false;
+
+            var sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+
+            if (text.Length == 0) return true;   // boşken yazmaya izin
+            if (text == sep) return true;        // sadece ayıraç ("," veya ".")
+
+            // "12," gibi sonda ayıraca izin ver (baş kısmı tamamen rakam olmalı)
+            if (text.EndsWith(sep))
+            {
+                var head = text[..^sep.Length];
+                foreach (char c in head)
+                    if (!char.IsDigit(c)) return false;
+                return true;
+            }
+
+            // Normal kontrol (mevcut kültürle)
+            return decimal.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out _);
+        }
+
+        // --- Ondalık giriş: PreviewTextInput ('.' ve ',' kültür ayıracına çevrilir) ---
+        private void DecimalInput_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (sender is not TextBox tb) return;
+
+            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            string incoming = (e.Text == "." || e.Text == ",") ? sep : e.Text;
+
+            string proposed = BuildProposed(tb, incoming);
+            bool valid = IsValidPartialDecimal(proposed);
+
+            bool needsManual = incoming != e.Text; // tuşlanan karakteri sep'e çevirdik mi?
+
+            if (!valid)
+            {
+                e.Handled = true; // engelle
+                return;
+            }
+
+            if (needsManual)
+            {
+                e.Handled = true;       // normal akışı iptal et
+                ReplaceSelection(tb, incoming); // kendimiz yazalım
+            }
+            else
+            {
+                e.Handled = false;      // normal akış
+            }
+        }
+
+        // --- Ondalık giriş: Pasting (yapıştırmayı normalize et) ---
+        private void DecimalInput_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            if (sender is not TextBox tb) return;
+
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                string pasted = (string)e.DataObject.GetData(typeof(string));
+                string normalized = pasted.Replace(".", sep).Replace(",", sep);
+
+                string proposed = BuildProposed(tb, normalized);
+
+                if (IsValidPartialDecimal(proposed))
+                {
+                    e.CancelCommand();           // kendi yazımımız
+                    ReplaceSelection(tb, normalized);
+                }
+                else
+                {
+                    e.CancelCommand();           // geçersiz -> iptal
+                }
             }
             else
             {
@@ -46,11 +117,26 @@ namespace teklif_programi.view
             }
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        // --- Ondalık giriş: TextChanged (stabil olduğunda kaynağı anında güncelle) ---
+        private void DecimalInput_TextChanged(object sender, TextChangedEventArgs e)
         {
-            // ihtiyaca göre doldurabilirsin
+            if (sender is not TextBox tb) return;
+
+            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            string s = (tb.Text ?? string.Empty).Replace(".", sep).Replace(",", sep).Trim();
+
+            // Geçici durumlarda (boş, tek ayıraç, sonda ayıraç) kaynağa yazma
+            if (string.IsNullOrEmpty(s) || s == sep || s.EndsWith(sep))
+                return;
+
+            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture, out _))
+            {
+                BindingExpression be = tb.GetBindingExpression(TextBox.TextProperty);
+                be?.UpdateSource(); // ViewModel'i anında güncelle
+            }
         }
 
+        // --- Diğer ---
         private void SatisSozlesmesi_Click(object sender, RoutedEventArgs e)
         {
             if (DataContext is TeklifDetayViewModel vm)
@@ -59,5 +145,17 @@ namespace teklif_programi.view
                 window.ShowDialog();
             }
         }
+
+        // XAML: TextChanged="TextBox_TextChanged" için eksik handler
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Gerekli değil ama binding'i güvenceye almak istersen:
+            if (sender is TextBox tb)
+            {
+                var be = tb.GetBindingExpression(TextBox.TextProperty);
+                be?.UpdateSource();
+            }
+        }
+
     }
 }

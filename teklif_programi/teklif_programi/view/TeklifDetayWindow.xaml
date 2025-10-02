@@ -12,6 +12,7 @@
         ResizeMode="CanResize"
         AllowsTransparency="False"
         WindowStartupLocation="CenterScreen"
+        xml:lang="tr-TR"
         Background="#ededed">
     <Window.Resources>
         <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
@@ -187,26 +188,34 @@
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="İndirim (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="87"
-                                     Text="{Binding GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                 Text="{Binding GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                 PreviewTextInput="DecimalInput_PreviewTextInput"
+                                 DataObject.Pasting="DecimalInput_Pasting"
+                                 TextChanged="DecimalInput_TextChanged"/>
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="KDV (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding KdvOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                 Text="{Binding KdvOrani, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                 PreviewTextInput="DecimalInput_PreviewTextInput"
+                                 DataObject.Pasting="DecimalInput_Pasting"
+                                 TextChanged="DecimalInput_TextChanged"/>
                         </StackPanel>
                         <StackPanel Margin="10,0">
                             <TextBlock Text="Paketleme" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding PaketlemeUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                 Text="{Binding PaketlemeUcret, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                 PreviewTextInput="DecimalInput_PreviewTextInput"
+                                 DataObject.Pasting="DecimalInput_Pasting"
+                                 TextChanged="DecimalInput_TextChanged"/>
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="Taşıma Ücreti" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding TasimaUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                 Text="{Binding TasimaUcret, Mode=TwoWay, UpdateSourceTrigger=Explicit}"
+                                 PreviewTextInput="DecimalInput_PreviewTextInput"
+                                 DataObject.Pasting="DecimalInput_Pasting"
+                                 TextChanged="DecimalInput_TextChanged"/>
                         </StackPanel>
                     </StackPanel>
 

@@ -189,26 +189,22 @@
                         <StackPanel Margin="0,0,10,0">
                             <TextBlock Text="İndirim (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="87"
-                                     Text="{Binding GenelIndirimOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                Text="{Binding GenelIndirimOrani, Mode=OneWay, StringFormat={}{0:N2}}"/>
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="KDV (%)" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding KdvOrani, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                Text="{Binding KdvOrani, Mode=OneWay, StringFormat={}{0:N2}}"/>
                         </StackPanel>
                         <StackPanel Margin="10,0">
                             <TextBlock Text="Paketleme" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding PaketlemeUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                Text="{Binding PaketlemeUcret, Mode=OneWay, StringFormat={}{0:N2}}"/>
                         </StackPanel>
                         <StackPanel>
                             <TextBlock Text="Taşıma Ücreti" FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5" Foreground="#13183E"/>
                             <TextBox Style="{StaticResource ModernTextBox}" Width="88"
-                                     Text="{Binding TasimaUcret, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat=F0}"
-                                     PreviewTextInput="OnlyAllowNumbers"/>
+                                Text="{Binding TasimaUcret, Mode=OneWay, StringFormat={}{0:N2}}"/>
                         </StackPanel>
                     </StackPanel>
 
