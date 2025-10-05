@@ -196,14 +196,61 @@ namespace teklif_programi.Models
         public decimal MaliyetFiyati
         {
             get => _maliyetFiyati;
-            set { _maliyetFiyati = value; OnPropertyChanged(); }
+            set
+            {
+                if (_maliyetFiyati != value)
+                {
+                    _maliyetFiyati = value;
+                    OnPropertyChanged();
+                    OnBirimFiyatDegisti?.Invoke(this, nameof(MaliyetFiyati));
+                }
+            }
         }
 
         public string MaliyetFiyatText
         {
             get => _maliyetFiyatText;
-            set { _maliyetFiyatText = value; OnPropertyChanged(); }
+            set
+            {
+                if (_maliyetFiyatText != value)
+                {
+                    _maliyetFiyatText = value;
+                    OnPropertyChanged();
+
+                    var raw = value
+                        .Replace("₺", string.Empty)
+                        .Replace("$", string.Empty)
+                        .Replace("€", string.Empty)
+                        .Replace(" ", string.Empty)
+                        .Trim();
+
+                    if (string.IsNullOrWhiteSpace(raw)) return;
+
+                    var lastComma = raw.LastIndexOf(',');
+                    var lastDot = raw.LastIndexOf('.');
+
+                    if (lastComma > lastDot)
+                    {
+                        raw = raw.Replace(".", string.Empty);
+                        raw = raw.Replace(",", ".");
+                    }
+                    else if (lastDot > lastComma)
+                    {
+                        raw = raw.Replace(",", string.Empty);
+                    }
+                    else
+                    {
+                        raw = raw.Replace(",", string.Empty).Replace(".", string.Empty);
+                    }
+
+                    if (decimal.TryParse(raw, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue))
+                    {
+                        MaliyetFiyati = parsedValue;
+                    }
+                }
+            }
         }
+
 
         public decimal FiyatTL
         {
