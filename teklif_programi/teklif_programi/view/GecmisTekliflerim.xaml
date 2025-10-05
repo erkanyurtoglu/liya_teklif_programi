@@ -187,7 +187,7 @@
                 <DataGridTextColumn Header="Kabul Tarihi" Binding="{Binding KabulTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Planlanan Teslim Tarihi" Binding="{Binding TeslimatTarihi, StringFormat=dd.MM.yyyy}" Width="1.3*"
+                <DataGridTextColumn Header="Planlanan Teslim Tarihi" Binding="{Binding TeslimatTarihi, StringFormat=dd.MM.yyyy}" Width="1.5*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
                 <DataGridTextColumn Header="Teslim Tarihi" Binding="{Binding TeslimTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
@@ -198,6 +198,13 @@
 
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="0.8*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
+
+                <DataGridTextColumn Header="Açıklamalar"
+                    Binding="{Binding SevkBilgileri.Aciklamalar, TargetNullValue=''}"
+                    Width="0.8*"
+                    ElementStyle="{StaticResource CellTextLeft}" />
+
+
 
                 <DataGridTemplateColumn Header="İşlemler" Width="170">
                     <DataGridTemplateColumn.CellTemplate>

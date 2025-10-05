@@ -127,6 +127,7 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.TeklifToplam)
                     .Include(t => t.TeklifUrunleri)
                         .ThenInclude(tu => tu.Urun)
+                    .Include(t => t.SevkBilgileri) 
                     .AsNoTracking()
                     .ToList();
 
@@ -204,6 +205,7 @@ namespace teklif_programi.ViewModels
                     .Include(t => t.TeklifToplam)
                     .Include(t => t.TeklifUrunleri)
                         .ThenInclude(tu => tu.Urun)
+                    .Include(t => t.SevkBilgileri)
                     .AsNoTracking()
                     .FirstOrDefault(t => t.TeklifId == teklifId);
 
