@@ -29,6 +29,7 @@ namespace teklif_programi.ViewModels
         private string _satisSozlesmesiMetni = string.Empty;
         private string _teslimatSekli = string.Empty;
         private string _teslimatYeri = string.Empty;
+        private readonly Dictionary<int, decimal> _bekleyenMaliyetGuncellemeleri = new();
 
         private const string SatisSozlesmesiTr = 
         @"
@@ -243,6 +244,28 @@ namespace teklif_programi.ViewModels
                 if (propertyName == nameof(TeklifUrunModel.BirimFiyat))
                     HesaplaIndirimliFiyat(model);
 
+                if (propertyName == nameof(TeklifUrunModel.MaliyetFiyati))
+                {
+                    try
+                    {
+                        var maliyetTl = ConvertSelectedCurrencyToTl(model.MaliyetFiyati);
+                        _bekleyenMaliyetGuncellemeleri[model.UrunId] = maliyetTl;
+
+                        var tumUrun = TumUrunler.FirstOrDefault(u => u.UrunId == model.UrunId);
+                        if (tumUrun != null)
+                            tumUrun.MaliyetFiyati = maliyetTl;
+
+                        var filtreUrun = FiltrelenmisUrunler.FirstOrDefault(u => u.UrunId == model.UrunId);
+                        if (filtreUrun != null)
+                            filtreUrun.MaliyetFiyati = maliyetTl;
+                    }
+                    catch (Exception ex)
+                    {
+                        _bekleyenMaliyetGuncellemeleri.Remove(model.UrunId);
+                        MessageBox.Show($"Maliyet fiyatı kaydedilirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
                 model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
                 model.ToplamText = FormatPrice(model.Toplam);
@@ -340,15 +363,33 @@ namespace teklif_programi.ViewModels
             };
         }
 
+        private decimal GetCurrencyRate(string currency)
+        {
+            var rate = DovizKurlari.FirstOrDefault(k => k.DovizCinsi == currency)?.Satis ?? 0;
+            return rate <= 0 ? 1 : rate;
+        }
+
+
         private decimal ConvertTlToSelectedCurrency(decimal tlValue)
         {
             return SelectedCurrency switch
             {
-                "USD" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "USD")?.Satis ?? 1),
-                "EUR" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "EUR")?.Satis ?? 1),
+                "USD" => tlValue / GetCurrencyRate("USD"),
+                "EUR" => tlValue / GetCurrencyRate("EUR"),
                 _ => tlValue
             };
         }
+
+        private decimal ConvertSelectedCurrencyToTl(decimal value)
+        {
+            return SelectedCurrency switch
+            {
+                "USD" => value * GetCurrencyRate("USD"),
+                "EUR" => value * GetCurrencyRate("EUR"),
+                _ => value
+            };
+        }
+
 
         private CultureInfo GetCultureByCurrency(string currency)
         {
@@ -494,6 +535,11 @@ namespace teklif_programi.ViewModels
                 return;
             }
 
+            if (!BekleyenMaliyetGuncellemeleriniKaydet())
+            {
+                return;
+            }
+
             try
             {
                 _teklifService.KaydetVePdfIndir(FirmaBilgisi,
@@ -516,6 +562,36 @@ namespace teklif_programi.ViewModels
                 MessageBox.Show($"Hata oluştu: {ex.Message}\nİç Hata: {ex.InnerException?.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private bool BekleyenMaliyetGuncellemeleriniKaydet()
+        {
+            if (!_bekleyenMaliyetGuncellemeleri.Any())
+                return true;
+
+            try
+            {
+                var urunIdler = _bekleyenMaliyetGuncellemeleri.Keys.ToList();
+                var urunler = _context.Urunler.Where(u => urunIdler.Contains(u.UrunId)).ToList();
+
+                foreach (var urun in urunler)
+                {
+                    if (_bekleyenMaliyetGuncellemeleri.TryGetValue(urun.UrunId, out var maliyetTl))
+                    {
+                        urun.MaliyetFiyati = maliyetTl;
+                    }
+                }
+
+                _context.SaveChanges();
+                _bekleyenMaliyetGuncellemeleri.Clear();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Maliyet fiyatı kaydedilirken hata oluştu: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+        }
+
 
 
         public event PropertyChangedEventHandler? PropertyChanged;
