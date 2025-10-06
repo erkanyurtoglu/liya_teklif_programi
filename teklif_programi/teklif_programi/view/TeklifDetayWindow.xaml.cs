@@ -177,5 +177,21 @@ namespace teklif_programi.view
             }
         }
 
+        private void ManuelUrunEkle_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not TeklifDetayViewModel viewModel)
+                return;
+
+            var manualWindow = new ManuelUrunEkleWindow
+            {
+                Owner = this
+            };
+
+            if (manualWindow.ShowDialog() == true && manualWindow.ManualUrun is Urun manualUrun)
+            {
+                viewModel.ManuelUrunEkle(manualUrun);
+            }
+        }
+
     }
 }

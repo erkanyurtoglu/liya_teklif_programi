@@ -397,12 +397,28 @@ namespace teklif_programi.ViewModels
             foreach (var kur in kurListesi) DovizKurlari.Add(kur);
         }
 
+        private decimal GetCurrencyRate(string currency)
+        {
+            var rate = DovizKurlari.FirstOrDefault(k => string.Equals(k.DovizCinsi, currency, StringComparison.OrdinalIgnoreCase))?.Satis ?? 0;
+            return rate <= 0 ? 1 : rate;
+        }
+
+
         private decimal ConvertTlToSelectedCurrency(decimal tlValue)
         {
             return SelectedCurrency switch
             {
-                "USD" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "USD")?.Satis ?? 1),
-                "EUR" => tlValue / (DovizKurlari.FirstOrDefault(k => k.DovizCinsi == "EUR")?.Satis ?? 1),
+                "USD" => tlValue / GetCurrencyRate("USD"),
+                "EUR" => tlValue / GetCurrencyRate("EUR"),
+                _ => tlValue
+            };
+        }
+        private decimal ConvertTlToCurrency(decimal tlValue, string currency)
+        {
+            return currency switch
+            {
+                "USD" => tlValue / GetCurrencyRate("USD"),
+                "EUR" => tlValue / GetCurrencyRate("EUR"),
                 _ => tlValue
             };
         }
@@ -511,6 +527,59 @@ namespace teklif_programi.ViewModels
             }
 
             _silinecekUrunIdSet.Remove(urun.UrunId);
+
+            UpdateToplamlarText();
+            OnPropertyChanged(nameof(TeklifUrunler));
+        }
+
+        public void ManuelUrunEkle(Urun? manualUrun)
+        {
+            if (manualUrun == null) return;
+
+            var fiyatTl = manualUrun.FiyatTL > 0 ? manualUrun.FiyatTL : manualUrun.BirimFiyat;
+            var fiyatUsd = manualUrun.FiyatUSD > 0 ? manualUrun.FiyatUSD : ConvertTlToCurrency(fiyatTl, "USD");
+            var fiyatEur = manualUrun.FiyatEUR > 0 ? manualUrun.FiyatEUR : ConvertTlToCurrency(fiyatTl, "EUR");
+            var birimFiyat = SelectedCurrency switch
+            {
+                "USD" => fiyatUsd,
+                "EUR" => fiyatEur,
+                _ => fiyatTl
+            };
+
+            var indirimOrani = Teklif?.GenelIndirimOrani ?? 0;
+
+            var model = new TeklifUrunModel
+            {
+                UrunId = 0,
+                UrunKodu = manualUrun.UrunKodu,
+                Kategori = manualUrun.Kategori,
+                UrunAciklamasiTr = manualUrun.UrunAciklamasi,
+                UrunAciklamasiEn = manualUrun.UrunAciklamasiEn,
+                UrunAciklamasi = SelectedLanguage == "EN" && !string.IsNullOrWhiteSpace(manualUrun.UrunAciklamasiEn)
+                    ? manualUrun.UrunAciklamasiEn
+                    : manualUrun.UrunAciklamasi,
+                Adet = 1,
+                BirimFiyat = birimFiyat,
+                IndirimliFiyat = TeklifHesaplayici.HesaplaIndirimliFiyat(birimFiyat, indirimOrani),
+                FiyatTL = fiyatTl,
+                FiyatUSD = fiyatUsd,
+                FiyatEUR = fiyatEur,
+                MaliyetFiyati = ConvertTlToSelectedCurrency(manualUrun.MaliyetFiyati),
+                MaliyetFiyatiTl = manualUrun.MaliyetFiyati,
+                Tamamlandi = false,
+                UretimNotu = string.Empty,
+                ManuelEklenen = true
+            };
+
+            model.BirimFiyatText = FormatPrice(model.BirimFiyat);
+            model.IndirimliFiyatText = FormatPrice(model.IndirimliFiyat);
+            model.ToplamText = FormatPrice(model.Toplam);
+            model.MaliyetFiyatText = FormatPrice(model.MaliyetFiyati);
+
+            model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+            model.PropertyChanged += Model_PropertyChanged;
+
+            TeklifUrunler.Add(model);
 
             UpdateToplamlarText();
             OnPropertyChanged(nameof(TeklifUrunler));
