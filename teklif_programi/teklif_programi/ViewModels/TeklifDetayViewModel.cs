@@ -423,6 +423,26 @@ namespace teklif_programi.ViewModels
             };
         }
 
+        private decimal ConvertSelectedCurrencyToTl(decimal value)
+        {
+            return SelectedCurrency switch
+            {
+                "USD" => value * GetCurrencyRate("USD"),
+                "EUR" => value * GetCurrencyRate("EUR"),
+                _ => value
+            };
+        }
+
+        private decimal ConvertCurrencyToTl(decimal value, string currency)
+        {
+            return currency switch
+            {
+                "USD" => value * GetCurrencyRate("USD"),
+                "EUR" => value * GetCurrencyRate("EUR"),
+                _ => value
+            };
+        }
+
         private void YukleTeklifDetaylari()
         {
             try
@@ -455,8 +475,10 @@ namespace teklif_programi.ViewModels
                         FiyatUSD = s.Urun?.FiyatUSD ?? 0,
                         FiyatEUR = s.Urun?.FiyatEUR ?? 0,
                         MaliyetFiyati = ConvertTlToSelectedCurrency(s.Urun?.MaliyetFiyati ?? 0),
+                        MaliyetFiyatiTl = s.Urun?.MaliyetFiyati ?? 0,
                         Tamamlandi = s.Tamamlandi ?? false,
                         UretimNotu = s.UretimNotu ?? string.Empty,
+                        ManuelEklenen = false,
                     };
                     m.BirimFiyatText = FormatPrice(m.BirimFiyat);
                     m.IndirimliFiyatText = FormatPrice(m.IndirimliFiyat);
@@ -781,6 +803,56 @@ namespace teklif_programi.ViewModels
 
                 foreach (var m in TeklifUrunler)
                 {
+                    if (m.ManuelEklenen || m.UrunId <= 0)
+                    {
+                        var fiyatTl = m.FiyatTL > 0 ? m.FiyatTL : ConvertSelectedCurrencyToTl(m.BirimFiyat);
+                        var fiyatUsd = m.FiyatUSD > 0 ? m.FiyatUSD : ConvertTlToCurrency(fiyatTl, "USD");
+                        var fiyatEur = m.FiyatEUR > 0 ? m.FiyatEUR : ConvertTlToCurrency(fiyatTl, "EUR");
+                        var maliyetTl = m.MaliyetFiyatiTl > 0 ? m.MaliyetFiyatiTl : ConvertCurrencyToTl(m.MaliyetFiyati, SelectedCurrency);
+
+                        var yeniKod = string.IsNullOrWhiteSpace(m.UrunKodu)
+                            ? $"MANUEL-{Guid.NewGuid():N}"[..15]
+                            : m.UrunKodu;
+
+                        var yeniUrun = new Urun
+                        {
+                            UrunKodu = yeniKod,
+                            Kategori = m.Kategori,
+                            UrunAciklamasi = string.IsNullOrWhiteSpace(m.UrunAciklamasiTr) ? m.UrunAciklamasi : m.UrunAciklamasiTr,
+                            UrunAciklamasiEn = string.IsNullOrWhiteSpace(m.UrunAciklamasiEn) ? m.UrunAciklamasi : m.UrunAciklamasiEn,
+                            BirimFiyat = fiyatTl,
+                            FiyatTL = fiyatTl,
+                            FiyatUSD = fiyatUsd,
+                            FiyatEUR = fiyatEur,
+                            MaliyetFiyati = maliyetTl,
+                            EklenmeTarihi = DateTime.Now
+                        };
+
+                        _context.Urunler.Add(yeniUrun);
+                        _context.SaveChanges();
+
+                        m.UrunId = yeniUrun.UrunId;
+                        m.ManuelEklenen = false;
+                        m.FiyatTL = yeniUrun.FiyatTL;
+                        m.FiyatUSD = yeniUrun.FiyatUSD;
+                        m.FiyatEUR = yeniUrun.FiyatEUR;
+                        m.MaliyetFiyatiTl = yeniUrun.MaliyetFiyati;
+                        m.MaliyetFiyati = ConvertTlToSelectedCurrency(yeniUrun.MaliyetFiyati);
+                        m.MaliyetFiyatText = FormatPrice(m.MaliyetFiyati);
+
+                        m.BirimFiyatText = FormatPrice(m.BirimFiyat);
+                        m.IndirimliFiyatText = FormatPrice(m.IndirimliFiyat);
+                        m.ToplamText = FormatPrice(m.Toplam);
+
+                        if (!TumUrunler.Any(u => u.UrunId == yeniUrun.UrunId))
+                        {
+                            TumUrunler.Add(yeniUrun);
+                            OnPropertyChanged(nameof(TumUrunler));
+                        }
+
+                        UrunleriFiltrele();
+                    }
+
                     var dbU = _context.TeklifUrunleri.FirstOrDefault(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == m.UrunId);
                     if (dbU != null)
                     {
@@ -790,6 +862,9 @@ namespace teklif_programi.ViewModels
                         dbU.ToplamTutar = m.Toplam;
                         dbU.Tamamlandi = m.Tamamlandi;
                         dbU.UretimNotu = m.UretimNotu;
+                        dbU.FiyatTL = m.FiyatTL;
+                        dbU.FiyatUSD = m.FiyatUSD;
+                        dbU.FiyatEUR = m.FiyatEUR;
                     }
                     else
                     {
@@ -802,7 +877,10 @@ namespace teklif_programi.ViewModels
                             IndirimliBirimFiyat = m.IndirimliFiyat,
                             ToplamTutar = m.Toplam,
                             Tamamlandi = m.Tamamlandi,
-                            UretimNotu = m.UretimNotu
+                            UretimNotu = m.UretimNotu,
+                            FiyatTL = m.FiyatTL,
+                            FiyatUSD = m.FiyatUSD,
+                            FiyatEUR = m.FiyatEUR
                         });
                     }
                 }
