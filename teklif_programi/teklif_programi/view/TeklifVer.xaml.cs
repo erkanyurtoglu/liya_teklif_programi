@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
+using teklif_programi.Models;
 using teklif_programi.ViewModels;
 
 namespace teklif_programi.view
@@ -157,6 +158,23 @@ namespace teklif_programi.view
             var viewModel = (TeklifVerViewModel)DataContext;
             var satisSozlesmesiWindow = new SatisSozlesmesiWindow(viewModel);
             satisSozlesmesiWindow.ShowDialog();
+        }
+
+
+        private void ManuelUrunEkle_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is not TeklifVerViewModel viewModel)
+                return;
+
+            var manualWindow = new ManuelUrunEkleWindow
+            {
+                Owner = Window.GetWindow(this)
+            };
+
+            if (manualWindow.ShowDialog() == true && manualWindow.ManualUrun is Urun manualUrun)
+            {
+                viewModel.ManuelUrunEkle(manualUrun);
+            }
         }
     }
 }

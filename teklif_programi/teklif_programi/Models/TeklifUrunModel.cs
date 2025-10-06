@@ -26,6 +26,9 @@ namespace teklif_programi.Models
         private string _maliyetFiyatText = string.Empty;
         private bool _tamamlandi;
         private string _uretimNotu = string.Empty;
+        private string _kategori = string.Empty;
+        private bool _manuelEklenen;
+        private decimal _maliyetFiyatiTl;
 
         public int UrunId
         {
@@ -55,6 +58,12 @@ namespace teklif_programi.Models
         {
             get => _urunAciklamasiEn;
             set { _urunAciklamasiEn = value; OnPropertyChanged(); }
+        }
+
+        public string Kategori
+        {
+            get => _kategori;
+            set { _kategori = value; OnPropertyChanged(); }
         }
 
         public int Adet
@@ -251,6 +260,11 @@ namespace teklif_programi.Models
             }
         }
 
+        public decimal MaliyetFiyatiTl
+        {
+            get => _maliyetFiyatiTl;
+            set { _maliyetFiyatiTl = value; OnPropertyChanged(); }
+        }
 
         public decimal FiyatTL
         {
@@ -280,6 +294,12 @@ namespace teklif_programi.Models
         {
             get => _uretimNotu;
             set { _uretimNotu = value; OnPropertyChanged(); }
+        }
+
+        public bool ManuelEklenen
+        {
+            get => _manuelEklenen;
+            set { _manuelEklenen = value; OnPropertyChanged(); }
         }
 
 

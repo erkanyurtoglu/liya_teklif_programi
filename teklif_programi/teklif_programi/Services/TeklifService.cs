@@ -16,14 +16,14 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text; // üstlere ekleyebilirsin
 using teklif_programi.Data;
 using teklif_programi.Helpers;
 using teklif_programi.Models;
+using IoPath = System.IO.Path;
 using MessageBox = System.Windows.MessageBox;
 using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
-using IoPath = System.IO.Path;
-using System.Text; // üstlere ekleyebilirsin
 
 
 namespace teklif_programi.Services
@@ -111,8 +111,58 @@ namespace teklif_programi.Services
             _context.Teklifler.Add(teklif);
             _context.SaveChanges();
 
+            var dovizKurlari = DovizServisi.KurListesiniGetir();
+            decimal usdRate = dovizKurlari.FirstOrDefault(k => k.DovizCinsi == "USD")?.Satis ?? 0m;
+            decimal eurRate = dovizKurlari.FirstOrDefault(k => k.DovizCinsi == "EUR")?.Satis ?? 0m;
+            usdRate = usdRate <= 0 ? 1 : usdRate;
+            eurRate = eurRate <= 0 ? 1 : eurRate;
+
+            decimal ConvertToTl(decimal value, string currencyCode)
+            {
+                return currencyCode switch
+                {
+                    "USD" => value * usdRate,
+                    "EUR" => value * eurRate,
+                    _ => value
+                };
+            }
+
             foreach (var urun in urunler)
             {
+                if (urun.ManuelEklenen || urun.UrunId <= 0)
+                {
+                    var fiyatTl = urun.FiyatTL > 0 ? urun.FiyatTL : ConvertToTl(urun.BirimFiyat, currency);
+                    var maliyetTl = urun.MaliyetFiyatiTl > 0 ? urun.MaliyetFiyatiTl : ConvertToTl(urun.MaliyetFiyati, currency);
+
+                    var yeniUrun = new Urun
+                    {
+                        UrunKodu = urun.UrunKodu,
+                        Kategori = urun.Kategori,
+                        UrunAciklamasi = string.IsNullOrWhiteSpace(urun.UrunAciklamasiTr)
+                            ? urun.UrunAciklamasi
+                            : urun.UrunAciklamasiTr,
+                        UrunAciklamasiEn = string.IsNullOrWhiteSpace(urun.UrunAciklamasiEn)
+                            ? urun.UrunAciklamasi
+                            : urun.UrunAciklamasiEn,
+                        BirimFiyat = fiyatTl,
+                        FiyatTL = fiyatTl,
+                        FiyatUSD = urun.FiyatUSD > 0 ? urun.FiyatUSD : (usdRate <= 0 ? 0 : fiyatTl / usdRate),
+                        FiyatEUR = urun.FiyatEUR > 0 ? urun.FiyatEUR : (eurRate <= 0 ? 0 : fiyatTl / eurRate),
+                        MaliyetFiyati = maliyetTl,
+                        EklenmeTarihi = DateTime.Now
+                    };
+
+                    _context.Urunler.Add(yeniUrun);
+                    _context.SaveChanges();
+
+                    urun.UrunId = yeniUrun.UrunId;
+                    urun.ManuelEklenen = false;
+                    urun.FiyatTL = yeniUrun.FiyatTL;
+                    urun.FiyatUSD = yeniUrun.FiyatUSD;
+                    urun.FiyatEUR = yeniUrun.FiyatEUR;
+                    urun.MaliyetFiyatiTl = yeniUrun.MaliyetFiyati;
+                }
+
                 _context.TeklifUrunleri.Add(new TeklifUrun
                 {
                     TeklifId = teklif.TeklifId,
