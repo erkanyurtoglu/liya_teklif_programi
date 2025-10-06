@@ -12,7 +12,7 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("teklif_programi")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.1")]
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c6a2ef1fcc6006d93b3d4e9c3e6bd0c37c46d970")]
 [assembly: System.Reflection.AssemblyProductAttribute("teklif_programi")]

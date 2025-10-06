@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Markup;
 using teklif_programi.Models;
 using teklif_programi.ViewModels;
 
@@ -35,12 +36,28 @@ namespace teklif_programi.view
             return tb.Text.Remove(start, length).Insert(start, incoming);
         }
 
-        // Yazım sırasında geçici durumları da geçerli say (boş, tek ayıraç, sonda ayıraç)
-        private static bool IsValidPartialDecimal(string text)
+        private static CultureInfo GetCulture(TextBox? tb)
+        {
+            if (tb?.Language is XmlLanguage language)
+            {
+                try
+                {
+                    return language.GetEquivalentCulture();
+                }
+                catch (InvalidOperationException)
+                {
+                    // xml:lang değeri geçersizse varsayılan kültüre dön.
+                }
+            }
+
+            return CultureInfo.CurrentCulture;
+        }
+
+        private static bool IsValidPartialDecimal(string text, CultureInfo culture)
         {
             if (text is null) return false;
 
-            var sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            var sep = culture.NumberFormat.NumberDecimalSeparator;
 
             if (text.Length == 0) return true;   // boşken yazmaya izin
             if (text == sep) return true;        // sadece ayıraç ("," veya ".")
@@ -55,7 +72,7 @@ namespace teklif_programi.view
             }
 
             // Normal kontrol (mevcut kültürle)
-            return decimal.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out _);
+            return decimal.TryParse(text, NumberStyles.Number, culture, out _);
         }
 
         // --- Ondalık giriş: PreviewTextInput ('.' ve ',' kültür ayıracına çevrilir) ---
@@ -63,11 +80,12 @@ namespace teklif_programi.view
         {
             if (sender is not TextBox tb) return;
 
-            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            CultureInfo culture = GetCulture(tb);
+            string sep = culture.NumberFormat.NumberDecimalSeparator;
             string incoming = (e.Text == "." || e.Text == ",") ? sep : e.Text;
 
             string proposed = BuildProposed(tb, incoming);
-            bool valid = IsValidPartialDecimal(proposed);
+            bool valid = IsValidPartialDecimal(proposed, culture);
 
             bool needsManual = incoming != e.Text; // tuşlanan karakteri sep'e çevirdik mi?
 
@@ -95,13 +113,14 @@ namespace teklif_programi.view
 
             if (e.DataObject.GetDataPresent(typeof(string)))
             {
-                string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+                CultureInfo culture = GetCulture(tb);
+                string sep = culture.NumberFormat.NumberDecimalSeparator;
                 string pasted = (string)e.DataObject.GetData(typeof(string));
                 string normalized = pasted.Replace(".", sep).Replace(",", sep);
 
                 string proposed = BuildProposed(tb, normalized);
 
-                if (IsValidPartialDecimal(proposed))
+                if (IsValidPartialDecimal(proposed, culture))
                 {
                     e.CancelCommand();           // kendi yazımımız
                     ReplaceSelection(tb, normalized);
@@ -122,14 +141,15 @@ namespace teklif_programi.view
         {
             if (sender is not TextBox tb) return;
 
-            string sep = CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator;
+            CultureInfo culture = GetCulture(tb);
+            string sep = culture.NumberFormat.NumberDecimalSeparator;
             string s = (tb.Text ?? string.Empty).Replace(".", sep).Replace(",", sep).Trim();
 
             // Geçici durumlarda (boş, tek ayıraç, sonda ayıraç) kaynağa yazma
             if (string.IsNullOrEmpty(s) || s == sep || s.EndsWith(sep))
                 return;
 
-            if (decimal.TryParse(s, NumberStyles.Number, CultureInfo.CurrentCulture, out _))
+            if (decimal.TryParse(s, NumberStyles.Number, culture, out _))
             {
                 BindingExpression be = tb.GetBindingExpression(TextBox.TextProperty);
                 be?.UpdateSource(); // ViewModel'i anında güncelle
