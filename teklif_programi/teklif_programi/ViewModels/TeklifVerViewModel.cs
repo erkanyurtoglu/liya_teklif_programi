@@ -510,6 +510,11 @@ namespace teklif_programi.ViewModels
 
         private string _genelToplamText = string.Empty;
         public string GenelToplamText { get => _genelToplamText; set { _genelToplamText = value; OnPropertyChanged(); } }
+        private string _paketlemeUcretText = string.Empty;
+        public string PaketlemeUcretText { get => _paketlemeUcretText; set { _paketlemeUcretText = value; OnPropertyChanged(); } }
+
+        private string _tasimaUcretText = string.Empty;
+        public string TasimaUcretText { get => _tasimaUcretText; set { _tasimaUcretText = value; OnPropertyChanged(); } }
 
         private void UpdateTotalsText()
         {
@@ -519,6 +524,8 @@ namespace teklif_programi.ViewModels
             ToplamFiyatText = FormatPrice(ToplamFiyat);
             KdvUcretiText = FormatPrice(KdvUcreti);
             GenelToplamText = FormatPrice(GenelToplam);
+            PaketlemeUcretText = FormatPrice(PaketlemeUcret);
+            TasimaUcretText = FormatPrice(TasimaUcret);
         }
 
         private decimal _genelIndirimOrani = 0;

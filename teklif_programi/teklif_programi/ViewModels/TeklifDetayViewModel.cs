@@ -334,6 +334,9 @@ namespace teklif_programi.ViewModels
         public string ToplamMaliyetText { get; private set; } = "₺0,00";
         public string KarTutariText { get; private set; } = "₺0,00";
         public string KarOraniText { get; private set; } = "0%";
+        public string PaketlemeUcretText { get; private set; } = "₺0,00";
+        public string TasimaUcretText { get; private set; } = "₺0,00";
+
 
         public string UrunArama
         {
@@ -666,6 +669,8 @@ namespace teklif_programi.ViewModels
             ToplamMaliyetText = FormatPrice(toplamMaliyet);
             KarTutariText = FormatPrice(karTutari);
             KarOraniText = karOrani.ToString("F2") + "%";
+            PaketlemeUcretText = FormatPrice(TeklifToplam.PaketlemeUcreti);
+            TasimaUcretText = FormatPrice(TeklifToplam.TasimaUcreti);
 
             OnPropertyChanged(nameof(TeklifToplam));
             OnPropertyChanged(nameof(IndirimliToplamText));
@@ -674,6 +679,8 @@ namespace teklif_programi.ViewModels
             OnPropertyChanged(nameof(ToplamMaliyetText));
             OnPropertyChanged(nameof(KarTutariText));
             OnPropertyChanged(nameof(KarOraniText));
+            OnPropertyChanged(nameof(PaketlemeUcretText));
+            OnPropertyChanged(nameof(TasimaUcretText));
         }
 
         private void Model_OnBirimFiyatDegisti(object? sender, string propertyName)
