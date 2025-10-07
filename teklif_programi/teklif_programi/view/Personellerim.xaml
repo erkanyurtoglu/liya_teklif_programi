@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:teklif_programi.Converters"
              mc:Ignorable="d"
              d:DesignHeight="900" d:DesignWidth="1350">
 
@@ -76,6 +77,7 @@
                   BorderBrush="#ededed" BorderThickness="1">
 
             <DataGrid.Resources>
+                <converters:PersonelDurumConverter x:Key="PersonelDurumConverter" />
                 <Style x:Key="ModernButtonStyle" TargetType="Button">
                     <Setter Property="FontSize" Value="14"/>
                     <Setter Property="Background" Value="#13183E"/>
@@ -198,11 +200,45 @@
                     </DataGridTextColumn.ElementStyle>
                 </DataGridTextColumn>
 
-                <DataGridTemplateColumn Header="İşlemler" Width="170">
+                <DataGridTemplateColumn Header="Durum" Width="1.2*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding AktifMi, Converter={StaticResource PersonelDurumConverter}}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Foreground" Value="#27AE60"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding AktifMi}" Value="False">
+                                                <Setter Property="Foreground" Value="#C0392B"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Header="İşlemler" Width="250">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Content="Detay" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Click="BtnDetay_Click" Background="#1874CD"/>
+                                <Button Content="{Binding AktifMi, Converter={StaticResource PersonelDurumConverter}, ConverterParameter=Button}"
+                                        ToolTip="{Binding AktifMi, Converter={StaticResource PersonelDurumConverter}, ConverterParameter=Tooltip}"
+                                        Width="90" Height="30" Margin="4,0"
+                                        Click="BtnDurumDegistir_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                                            <Setter Property="Background" Value="#27AE60"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AktifMi}" Value="True">
+                                                    <Setter Property="Background" Value="#C0392B"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
                                 <Button Content="Sil" Style="{StaticResource ModernButtonStyle}" Width="70" Height="30" Margin="4,0" Background="#C0392B" Click="BtnPersonelSil_Click"/>
                             </StackPanel>
                         </DataTemplate>

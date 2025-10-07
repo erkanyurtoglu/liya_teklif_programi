@@ -44,11 +44,20 @@ namespace teklif_programi.view
         {
             using (var db = new TeklifDbContext()) // Her sorguda yeni bir DbContext kullanılır
             {
-                var personeller = string.IsNullOrWhiteSpace(arama)
-                    ? db.Personeller.ToList() // Arama yoksa tüm personeller
-                    : db.Personeller
-                          .Where(f => f.AdSoyad.Contains(arama) || f.KullaniciAdi.Contains(arama) || f.Telefon.Contains(arama) || f.Pozisyon.Contains(arama)) // Filtreleme
-                          .ToList();
+                var query = db.Personeller.AsQueryable();
+
+                if (!string.IsNullOrWhiteSpace(arama))
+                {
+                    query = query.Where(f => f.AdSoyad.Contains(arama)
+                        || f.KullaniciAdi.Contains(arama)
+                        || f.Telefon.Contains(arama)
+                        || f.Pozisyon.Contains(arama));
+                }
+
+                var personeller = query
+                    .OrderByDescending(p => p.AktifMi)
+                    .ThenBy(p => p.AdSoyad)
+                    .ToList();
 
                 // DataGrid'e veriyi bağla
                 dataGridPersonel.ItemsSource = personeller;
@@ -140,6 +149,49 @@ namespace teklif_programi.view
                     MessageBox.Show("Şifre yanlış. Silme işlemi iptal edildi.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+
+        /// <summary>
+        /// Personeli aktif/pasif durumuna göre günceller.
+        /// </summary>
+        private void BtnDurumDegistir_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button || button.DataContext is not Personel secilenPersonel)
+            {
+                return;
+            }
+
+            using var db = new TeklifDbContext();
+            var personel = db.Personeller.FirstOrDefault(p => p.PersonelId == secilenPersonel.PersonelId);
+
+            if (personel == null)
+            {
+                MessageBox.Show("Personel bulunamadı.", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            bool yeniDurum = !personel.AktifMi;
+            string onayMesaji = yeniDurum
+                ? $"{personel.AdSoyad} adlı personeli yeniden aktifleştirmek istediğinize emin misiniz?"
+                : $"{personel.AdSoyad} adlı personeli pasif duruma almak istediğinize emin misiniz?";
+
+            if (MessageBox.Show(onayMesaji, "Onay", MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            personel.AktifMi = yeniDurum;
+            db.Personeller.Update(personel);
+            db.SaveChanges();
+
+            MessageBox.Show(
+                yeniDurum ? "Personel yeniden aktifleştirildi." : "Personel pasif duruma alındı.",
+                "Bilgi",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            PersonelListele(txtArama.Text.Trim());
         }
     }
 }

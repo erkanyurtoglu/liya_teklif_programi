@@ -48,6 +48,15 @@ namespace teklif_programi.view
                 {
                     var personel = await context.Personeller
                         .FirstOrDefaultAsync(p => p.KullaniciAdi == kullanici && p.Sifre == sifre);
+
+                    if (personel != null && !personel.AktifMi)
+                    {
+                        txtErrorMessage.Text = "Bu personel hesabı pasif durumdadır.";
+                        txtErrorMessage.Visibility = Visibility.Visible;
+                        SessionManager.CurrentPersonel = null;
+                        SessionManager.CurrentAdmin = null;
+                        return;
+                    }
                     girisBasarili = personel != null;
                     SessionManager.CurrentPersonel = personel;
                     SessionManager.CurrentAdmin = null;

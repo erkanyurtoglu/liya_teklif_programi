@@ -167,10 +167,10 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\FirmaEkle.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Firmalarim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Istatistikler.baml
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\ManuelUrunEkleWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PasswordDialog.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PersonelDetayWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PersonelEkle.baml
-C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Personellerim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\SatisSozlesmesiWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\SevkBilgileriWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\UrunDetayWindow.baml
@@ -188,6 +188,7 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\GecmisTekliflerim.g.cs
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\girisEkrani.g.cs
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Istatistikler.g.cs
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\ManuelUrunEkleWindow.g.cs
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PasswordDialog.g.cs
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PersonelDetayWindow.g.cs
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\PersonelEkle.g.cs
@@ -213,6 +214,7 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\BitenTekliflerim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\GecmisTekliflerim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\girisEkrani.baml
+C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\Personellerim.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\TeklifDetayWindow.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\TeklifVer.baml
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_programi.g.resources
@@ -227,5 +229,3 @@ C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_prog
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_programi.pdb
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\teklif_programi.genruntimeconfig.cache
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\ref\teklif_programi.dll
-C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\ManuelUrunEkleWindow.baml
-C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\obj\Debug\net8.0-windows\view\ManuelUrunEkleWindow.g.cs

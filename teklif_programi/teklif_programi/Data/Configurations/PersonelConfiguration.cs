@@ -48,6 +48,12 @@ namespace teklif_programi.Data.Configurations
                 .HasMaxLength(100);
             // Sifre zorunlu bir alan, maksimum 100 karakter (hash için uygun uzunluk).
 
+            builder.Property(p => p.AktifMi)
+                .IsRequired()
+                .HasDefaultValue(true);
+            // Personelin varsayılan olarak aktif olmasını sağlar.
+
+
             builder.Property(p => p.EklenmeTarihi)
                 .HasDefaultValueSql("GETDATE()");
             // EklenmeTarihi alanına varsayılan olarak mevcut tarihi atar (SQL GETDATE fonksiyonu).

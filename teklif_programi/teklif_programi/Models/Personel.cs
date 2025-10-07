@@ -27,6 +27,9 @@ namespace teklif_programi.Models
         public string Sifre { get; set; } = string.Empty;
         // Personelin şifresi (hashlenmiş), varsayılan olarak boş string.
 
+        public bool AktifMi { get; set; } = true;
+        // Personelin sistemde aktif olup olmadığını belirtir. Varsayılan değer aktiftir.
+
         public DateTime EklenmeTarihi { get; set; }
         // Personelin sisteme eklenme tarihi.
 

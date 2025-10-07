@@ -36,6 +36,7 @@ namespace teklif_programi.Services
         public List<PersonelPerformans> GetPersonelPerformanslari()
         {
             return _context.Personeller
+                .Where(p => p.AktifMi)
                 .Select(p => new PersonelPerformans
                 {
                     Personel = p.AdSoyad,
