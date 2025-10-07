@@ -66,6 +66,8 @@ namespace teklif_programi.Models
 
         public DateTime? KabulTarihi { get; set; }
         // Teklifin kabul edildiği tarih (opsiyonel).
+        public DateTime? UretimPdfTarihi { get; set; }
+        // Üretim listesinin PDF olarak indirildiği tarih (opsiyonel).
 
         public virtual Musteri Musteri { get; set; } = null!;
         // Teklife ait müşteri nesnesi (1-N ilişki).

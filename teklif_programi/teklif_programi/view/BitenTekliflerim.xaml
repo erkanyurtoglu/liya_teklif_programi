@@ -187,7 +187,10 @@
                 <DataGridTextColumn Header="Teslim Tarihi" Binding="{Binding TeslimTarihi, StringFormat=dd.MM.yyyy}" Width="1*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
 
-                <DataGridTextColumn Header="Teklifi Yapan" Binding="{Binding Personel.KullaniciAdi}" Width="1.5*"
+                <DataGridTextColumn Header="Üretim PDF Tarihi" Binding="{Binding UretimPdfTarihi, StringFormat=dd.MM.yyyy HH:mm}" Width="1.2*"
+                                    ElementStyle="{StaticResource CellTextCenter}" />
+
+                <DataGridTextColumn Header="Teklifi Yapan" Binding="{Binding Personel.KullaniciAdi}" Width="0.9*"
                                     ElementStyle="{StaticResource CellTextCenter}" />
                 
                 <DataGridTextColumn Header="Durum" Binding="{Binding Durum}" Width="0.8*"

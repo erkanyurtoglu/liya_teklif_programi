@@ -934,15 +934,32 @@ namespace teklif_programi.ViewModels
         {
             if (Teklif == null) return;
 
+            DateTime? oncekiTarih = Teklif.UretimPdfTarihi;
+
             try
             {
-                _teklifService.UretimListesiPdfIndir(Teklif, TeklifUrunler);
+                var pdfOlusturmaTarihi = DateTime.Now;
+                _teklifService.UretimListesiPdfIndir(Teklif, TeklifUrunler, pdfOlusturmaTarihi);
+
+                Teklif.UretimPdfTarihi = pdfOlusturmaTarihi;
+                _context.Entry(Teklif).Property(t => t.UretimPdfTarihi).IsModified = true;
+                _context.SaveChanges();
+
+                OnPropertyChanged(nameof(Teklif));
+                EventHub.RaiseTeklifGuncellendi(Teklif.TeklifId);
             }
             catch (Exception ex)
             {
+                // PDF oluşturma ya da kayıt sırasında hata oluşursa eski değeri geri yükle
+                if (Teklif != null)
+                {
+                    Teklif.UretimPdfTarihi = oncekiTarih;
+                    _context.Entry(Teklif).Property(t => t.UretimPdfTarihi).IsModified = false;
+                }
                 MessageBox.Show($"Üretim listesi oluşturulurken hata: {ex.Message}", "Hata", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
 
         private void PdfIndir()
         {

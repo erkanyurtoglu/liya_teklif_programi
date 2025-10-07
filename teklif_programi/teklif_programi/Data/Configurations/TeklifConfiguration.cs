@@ -59,6 +59,11 @@ namespace teklif_programi.Data.Configurations
                 .HasColumnType("datetime2");
             // Teklifin kabul edildiği tarih (opsiyonel).
 
+            builder.Property(t => t.UretimPdfTarihi)
+                .HasColumnType("datetime2");
+            // Üretim PDF'inin indirildiği tarih (opsiyonel).
+
+
 
             builder.Property(t => t.IlgiliKisi)
                  .HasMaxLength(100);

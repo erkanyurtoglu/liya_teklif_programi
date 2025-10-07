@@ -893,7 +893,9 @@ namespace teklif_programi.Services
         }
 
 
-        public void UretimListesiPdfIndir(Teklif teklif, IEnumerable<TeklifUrunModel> urunler)
+        public void UretimListesiPdfIndir(Teklif teklif,
+                                          IEnumerable<TeklifUrunModel> urunler,
+                                          DateTime? pdfOlusturmaTarihi = null)
         {
             ArgumentNullException.ThrowIfNull(teklif);
             ArgumentNullException.ThrowIfNull(urunler);
@@ -907,11 +909,12 @@ namespace teklif_programi.Services
             var personel = _context.Personeller.FirstOrDefault(p => p.PersonelId == teklif.PersonelId);
 
             var firmaSafe = ToSafeFilePart(firma.FirmaAdi);
+            var olusturmaTarihi = pdfOlusturmaTarihi ?? DateTime.Now;
 
             SaveFileDialog saveFileDialog = new()
             {
                 Filter = "PDF Dosyaları (*.pdf)|*.pdf",
-                FileName = $"UretimListesi_{firmaSafe}_{teklif.TeklifId}_{DateTime.Now:dd.MM.yyyy}.pdf"
+                FileName = $"UretimListesi_{firmaSafe}_{teklif.TeklifId}_{olusturmaTarihi:dd.MM.yyyy}.pdf"
             };
 
 
@@ -965,6 +968,7 @@ namespace teklif_programi.Services
                 infoTable.AddCell(InfoCell("Teklifi Yapan:", personel?.KullaniciAdi ?? string.Empty));
                 infoTable.AddCell(InfoCell("Teslim Tarihi:", teklif.TeslimatTarihi?.ToString("dd.MM.yyyy") ?? string.Empty));
                 infoTable.AddCell(InfoCell("Teklif No:", teklif.TeklifId.ToString()));
+                infoTable.AddCell(InfoCell("Üretim PDF Oluşturma Tarihi:", olusturmaTarihi.ToString("dd.MM.yyyy HH:mm") ?? string.Empty));
 
                 doc.Add(infoTable);
 
