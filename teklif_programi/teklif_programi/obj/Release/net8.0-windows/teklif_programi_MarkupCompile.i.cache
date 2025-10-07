@@ -10,11 +10,11 @@ none
 false
 TRACE;RELEASE;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WİNDOWS7_0_OR_GREATER
 C:\Users\yurto\Documents\GitHub\liya_teklif_programi\teklif_programi\teklif_programi\App.xaml
-241807591703
+25623287291
 1-1226889923
-67-240828835
+69-1860323779
 258-198869406
-styles\navigationButtonStyles.xaml;view\AlinanTeklifDetayWindow.xaml;view\AlinanTekliflerim.xaml;view\anaEkran.xaml;view\BitenTekliflerim.xaml;view\FirmaDetayWindow.xaml;view\FirmaEkle.xaml;view\Firmalarim.xaml;view\GecmisTekliflerim.xaml;view\girisEkrani.xaml;view\Istatistikler.xaml;view\PasswordDialog.xaml;view\PersonelDetayWindow.xaml;view\PersonelEkle.xaml;view\Personellerim.xaml;view\SatisSozlesmesiWindow.xaml;view\SevkBilgileriWindow.xaml;view\TeklifDetayWindow.xaml;view\TeklifVer.xaml;view\UrunDetayWindow.xaml;view\UrunEkle.xaml;view\Urunlerim.xaml;view\UrunMaliyetWindow.xaml;view\UrunSecimWindow.xaml;
+styles\navigationButtonStyles.xaml;view\AlinanTeklifDetayWindow.xaml;view\AlinanTekliflerim.xaml;view\anaEkran.xaml;view\BitenTekliflerim.xaml;view\FirmaDetayWindow.xaml;view\FirmaEkle.xaml;view\Firmalarim.xaml;view\GecmisTekliflerim.xaml;view\girisEkrani.xaml;view\Istatistikler.xaml;view\ManuelUrunEkleWindow.xaml;view\PasswordDialog.xaml;view\PersonelDetayWindow.xaml;view\PersonelEkle.xaml;view\Personellerim.xaml;view\SatisSozlesmesiWindow.xaml;view\SevkBilgileriWindow.xaml;view\TeklifDetayWindow.xaml;view\TeklifVer.xaml;view\UrunDetayWindow.xaml;view\UrunEkle.xaml;view\Urunlerim.xaml;view\UrunMaliyetWindow.xaml;view\UrunSecimWindow.xaml;
 
-False
+True
 
