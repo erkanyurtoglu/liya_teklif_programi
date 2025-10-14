@@ -227,18 +227,11 @@ namespace teklif_programi.ViewModels
         {
             foreach (var model in SecilenUrunler)
             {
-                if (SelectedLanguage == "EN")
-                {
-                    model.UrunAciklamasi = string.IsNullOrWhiteSpace(model.UrunAciklamasiEn)
-                        ? model.UrunAciklamasiTr
-                        : model.UrunAciklamasiEn;
-                }
-                else
-                {
-                    model.UrunAciklamasi = string.IsNullOrWhiteSpace(model.UrunAciklamasiTr)
-                        ? model.UrunAciklamasiEn
-                        : model.UrunAciklamasiTr;
-                }
+                var preferred = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
+                var fallback = SelectedLanguage == "EN" ? model.UrunAciklamasiTr : model.UrunAciklamasiEn;
+                model.UrunAciklamasi = !string.IsNullOrWhiteSpace(preferred)
+                    ? preferred!
+                    : (!string.IsNullOrWhiteSpace(fallback) ? fallback! : model.UrunAciklamasi);
             }
             OnPropertyChanged(nameof(SecilenUrunler));
         }
@@ -298,6 +291,30 @@ namespace teklif_programi.ViewModels
         }
 
 
+        private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (sender is not TeklifUrunModel model)
+                return;
+
+            if (e.PropertyName == nameof(TeklifUrunModel.UrunAciklamasi))
+            {
+                if (SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase))
+                {
+                    model.UrunAciklamasiEn = model.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(model.UrunAciklamasiTr))
+                        model.UrunAciklamasiTr = model.UrunAciklamasi;
+                }
+                else
+                {
+                    model.UrunAciklamasiTr = model.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(model.UrunAciklamasiEn))
+                        model.UrunAciklamasiEn = model.UrunAciklamasi;
+                }
+            }
+        }
+
+
+
         public RelayCommand<Urun> SepeteEkleCommand { get; }
         public RelayCommand<TeklifUrunModel> SepettenCikarCommand { get; }
         public RelayCommand KaydetVePdfIndirCommand { get; }
@@ -335,6 +352,7 @@ namespace teklif_programi.ViewModels
                     ManuelEklenen = false
                 };
                 model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+                model.PropertyChanged += Model_PropertyChanged;
                 HesaplaIndirimliFiyat(model);
                 SecilenUrunler.Add(model);
                 model.BirimFiyatText = FormatPrice(model.BirimFiyat);
@@ -386,6 +404,7 @@ namespace teklif_programi.ViewModels
             };
 
             model.OnBirimFiyatDegisti += Model_OnBirimFiyatDegisti;
+            model.PropertyChanged += Model_PropertyChanged;
             HesaplaIndirimliFiyat(model);
             SecilenUrunler.Add(model);
 
@@ -409,6 +428,8 @@ namespace teklif_programi.ViewModels
         {
             if (urun != null)
             {
+                urun.OnBirimFiyatDegisti -= Model_OnBirimFiyatDegisti;
+                urun.PropertyChanged -= Model_PropertyChanged;
                 SecilenUrunler.Remove(urun);
                 UpdateTotalsText();
                 OnPropertyChanged(nameof(SecilenUrunler));
@@ -655,6 +676,29 @@ namespace teklif_programi.ViewModels
 
             try
             {
+                foreach (var urun in SecilenUrunler)
+                {
+                    if (SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        urun.UrunAciklamasiEn = urun.UrunAciklamasi;
+                        if (string.IsNullOrWhiteSpace(urun.UrunAciklamasiTr))
+                            urun.UrunAciklamasiTr = urun.UrunAciklamasi;
+                    }
+                    else
+                    {
+                        urun.UrunAciklamasiTr = urun.UrunAciklamasi;
+                        if (string.IsNullOrWhiteSpace(urun.UrunAciklamasiEn))
+                            urun.UrunAciklamasiEn = urun.UrunAciklamasi;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(urun.UrunAciklamasi))
+                    {
+                        urun.UrunAciklamasi = SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase)
+                            ? urun.UrunAciklamasiEn ?? string.Empty
+                            : urun.UrunAciklamasiTr ?? string.Empty;
+                    }
+                }
+
                 _teklifService.KaydetVePdfIndir(FirmaBilgisi,
                                               SecilenUrunler,
                                               GenelIndirimOrani,

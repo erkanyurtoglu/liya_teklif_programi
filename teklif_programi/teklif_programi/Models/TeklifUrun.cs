@@ -27,6 +27,16 @@ namespace teklif_programi.Models
         // ToplamTutar: Ürün toplam fiyatı (Adet * IndirimliBirimFiyat)
         public decimal ToplamTutar { get; set; }
 
+        // UrunAciklamasi: Teklif kaydına özgü (güncellenebilir) açıklama
+        public string? UrunAciklamasi { get; set; }
+
+        // UrunAciklamasiTr: Teklif kaydına özgü Türkçe açıklama
+        public string? UrunAciklamasiTr { get; set; }
+
+        // UrunAciklamasiEn: Teklif kaydına özgü İngilizce açıklama
+        public string? UrunAciklamasiEn { get; set; }
+
+
         // ParaBirimi: Fiyatın para birimi (TL, USD, EUR)
         public decimal ParaBirimi { get; set; }
 

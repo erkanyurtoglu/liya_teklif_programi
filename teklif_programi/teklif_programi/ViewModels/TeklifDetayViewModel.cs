@@ -464,13 +464,20 @@ namespace teklif_programi.ViewModels
                 TeklifUrunler.Clear();
                 foreach (var s in satirlar)
                 {
+                    var aciklamaTr = string.IsNullOrWhiteSpace(s.UrunAciklamasiTr)
+                    ? s.Urun?.UrunAciklamasi
+                    : s.UrunAciklamasiTr;
+                    var aciklamaEn = string.IsNullOrWhiteSpace(s.UrunAciklamasiEn)
+                        ? s.Urun?.UrunAciklamasiEn ?? s.Urun?.UrunAciklamasi
+                        : s.UrunAciklamasiEn;
+
                     var m = new TeklifUrunModel
                     {
                         UrunId = s.UrunId,
                         UrunKodu = s.Urun?.UrunKodu ?? "Bilinmiyor",
-                        UrunAciklamasi = s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
-                        UrunAciklamasiTr = s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
-                        UrunAciklamasiEn = s.Urun?.UrunAciklamasiEn ?? s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
+                        UrunAciklamasi = s.UrunAciklamasi ?? s.Urun?.UrunAciklamasi ?? "Bilinmiyor",
+                        UrunAciklamasiTr = aciklamaTr ?? "Bilinmiyor",
+                        UrunAciklamasiEn = aciklamaEn ?? aciklamaTr ?? "Bilinmiyor",
                         Adet = s.Adet,
                         BirimFiyat = s.BirimFiyat,
                         IndirimliFiyat = s.IndirimliBirimFiyat,
@@ -617,6 +624,8 @@ namespace teklif_programi.ViewModels
             var varMi = _context.TeklifUrunleri.Any(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == item.UrunId);
             if (varMi) _silinecekUrunIdSet.Add(item.UrunId);
 
+            item.OnBirimFiyatDegisti -= Model_OnBirimFiyatDegisti;
+            item.PropertyChanged -= Model_PropertyChanged;
             TeklifUrunler.Remove(item);
             UpdateToplamlarText();
             OnPropertyChanged(nameof(TeklifUrunler));
@@ -700,8 +709,28 @@ namespace teklif_programi.ViewModels
 
         private void Model_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (sender is TeklifUrunModel && (e.PropertyName == nameof(TeklifUrunModel.Adet) || e.PropertyName == nameof(TeklifUrunModel.IndirimliFiyat)))
+            if (sender is not TeklifUrunModel model)
+                return;
+
+            if (e.PropertyName == nameof(TeklifUrunModel.Adet) || e.PropertyName == nameof(TeklifUrunModel.IndirimliFiyat))
+            {
                 UpdateToplamlarText();
+            }
+            else if (e.PropertyName == nameof(TeklifUrunModel.UrunAciklamasi))
+            {
+                if (SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase))
+                {
+                    model.UrunAciklamasiEn = model.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(model.UrunAciklamasiTr))
+                        model.UrunAciklamasiTr = model.UrunAciklamasi;
+                }
+                else
+                {
+                    model.UrunAciklamasiTr = model.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(model.UrunAciklamasiEn))
+                        model.UrunAciklamasiEn = model.UrunAciklamasi;
+                }
+            }
         }
 
         private static decimal GetFiyatByCurrency(Urun urun, string currency) => currency switch
@@ -715,7 +744,11 @@ namespace teklif_programi.ViewModels
         {
             foreach (var model in TeklifUrunler)
             {
-                model.UrunAciklamasi = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
+                var preferred = SelectedLanguage == "EN" ? model.UrunAciklamasiEn : model.UrunAciklamasiTr;
+                var fallback = SelectedLanguage == "EN" ? model.UrunAciklamasiTr : model.UrunAciklamasiEn;
+                model.UrunAciklamasi = !string.IsNullOrWhiteSpace(preferred)
+                    ? preferred!
+                    : (!string.IsNullOrWhiteSpace(fallback) ? fallback! : model.UrunAciklamasi);
             }
             OnPropertyChanged(nameof(TeklifUrunler));
         }
@@ -808,8 +841,33 @@ namespace teklif_programi.ViewModels
                     _silinecekUrunIdSet.Clear();
                 }
 
+                void SenkronizeAciklama(TeklifUrunModel m)
+                {
+                    if (SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase))
+                    {
+                        m.UrunAciklamasiEn = m.UrunAciklamasi;
+                        if (string.IsNullOrWhiteSpace(m.UrunAciklamasiTr))
+                            m.UrunAciklamasiTr = m.UrunAciklamasi;
+                    }
+                    else
+                    {
+                        m.UrunAciklamasiTr = m.UrunAciklamasi;
+                        if (string.IsNullOrWhiteSpace(m.UrunAciklamasiEn))
+                            m.UrunAciklamasiEn = m.UrunAciklamasi;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(m.UrunAciklamasi))
+                    {
+                        m.UrunAciklamasi = SelectedLanguage.Equals("EN", StringComparison.OrdinalIgnoreCase)
+                            ? m.UrunAciklamasiEn ?? string.Empty
+                            : m.UrunAciklamasiTr ?? string.Empty;
+                    }
+                }
+
                 foreach (var m in TeklifUrunler)
                 {
+                    SenkronizeAciklama(m);
+
                     if (m.ManuelEklenen || m.UrunId <= 0)
                     {
                         var fiyatTl = m.FiyatTL > 0 ? m.FiyatTL : ConvertSelectedCurrencyToTl(m.BirimFiyat);
@@ -872,6 +930,9 @@ namespace teklif_programi.ViewModels
                         dbU.FiyatTL = m.FiyatTL;
                         dbU.FiyatUSD = m.FiyatUSD;
                         dbU.FiyatEUR = m.FiyatEUR;
+                        dbU.UrunAciklamasi = m.UrunAciklamasi;
+                        dbU.UrunAciklamasiTr = m.UrunAciklamasiTr;
+                        dbU.UrunAciklamasiEn = m.UrunAciklamasiEn;
                     }
                     else
                     {
@@ -887,7 +948,10 @@ namespace teklif_programi.ViewModels
                             UretimNotu = m.UretimNotu,
                             FiyatTL = m.FiyatTL,
                             FiyatUSD = m.FiyatUSD,
-                            FiyatEUR = m.FiyatEUR
+                            FiyatEUR = m.FiyatEUR,
+                            UrunAciklamasi = m.UrunAciklamasi,
+                            UrunAciklamasiTr = m.UrunAciklamasiTr,
+                            UrunAciklamasiEn = m.UrunAciklamasiEn
                         });
                     }
                 }

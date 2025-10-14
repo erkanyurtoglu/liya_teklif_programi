@@ -40,6 +40,19 @@ namespace teklif_programi.Data.Configurations
                 .IsRequired();
             // ToplamTutar zorunlu bir alan, 2 ondalık basamaklı decimal.
 
+            builder.Property(tu => tu.UrunAciklamasi)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("UrunAciklamasi");
+
+            builder.Property(tu => tu.UrunAciklamasiTr)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("UrunAciklamasiTr");
+
+            builder.Property(tu => tu.UrunAciklamasiEn)
+                .HasColumnType("nvarchar(max)")
+                .HasColumnName("UrunAciklamasiEn");
+
+
             builder.Property(tu => tu.ParaBirimi)
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();

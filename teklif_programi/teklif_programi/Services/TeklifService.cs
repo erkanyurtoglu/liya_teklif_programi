@@ -127,8 +127,33 @@ namespace teklif_programi.Services
                 };
             }
 
+            static void SenkronizeAciklamaDilleri(TeklifUrunModel urun, string language)
+            {
+                if (language.Equals("EN", StringComparison.OrdinalIgnoreCase))
+                {
+                    urun.UrunAciklamasiEn = urun.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(urun.UrunAciklamasiTr))
+                        urun.UrunAciklamasiTr = urun.UrunAciklamasi;
+                }
+                else
+                {
+                    urun.UrunAciklamasiTr = urun.UrunAciklamasi;
+                    if (string.IsNullOrWhiteSpace(urun.UrunAciklamasiEn))
+                        urun.UrunAciklamasiEn = urun.UrunAciklamasi;
+                }
+
+                if (string.IsNullOrWhiteSpace(urun.UrunAciklamasi))
+                {
+                    urun.UrunAciklamasi = language.Equals("EN", StringComparison.OrdinalIgnoreCase)
+                        ? urun.UrunAciklamasiEn ?? string.Empty
+                        : urun.UrunAciklamasiTr ?? string.Empty;
+                }
+            }
+
             foreach (var urun in urunler)
             {
+                SenkronizeAciklamaDilleri(urun, selectedLanguage);
+
                 if (urun.ManuelEklenen || urun.UrunId <= 0)
                 {
                     var fiyatTl = urun.FiyatTL > 0 ? urun.FiyatTL : ConvertToTl(urun.BirimFiyat, currency);
@@ -170,7 +195,10 @@ namespace teklif_programi.Services
                     Adet = urun.Adet,
                     BirimFiyat = urun.BirimFiyat,
                     IndirimliBirimFiyat = urun.IndirimliFiyat,
-                    ToplamTutar = urun.Toplam
+                    ToplamTutar = urun.Toplam,
+                    UrunAciklamasi = urun.UrunAciklamasi,
+                    UrunAciklamasiTr = urun.UrunAciklamasiTr,
+                    UrunAciklamasiEn = urun.UrunAciklamasiEn
                 });
             }
 
