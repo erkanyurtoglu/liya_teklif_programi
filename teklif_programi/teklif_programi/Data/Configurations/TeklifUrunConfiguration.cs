@@ -40,6 +40,12 @@ namespace teklif_programi.Data.Configurations
                 .IsRequired();
             // ToplamTutar zorunlu bir alan, 2 ondalık basamaklı decimal.
 
+            builder.Property(tu => tu.MaliyetFiyati)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired(false);
+            // MaliyetFiyati opsiyonel alan, teklif sırasında kaydedilen maliyeti saklar.
+
+
             builder.Property(tu => tu.UrunAciklamasi)
                 .HasColumnType("nvarchar(max)")
                 .HasColumnName("UrunAciklamasi");

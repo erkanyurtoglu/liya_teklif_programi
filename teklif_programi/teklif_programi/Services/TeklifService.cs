@@ -154,26 +154,26 @@ namespace teklif_programi.Services
             {
                 SenkronizeAciklamaDilleri(urun, selectedLanguage);
 
+                // 1) Satırın TL maliyeti: her durumda elimizde dursun
+                var maliyetTlRow = urun.MaliyetFiyatiTl > 0
+                    ? urun.MaliyetFiyatiTl
+                    : ConvertToTl(urun.MaliyetFiyati, currency);
+
                 if (urun.ManuelEklenen || urun.UrunId <= 0)
                 {
                     var fiyatTl = urun.FiyatTL > 0 ? urun.FiyatTL : ConvertToTl(urun.BirimFiyat, currency);
-                    var maliyetTl = urun.MaliyetFiyatiTl > 0 ? urun.MaliyetFiyatiTl : ConvertToTl(urun.MaliyetFiyati, currency);
 
                     var yeniUrun = new Urun
                     {
                         UrunKodu = urun.UrunKodu,
                         Kategori = urun.Kategori,
-                        UrunAciklamasi = string.IsNullOrWhiteSpace(urun.UrunAciklamasiTr)
-                            ? urun.UrunAciklamasi
-                            : urun.UrunAciklamasiTr,
-                        UrunAciklamasiEn = string.IsNullOrWhiteSpace(urun.UrunAciklamasiEn)
-                            ? urun.UrunAciklamasi
-                            : urun.UrunAciklamasiEn,
+                        UrunAciklamasi = string.IsNullOrWhiteSpace(urun.UrunAciklamasiTr) ? urun.UrunAciklamasi : urun.UrunAciklamasiTr,
+                        UrunAciklamasiEn = string.IsNullOrWhiteSpace(urun.UrunAciklamasiEn) ? urun.UrunAciklamasi : urun.UrunAciklamasiEn,
                         BirimFiyat = fiyatTl,
                         FiyatTL = fiyatTl,
                         FiyatUSD = urun.FiyatUSD > 0 ? urun.FiyatUSD : (usdRate <= 0 ? 0 : fiyatTl / usdRate),
                         FiyatEUR = urun.FiyatEUR > 0 ? urun.FiyatEUR : (eurRate <= 0 ? 0 : fiyatTl / eurRate),
-                        MaliyetFiyati = maliyetTl,
+                        MaliyetFiyati = maliyetTlRow,   // <- burada da aynı değişken
                         EklenmeTarihi = DateTime.Now
                     };
 
@@ -185,9 +185,10 @@ namespace teklif_programi.Services
                     urun.FiyatTL = yeniUrun.FiyatTL;
                     urun.FiyatUSD = yeniUrun.FiyatUSD;
                     urun.FiyatEUR = yeniUrun.FiyatEUR;
-                    urun.MaliyetFiyatiTl = yeniUrun.MaliyetFiyati;
+                    urun.MaliyetFiyatiTl = maliyetTlRow; // normalize et
                 }
 
+                // 2) Teklif satırı eklenirken de aynı maliyeti kullan
                 _context.TeklifUrunleri.Add(new TeklifUrun
                 {
                     TeklifId = teklif.TeklifId,
@@ -196,11 +197,13 @@ namespace teklif_programi.Services
                     BirimFiyat = urun.BirimFiyat,
                     IndirimliBirimFiyat = urun.IndirimliFiyat,
                     ToplamTutar = urun.Toplam,
+                    MaliyetFiyati = maliyetTlRow,   // <- artık tanımlı
                     UrunAciklamasi = urun.UrunAciklamasi,
                     UrunAciklamasiTr = urun.UrunAciklamasiTr,
                     UrunAciklamasiEn = urun.UrunAciklamasiEn
                 });
             }
+
 
             var toplamFiyat = TeklifHesaplayici.HesaplaToplamFiyat(urunler);
             var kdvTutari = TeklifHesaplayici.HesaplaKdv(toplamFiyat, kdvOrani);

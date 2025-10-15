@@ -470,6 +470,10 @@ namespace teklif_programi.ViewModels
                     var aciklamaEn = string.IsNullOrWhiteSpace(s.UrunAciklamasiEn)
                         ? s.Urun?.UrunAciklamasiEn ?? s.Urun?.UrunAciklamasi
                         : s.UrunAciklamasiEn;
+                    var satirMaliyeti = s.MaliyetFiyati;
+                    var maliyetTl = satirMaliyeti.HasValue && satirMaliyeti.Value > 0
+                        ? satirMaliyeti.Value
+                        : s.Urun?.MaliyetFiyati ?? 0;
 
                     var m = new TeklifUrunModel
                     {
@@ -484,8 +488,8 @@ namespace teklif_programi.ViewModels
                         FiyatTL = s.Urun?.FiyatTL ?? 0,
                         FiyatUSD = s.Urun?.FiyatUSD ?? 0,
                         FiyatEUR = s.Urun?.FiyatEUR ?? 0,
-                        MaliyetFiyati = ConvertTlToSelectedCurrency(s.Urun?.MaliyetFiyati ?? 0),
-                        MaliyetFiyatiTl = s.Urun?.MaliyetFiyati ?? 0,
+                        MaliyetFiyati = ConvertTlToSelectedCurrency(maliyetTl),
+                        MaliyetFiyatiTl = maliyetTl,
                         Tamamlandi = s.Tamamlandi ?? false,
                         UretimNotu = s.UretimNotu ?? string.Empty,
                         ManuelEklenen = false,
@@ -650,7 +654,10 @@ namespace teklif_programi.ViewModels
             {
                 urun.BirimFiyat = GetFiyatByCurrency(urun, SelectedCurrency);
                 var dbUrun = TumUrunler.FirstOrDefault(u => u.UrunId == urun.UrunId);
-                urun.MaliyetFiyati = ConvertTlToSelectedCurrency(dbUrun?.MaliyetFiyati ?? 0);
+                var maliyetTl = urun.MaliyetFiyatiTl > 0
+                    ? urun.MaliyetFiyatiTl
+                    : dbUrun?.MaliyetFiyati ?? 0;
+                urun.MaliyetFiyati = ConvertTlToSelectedCurrency(maliyetTl);
             }
             RecalculateAll();
         }
@@ -873,7 +880,11 @@ namespace teklif_programi.ViewModels
                         var fiyatTl = m.FiyatTL > 0 ? m.FiyatTL : ConvertSelectedCurrencyToTl(m.BirimFiyat);
                         var fiyatUsd = m.FiyatUSD > 0 ? m.FiyatUSD : ConvertTlToCurrency(fiyatTl, "USD");
                         var fiyatEur = m.FiyatEUR > 0 ? m.FiyatEUR : ConvertTlToCurrency(fiyatTl, "EUR");
-                        var maliyetTl = m.MaliyetFiyatiTl > 0 ? m.MaliyetFiyatiTl : ConvertCurrencyToTl(m.MaliyetFiyati, SelectedCurrency);
+
+                        // İÇ BLOKTA YENİ İSİM
+                        var maliyetTlYeni = m.MaliyetFiyatiTl > 0
+                            ? m.MaliyetFiyatiTl
+                            : ConvertCurrencyToTl(m.MaliyetFiyati, SelectedCurrency);
 
                         var yeniKod = string.IsNullOrWhiteSpace(m.UrunKodu)
                             ? $"MANUEL-{Guid.NewGuid():N}"[..15]
@@ -889,7 +900,7 @@ namespace teklif_programi.ViewModels
                             FiyatTL = fiyatTl,
                             FiyatUSD = fiyatUsd,
                             FiyatEUR = fiyatEur,
-                            MaliyetFiyati = maliyetTl,
+                            MaliyetFiyati = maliyetTlYeni,
                             EklenmeTarihi = DateTime.Now
                         };
 
@@ -918,13 +929,23 @@ namespace teklif_programi.ViewModels
                         UrunleriFiltrele();
                     }
 
-                    var dbU = _context.TeklifUrunleri.FirstOrDefault(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == m.UrunId);
+                    var dbU = _context.TeklifUrunleri
+                        .FirstOrDefault(tu => tu.TeklifId == Teklif.TeklifId && tu.UrunId == m.UrunId);
+
+                    // DIŞ BLOKTA FARKLI İSİM
+                    var maliyetTlGuncel = m.MaliyetFiyatiTl > 0
+                        ? m.MaliyetFiyatiTl
+                        : ConvertCurrencyToTl(m.MaliyetFiyati, SelectedCurrency);
+
+                    m.MaliyetFiyatiTl = maliyetTlGuncel;
+
                     if (dbU != null)
                     {
                         dbU.Adet = m.Adet;
                         dbU.BirimFiyat = m.BirimFiyat;
                         dbU.IndirimliBirimFiyat = m.IndirimliFiyat;
                         dbU.ToplamTutar = m.Toplam;
+                        dbU.MaliyetFiyati = maliyetTlGuncel;
                         dbU.Tamamlandi = m.Tamamlandi;
                         dbU.UretimNotu = m.UretimNotu;
                         dbU.FiyatTL = m.FiyatTL;
@@ -955,6 +976,7 @@ namespace teklif_programi.ViewModels
                         });
                     }
                 }
+
 
                 var dbTop = _context.TeklifToplamlari.FirstOrDefault(tt => tt.TeklifId == Teklif.TeklifId);
                 if (dbTop != null)
